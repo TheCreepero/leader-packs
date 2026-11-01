@@ -180,6 +180,7 @@ Written only by `-ConvertPortraits -Pack <pack> [-Force]`: for each DDS of the p
 | `data/stat-bands.json` | Hand-written: the start ranges of `skill` and the attribute skills per role kind [CHR-006] [CHR-012]. |
 | `data/workshop.json` | The wiki address and the author's other mods, shared by every pack. |
 | `data/portrait-card.json` | The small card's geometry and the face position inside its photo window [CHR-005]; read by the converter. The owner approved these values: they change only on the owner's word. |
+| `data/thumbnail.json` | The Workshop thumbnail, shared by every pack: `background` (a loading screen's path under the game root, read at render time and never copied into the repository), `crop`, `blur` and `scrim`; and per pack under `packs.<pack>.portraits` the 2 or 3 leader keys whose chosen portraits the thumbnail shows, left to right. Read by the release skill; changes only on the owner's word. |
 
 `game-characters.json`, `start-traits.json` and `portrait-card.json` are protected from hand edits by the project hook.
 

@@ -3,8 +3,9 @@ name: leader-pack-release
 description: >-
   Use when publishing one Leader Packs country pack to the Steam Workshop as "Commanders Pack: <Country>":
   a first upload, an update or a Workshop description change. Extends the shared hoi4-mod-release skill with
-  the per-pack preflight, the thumbnail with the country's flag, the photo credits on the wiki, the generated
-  Workshop description and its AI-assisted portrait disclosure.
+  the per-pack preflight, the thumbnail with the country's flag and a row of the pack's portraits over the
+  shared background, the photo credits on the wiki, the generated Workshop description and its AI-assisted
+  portrait disclosure.
 disable-model-invocation: true
 ---
 
@@ -20,13 +21,16 @@ Each pack is its own Workshop item. Follow the shared `hoi4-mod-release` skill, 
 5. `Test-HoiKnowledge.ps1 -Repo leader-packs -Detailed` (the `hoi4-modding-knowledge` skill): the sweep queue is empty.
 
 ## 2. Thumbnail
-A pack whose `packs/<pack>/thumbnail.png` still has the hash of `assets/thumbnail_master.png` (`Get-FileHash`) gets its own thumbnail before its first upload; a pack that has one keeps it unless the owner asks.
+A pack whose `packs/<pack>/thumbnail.png` still has the hash of `assets/thumbnail_master.png` (`Get-FileHash`) gets its own thumbnail before its first upload; with fewer than 2 chosen portraits the release stops and the owner is told. A pack that has one keeps it unless the owner asks, or a leader it shows has had a new portrait picked since: a recorded `source/<pack>/portraits/<key>.png` whose last commit (`git log -1 --format=%cI -- <file>`) is newer than that of `packs/<pack>/thumbnail.png`.
 
-1. Use the `mod-thumbnail-generator` skill, title `COMMANDERS PACK`, subtitle the country in capitals, with the country's flag (`--flag-tag <TAG>`) below the subtitle.
-2. As Event Packs does with its event pictures, the background is the pack's own image: one of its chosen portraits, `source/<pack>/portraits/<key>.png`, never a vanilla loading screen or portrait: no vanilla image is uploaded. Prefer the pack's best-known leader, and a portrait painted from a public-domain or CC0 photo. The portrait is tall, so crop `top` or `center` to keep the face.
-3. The flag and the colours as Event Packs does it: the flag variant is the ruling party's ideology that `Get-HoiCountryHistory -Tag <TAG> -Section politics` prints (`hoi4-vanilla-lookup`), the game root the one `Get-HoiGameInfo` prints; the main colour is the colour the flag is known by, read from the flag file the generator names as `overlay_source`, never white; the text colour is white, or black on a light main colour.
-4. Write to `--out-dirs "scratch\thumbnail\<pack>"`; the JSON must say `"status": "success"` and `"workshop_limit_exceeded": false`. Show the owner the image; on their word, copy it with `Copy-Item scratch\thumbnail\<pack>\thumbnail.png packs\<pack>\thumbnail.png` as a statement of its own (a hook refuses any other shell write into `packs/`).
-5. `powershell -File .\build.ps1 -ValidateOnly` ends `Validation succeeded.`, then commit the thumbnail on the owner's word.
+Every pack's thumbnail has the same layout: the title and the country at the top, the flag below them, a row of 2 or 3 of the pack's portraits below the flag, over the one shared background of `data/thumbnail.json`.
+
+1. Use the `mod-thumbnail-generator` skill, title `COMMANDERS PACK`, subtitle the country in capitals, with the country's flag (`--flag-tag <TAG>`) below the subtitle, `--text-pos top`, and `--game-dir "<game root>"`, the game root the one `Get-HoiGameInfo` prints (`hoi4-vanilla-lookup`).
+2. The portraits: the keys under `packs.<pack>.portraits` of `data/thumbnail.json`. A pack without them: propose its 3 best-known leaders with a chosen portrait (2 when it has only 2), in the order they are to stand left to right, and on the owner's word, which may swap them, write the keys there. Pass their `source/<pack>/portraits/<key>.png` to `--portraits`, comma-separated, in that order.
+3. The background: `--bg-image "<game root>\<background>"`, with `--bg-crop <crop>`, `--bg-blur <blur>` and `--scrim <scrim>`, all from `data/thumbnail.json`. This loading screen and the flag are the only vanilla images a pack may ship, and only inside its `thumbnail.png`: never copy, convert or save either anywhere else.
+4. The flag and the colours as Event Packs does it: the flag variant is the ruling party's ideology that `Get-HoiCountryHistory -Tag <TAG> -Section politics` prints (`hoi4-vanilla-lookup`); the main colour is the colour the flag is known by, read from the flag file the generator names as `overlay_source`, never white, and lightened until it reads clearly on the dark background (Finland's `#003580` becomes `#4A86D8`): the generator does not check contrast over artwork; the text colour is white.
+5. Write to `--out-dirs "scratch\thumbnail\<pack>"`; the JSON must say `"status": "success"`, `"workshop_limit_exceeded": false` and no `warnings`, and `portrait_sources` must list the recorded portraits. Show the owner the image; on their word, copy it with `Copy-Item scratch\thumbnail\<pack>\thumbnail.png packs\<pack>\thumbnail.png` as a statement of its own (a hook refuses any other shell write into `packs/`).
+6. `powershell -File .\build.ps1 -ValidateOnly` ends `Validation succeeded.`, then commit the thumbnail, and `data/thumbnail.json` when its keys are new, on the owner's word.
 
 ## 3. Change note, credits and description
 1. The change note names the leaders added or changed, by name, and any leader set to `skip` with the reason.
