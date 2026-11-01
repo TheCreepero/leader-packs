@@ -418,6 +418,48 @@ Describe 'FetchPhoto and Audit' {
         [System.IO.File]::ReadAllText($photosPath) | Should -BeExactly $before
     }
 
+    It 'waits and tries again when Wikimedia answers 429 or 503, as long as Retry-After asks' {
+        $fixtureRoot = New-LpGeneratedFixture
+        $script:DownloadAttempts = 0
+        Mock Start-Sleep { }
+        Mock Invoke-RestMethod { Get-LpCommonsFixture -Name 'cc-by' }
+        Mock Invoke-WebRequest {
+            $script:DownloadAttempts++
+            if ($script:DownloadAttempts -le 2) {
+                $statusCode = if ($script:DownloadAttempts -eq 1) { 429 } else { 503 }
+                $exception = [System.Exception]::new('Too many requests')
+                Add-Member -InputObject $exception -NotePropertyName Response -NotePropertyValue ([PSCustomObject]@{ StatusCode = $statusCode; Headers = @{ 'Retry-After' = '30' } })
+                throw $exception
+            }
+            [System.IO.File]::WriteAllText($OutFile, 'photo bytes')
+        }
+        Invoke-LpFetchPhoto -RepoRoot $fixtureRoot -Pack 'testland' -File 'x.jpg' -Key 'zulu' 6>$null | Select-Object -Last 1 | Should -Be 0
+        $script:DownloadAttempts | Should -Be 3
+        Should -Invoke Start-Sleep -Times 2 -Exactly -ParameterFilter { $Seconds -eq 30 }
+        Get-LpPhotoByKey -Pack (Get-LpPack -RepoRoot $fixtureRoot -Pack 'testland') -PhotoKey 'zulu' | Should -Not -BeNullOrEmpty
+    }
+
+    It 'gives up after the last attempt and never retries another failure' {
+        Mock Start-Sleep { }
+        Mock Invoke-RestMethod {
+            $exception = [System.Exception]::new('Too many requests')
+            Add-Member -InputObject $exception -NotePropertyName Response -NotePropertyValue ([PSCustomObject]@{ StatusCode = 429; Headers = @{} })
+            $errorRecord = [System.Management.Automation.ErrorRecord]::new($exception, 'WebCmdletWebResponseException', 'InvalidOperation', $null)
+            $errorRecord.ErrorDetails = [System.Management.Automation.ErrorDetails]::new("<html><body><p>Too many requests -</p>`n<p>use thumbnail steps</p></body></html>")
+            throw $errorRecord
+        }
+        $script:RequestOutput = [System.Collections.Generic.List[string]]::new()
+        { Invoke-LpCommonsRequest -Uri 'https://commons.wikimedia.org/w/api.php' -MaxAttempts 3 6>&1 | ForEach-Object { $script:RequestOutput.Add([string]$_) } } | Should -Throw
+        Should -Invoke Invoke-RestMethod -Times 3 -Exactly
+        @($script:RequestOutput | Where-Object { $_ -eq '  Wikimedia answered 429: Too many requests - use thumbnail steps' }).Count | Should -Be 3
+        $script:RequestOutput[-1] | Should -Be '  giving up after 3 attempts'
+        Should -Invoke Start-Sleep -Times 1 -Exactly -ParameterFilter { $Seconds -eq 5 }
+        Should -Invoke Start-Sleep -Times 1 -Exactly -ParameterFilter { $Seconds -eq 10 }
+        Mock Invoke-RestMethod { throw 'not found' }
+        { Invoke-LpCommonsRequest -Uri 'https://commons.wikimedia.org/w/api.php' 6>$null } | Should -Throw 'not found'
+        Should -Invoke Start-Sleep -Times 2 -Exactly
+    }
+
     It 'the audit reads every licence from Commons again and fails on a licence that changed' {
         $fixtureRoot = New-LpGeneratedFixture
         Mock Invoke-RestMethod {

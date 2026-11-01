@@ -1435,9 +1435,9 @@ function Invoke-LpAudit {
             $problems.Add((New-LpProblem -Level 'WARN' -Where $photoWhere -Message "licence recorded from Commons on $($photo.fetched), over 180 days ago: fetch it again with build.ps1 -FetchPhoto"))
         }
         try {
-            $response = Invoke-RestMethod -Uri (Get-LpCommonsQueryUrl -FileTitle ([string]$photo.commonsTitle)) -Headers (Get-LpWebHeaders) -UseBasicParsing
+            $response = Invoke-LpCommonsRequest -Uri (Get-LpCommonsQueryUrl -FileTitle ([string]$photo.commonsTitle))
         } catch {
-            $problems.Add((New-LpProblem -Level 'WARN' -Where $photoWhere -Message "Commons could not be read: $($_.Exception.Message)"))
+            $problems.Add((New-LpProblem -Level 'WARN' -Where $photoWhere -Message "Commons could not be read: $(Get-LpWebErrorText -ErrorRecord $_)"))
             continue
         }
         $verdict = Get-LpCommonsVerdict -Response $response
@@ -1575,7 +1575,63 @@ function Get-LpCommonsVerdict {
 }
 
 function Get-LpWebHeaders {
-    return @{ 'User-Agent' = 'LeaderPacksModTools/1.0 (Hearts of Iron IV mod build tool; one request per photo)' }
+    $powerShellVersion = '{0}.{1}' -f $PSVersionTable.PSVersion.Major, $PSVersionTable.PSVersion.Minor
+    return @{ 'User-Agent' = "LeaderPacksBot/1.0 (https://github.com/TheCreepero/leader-packs; Hearts of Iron IV mod build tool, one request at a time) PowerShell/$powerShellVersion" }
+}
+
+function Get-LpWebErrorText {
+    param([Parameter(Mandatory = $true)][System.Management.Automation.ErrorRecord]$ErrorRecord)
+
+    $text = if ($null -ne $ErrorRecord.ErrorDetails -and $ErrorRecord.ErrorDetails.Message) { $ErrorRecord.ErrorDetails.Message } else { $ErrorRecord.Exception.Message }
+    $text = ([regex]::Replace([string]$text, '<[^>]+>', ' ') -replace '\s+', ' ').Trim()
+    if ($text.Length -gt 300) {
+        $text = $text.Substring(0, 300) + '...'
+    }
+    return $text
+}
+
+function Get-LpRetryDelaySeconds {
+    param($Response, [Parameter(Mandatory = $true)][int]$Attempt)
+
+    $backoffSeconds = 5 * [Math]::Pow(2, $Attempt - 1)
+    $retryAfterSeconds = 0
+    $headers = Get-LpProperty -Object $Response -Name 'Headers'
+    if ($null -ne $headers -and -not [int]::TryParse([string]$headers['Retry-After'], [ref]$retryAfterSeconds)) {
+        $retryAfterSeconds = 0
+    }
+    return [int][Math]::Min(120, [Math]::Max($retryAfterSeconds, $backoffSeconds))
+}
+
+function Invoke-LpCommonsRequest {
+    param(
+        [Parameter(Mandatory = $true)][string]$Uri,
+        [string]$OutFile,
+        [int]$MaxAttempts = 5
+    )
+
+    for ($attempt = 1; ; $attempt++) {
+        try {
+            if ($OutFile) {
+                Invoke-WebRequest -Uri $Uri -Headers (Get-LpWebHeaders) -OutFile $OutFile -UseBasicParsing
+                return
+            }
+            return (Invoke-RestMethod -Uri $Uri -Headers (Get-LpWebHeaders) -UseBasicParsing)
+        } catch {
+            $response = Get-LpProperty -Object $_.Exception -Name 'Response'
+            $statusCode = if ($null -ne $response) { [int]$response.StatusCode } else { 0 }
+            if ($statusCode -notin @(429, 503)) {
+                throw
+            }
+            Write-Host "  Wikimedia answered $statusCode`: $(Get-LpWebErrorText -ErrorRecord $_)" -ForegroundColor Yellow
+            if ($attempt -ge $MaxAttempts) {
+                Write-Host "  giving up after $MaxAttempts attempts" -ForegroundColor Yellow
+                throw
+            }
+            $delaySeconds = Get-LpRetryDelaySeconds -Response $response -Attempt $attempt
+            Write-Host "  trying again in $delaySeconds s (attempt $($attempt + 1) of $MaxAttempts)" -ForegroundColor Yellow
+            Start-Sleep -Seconds $delaySeconds
+        }
+    }
 }
 
 function Get-LpCacheFilePath {
@@ -1613,7 +1669,7 @@ function Invoke-LpFetchPhoto {
     }
     $packData = Get-LpPack -RepoRoot $RepoRoot -Pack $Pack
     $fileTitle = if ($File -like 'File:*') { $File } else { 'File:' + $File }
-    $response = Invoke-RestMethod -Uri (Get-LpCommonsQueryUrl -FileTitle $fileTitle) -Headers (Get-LpWebHeaders) -UseBasicParsing
+    $response = Invoke-LpCommonsRequest -Uri (Get-LpCommonsQueryUrl -FileTitle $fileTitle)
     $verdict = Get-LpCommonsVerdict -Response $response
     if (-not $verdict.Accepted) {
         Write-Host "REJECTED $fileTitle : $($verdict.Reason)" -ForegroundColor Red
@@ -1634,7 +1690,7 @@ function Invoke-LpFetchPhoto {
     if (-not (Test-Path -LiteralPath $packData.CacheDir)) {
         New-Item -ItemType Directory -Path $packData.CacheDir -Force | Out-Null
     }
-    Invoke-WebRequest -Uri $photo.downloadUrl -Headers (Get-LpWebHeaders) -OutFile $cachePath -UseBasicParsing
+    Invoke-LpCommonsRequest -Uri $photo.downloadUrl -OutFile $cachePath
     $photo.downloadSha256 = Get-LpSha256 -Path $cachePath
     $keptPhotos = [System.Collections.Generic.List[PSObject]]::new()
     foreach ($existingPhoto in $packData.Photos) {
@@ -1659,7 +1715,7 @@ function Get-LpCachedPhoto {
         if (-not (Test-Path -LiteralPath $Pack.CacheDir)) {
             New-Item -ItemType Directory -Path $Pack.CacheDir -Force | Out-Null
         }
-        Invoke-WebRequest -Uri ([string]$Photo.downloadUrl) -Headers (Get-LpWebHeaders) -OutFile $cachePath -UseBasicParsing
+        Invoke-LpCommonsRequest -Uri ([string]$Photo.downloadUrl) -OutFile $cachePath
     }
     if ((Get-LpSha256 -Path $cachePath) -ne [string]$Photo.downloadSha256) {
         throw "photo '$($Photo.key)': $cachePath does not match the SHA-256 recorded at fetch time; fetch it again with build.ps1 -FetchPhoto"
