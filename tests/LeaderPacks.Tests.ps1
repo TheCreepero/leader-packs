@@ -81,10 +81,11 @@ param(
     [string]$Seeds,
     [int]$ColourSeed = 1,
     [switch]$NoFacePass,
+    [int]$Age = -1,
     [switch]$PassThru
 )
 $managerRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
-$call = [ordered]@{ Photo = $Photo; Name = $Name; Tag = $Tag; Role = $Role; Headwear = $Headwear; Uniform = $Uniform; AvoidHeadwear = $AvoidHeadwear; Notes = $Notes; Seeds = $Seeds; ColourSeed = $ColourSeed; NoFacePass = [bool]$NoFacePass }
+$call = [ordered]@{ Photo = $Photo; Name = $Name; Tag = $Tag; Role = $Role; Headwear = $Headwear; Uniform = $Uniform; AvoidHeadwear = $AvoidHeadwear; Notes = $Notes; Seeds = $Seeds; ColourSeed = $ColourSeed; NoFacePass = [bool]$NoFacePass; Age = $Age }
 Add-Content -LiteralPath (Join-Path $managerRoot 'calls.jsonl') -Value (ConvertTo-Json -InputObject $call -Compress)
 if ($env:LP_STUB_FAIL -and $Name -like ('*' + $env:LP_STUB_FAIL)) {
     throw 'TOOL FAILURE: stand-in failure'
@@ -275,6 +276,11 @@ Describe 'Check rules' {
         @{ Name = 'a colourSeed that is not a whole number'; Expected = 'portrait.colourSeed must be a whole number from 0 up'; Change = { param($root) Set-LpFixtureLeaders -Root $root -Change { param($s) $s.leaders[0].portrait | Add-Member -NotePropertyName 'colourSeed' -NotePropertyValue 1.5 } } }
         @{ Name = 'a negative colourSeed'; Expected = 'portrait.colourSeed must be a whole number from 0 up'; Change = { param($root) Set-LpFixtureLeaders -Root $root -Change { param($s) $s.leaders[0].portrait | Add-Member -NotePropertyName 'colourSeed' -NotePropertyValue -1 } } }
         @{ Name = 'a facePass that is not true or false'; Expected = 'portrait.facePass must be true or false'; Change = { param($root) Set-LpFixtureLeaders -Root $root -Change { param($s) $s.leaders[0].portrait | Add-Member -NotePropertyName 'facePass' -NotePropertyValue 'no' } } }
+        @{ Name = 'a born that is not a year'; Expected = 'portrait.born must be a four-digit year'; Change = { param($root) Set-LpFixtureLeaders -Root $root -Change { param($s) $s.leaders[0].portrait.born = '1894' } } }
+        @{ Name = 'a photoYear that is not a year'; Expected = 'portrait.photoYear must be a four-digit year'; Change = { param($root) Set-LpFixtureLeaders -Root $root -Change { param($s) $s.leaders[0].portrait.photoYear = 43 } } }
+        @{ Name = 'a photo taken before the birth year'; Expected = 'portrait.photoYear must not be before portrait.born'; Change = { param($root) Set-LpFixtureLeaders -Root $root -Change { param($s) $s.leaders[0].portrait.photoYear = 1890 } } }
+        @{ Name = 'years that give a childhood age'; Expected = 'portrait.photoYear - portrait.born must give an age of 15 to 100'; Change = { param($root) Set-LpFixtureLeaders -Root $root -Change { param($s) $s.leaders[0].portrait.photoYear = 1904 } } }
+        @{ Name = 'years that give an age over 100'; Expected = 'portrait.photoYear - portrait.born must give an age of 15 to 100'; Change = { param($root) Set-LpFixtureLeaders -Root $root -Change { param($s) $s.leaders[0].portrait.born = 1794 } } }
         @{ Name = 'a photo key that was never fetched'; Expected = "photo 'zulu' is not in source/testland/photos.json"; Change = { param($root) Set-LpFixtureLeaders -Root $root -Change { param($s) $s.leaders[0].portrait.photo = 'zulu' } } }
         @{ Name = 'a photo licence outside the policy'; Expected = 'outside the policy'; Change = { param($root) Set-LpFixturePhotos -Root $root -Change { param($s) $s.photos[0].licenseCategory = 'CC BY-SA' } } }
         @{ Name = 'a photo category that the Commons code does not give'; Expected = 'does not match its Commons code'; Change = { param($root) Set-LpFixturePhotos -Root $root -Change { param($s) $s.photos[0].license = 'cc-by-sa-4.0' } } }
@@ -545,13 +551,60 @@ Describe 'MakePortraits with a stand-in New-HoiPortrait' {
         (Get-LpRecordEntry -Root $fixtureRoot -Leader 'bravo_leader').rounds[0].settings.facePass | Should -BeTrue
     }
 
-    It 'makes no round for a leader whose colourSeed or facePass is not valid' {
+    It 'passes the age from born and photoYear to New-HoiPortrait, records it, and passes none for a leader without the years' {
         $fixtureRoot = New-LpFixtureRepo -NoPortraits
         Set-LpFixtureCache -Root $fixtureRoot
-        Set-LpFixtureLeaders -Root $fixtureRoot -Change { param($s) $s.leaders[0].portrait | Add-Member -NotePropertyName 'colourSeed' -NotePropertyValue 'two' }
+        Set-LpFixtureLeaders -Root $fixtureRoot -Change { param($s) $s.leaders[1].portrait.PSObject.Properties.Remove('born'); $s.leaders[1].portrait.PSObject.Properties.Remove('photoYear') }
+        $managerRoot = New-LpStubManager
+        Invoke-LpMakePortraits -RepoRoot $fixtureRoot -Pack 'testland' -ManagerRoot $managerRoot 6>$null | Select-Object -Last 1 | Should -Be 0
+        $calls = @(Get-LpStubCalls -ManagerRoot $managerRoot)
+        $calls[0].Age | Should -Be 49
+        $calls[1].Age | Should -Be -1
+        $alpha = Get-LpRecordEntry -Root $fixtureRoot -Leader 'alpha_leader'
+        $alpha.rounds[0].settings.born | Should -Be 1894
+        $alpha.rounds[0].settings.photoYear | Should -Be 1943
+        $alpha.rounds[0].settings.age | Should -Be 49
+        $alpha.rounds[0].settings.ageSent | Should -BeTrue
+        $bravo = Get-LpRecordEntry -Root $fixtureRoot -Leader 'bravo_leader'
+        foreach ($fieldName in @('born', 'photoYear', 'age')) {
+            $bravo.rounds[0].settings.PSObject.Properties[$fieldName] | Should -Not -BeNullOrEmpty
+            $bravo.rounds[0].settings.$fieldName | Should -BeNullOrEmpty
+        }
+        $bravo.rounds[0].settings.ageSent | Should -BeFalse
+        $yearWarnings = @(Test-LpPack -RepoRoot $fixtureRoot -Pack 'testland' | Where-Object { $_.Level -eq 'WARN' -and $_.Message -match 'portrait.born or portrait.photoYear is missing' })
+        $yearWarnings.Count | Should -Be 1
+        ($yearWarnings[0].Where + ' ' + $yearWarnings[0].Message) | Should -Match 'bravo_leader'
+    }
+
+    It 'passes no age to a New-HoiPortrait that takes none' {
+        $fixtureRoot = New-LpFixtureRepo -NoPortraits
+        Set-LpFixtureCache -Root $fixtureRoot
+        $managerRoot = New-LpStubManager
+        $stubPath = Join-Path $managerRoot 'Scripts\Portraits\New-HoiPortrait.ps1'
+        $stubText = [System.IO.File]::ReadAllText($stubPath)
+        $stubText = $stubText.Replace("    [int]`$Age = -1,`r`n", '').Replace("    [int]`$Age = -1,`n", '').Replace('; Age = $Age }', ' }')
+        [System.IO.File]::WriteAllText($stubPath, $stubText)
+        $output = @(Invoke-LpMakePortraits -RepoRoot $fixtureRoot -Pack 'testland' -ManagerRoot $managerRoot 6>&1)
+        $output | Select-Object -Last 1 | Should -Be 0
+        ($output -join "`n") | Should -Match 'takes no -Age'
+        $calls = @(Get-LpStubCalls -ManagerRoot $managerRoot)
+        $calls.Count | Should -BeGreaterThan 0
+        $calls[0].PSObject.Properties['Age'] | Should -BeNullOrEmpty
+        $settings = (Get-LpRecordEntry -Root $fixtureRoot -Leader 'alpha_leader').rounds[0].settings
+        $settings.age | Should -Be 49
+        $settings.ageSent | Should -BeFalse
+    }
+
+    It 'makes no round for a leader whose colourSeed, facePass, born or photoYear is not valid' {
+        $fixtureRoot = New-LpFixtureRepo -NoPortraits
+        Set-LpFixtureCache -Root $fixtureRoot
+        Set-LpFixtureLeaders -Root $fixtureRoot -Change { param($s) $s.leaders[0].portrait | Add-Member -NotePropertyName 'colourSeed' -NotePropertyValue 'two'; $s.leaders[1].portrait.born = 'about 1892' }
         $managerRoot = New-LpStubManager
         Invoke-LpMakePortraits -RepoRoot $fixtureRoot -Pack 'testland' -ManagerRoot $managerRoot 6>$null | Select-Object -Last 1 | Should -Be 1
-        @(Get-LpStubCalls -ManagerRoot $managerRoot | ForEach-Object { $_.Name }) | Should -Not -Contain 'lp_tst_alpha_leader'
+        $called = @(Get-LpStubCalls -ManagerRoot $managerRoot | ForEach-Object { $_.Name })
+        $called | Should -Not -Contain 'lp_tst_alpha_leader'
+        $called | Should -Not -Contain 'lp_tst_bravo_leader'
+        $called | Should -Contain 'lp_tst_charlie_leader'
     }
 
     It 'skips leaders waiting for review, makes round 2 with seeds 5 to 8 after a rejection, and leaves a chosen leader alone' {

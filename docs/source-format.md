@@ -32,7 +32,9 @@ Hand-written by the pack's agents.
                 "headwear": "wearing a soft grey Finnish M36 field cap with a small round cockade",
                 "uniform": "grey field uniform with collar patches",
                 "avoidHeadwear": "peaked cap, visor cap, helmet",
-                "notes": ""
+                "notes": "",
+                "born": 1894,
+                "photoYear": 1943
             }
         },
         {
@@ -49,7 +51,7 @@ Hand-written by the pack's agents.
             "logistics": 2,
             "traits": [],
             "factSheet": "harald_ohquist",
-            "portrait": { "photo": "ohquist", "role": "Finnish general", "headwear": "bareheaded", "uniform": "grey general's uniform", "avoidHeadwear": "cap, hat, helmet", "notes": "" }
+            "portrait": { "photo": "ohquist", "role": "Finnish general", "headwear": "bareheaded", "uniform": "grey general's uniform", "avoidHeadwear": "cap, hat, helmet", "notes": "", "born": 1891, "photoYear": 1939 }
         },
         {
             "key": "hugo_osterman",
@@ -73,7 +75,7 @@ Hand-written by the pack's agents.
 | `skill` and the attribute skills | Army roles: `attack`, `defense`, `planning`, `logistics`. Navy: `attack`, `defense`, `maneuvering`, `coordination`. Within `data/stat-bands.json` [CHR-006] [CHR-012]. |
 | `traits` | Only traits vanilla gives a unit leader of that kind at the start, shared or of the pack's own country (`data/<pack>/start-traits.json`). |
 | `factSheet` | The section `## <key>` of `source/<pack>/fact-sheets.md` with the sourced facts behind the leader and his stats. |
-| `portrait` | `photo`: a key of `photos.json`. `role`, `headwear`, `uniform`, `avoidHeadwear`, `notes` go into the portrait prompts as written; naming the headwear is what keeps it. An empty `headwear` is a warning of `-Check`, not an error. Optional, for a rejected round: `colourSeed`, a whole number from 0 up (absent: 1), the seed of the colouring step; `facePass`, `true` or `false` (absent: `true`), whether the face detail pass runs. `-Check` fails on any other value. |
+| `portrait` | `photo`: a key of `photos.json`. `role`, `headwear`, `uniform`, `avoidHeadwear`, `notes` go into the portrait prompts as written; naming the headwear is what keeps it. An empty `headwear` is a warning of `-Check`, not an error. `born` and `photoYear`, four-digit years (the leader's birth year from the dossier, the photo's year from its Commons page): their difference is the age cue of the prompt, which keeps the painted face from coming out too young; either missing is a warning of `-Check`; a value that is not a four-digit year, a photo year before the birth year, or years that give an age outside 15 to 100 (the range the Manager's `-Age` takes) an error. Optional, for a rejected round: `colourSeed`, a whole number from 0 up (absent: 1), the seed of the colouring step; `facePass`, `true` or `false` (absent: `true`), whether the face detail pass runs. `-Check` fails on any other value. |
 | `reason` | `skip` only: why the leader is left out, with the id that already covers him. `-Check` fails when the reason names no character id of the snapshot. |
 
 ### Modes
@@ -109,7 +111,7 @@ Written only by `-MakePortraits` and `-ApplyPortraitReview`. One entry per leade
                     "round": 1,
                     "date": "2026-11-01",
                     "seeds": [1, 2, 3, 4],
-                    "settings": { "role": "Finnish general", "headwear": "...", "uniform": "...", "avoidHeadwear": "...", "notes": "", "colourSeed": 1, "facePass": true },
+                    "settings": { "role": "Finnish general", "headwear": "...", "uniform": "...", "avoidHeadwear": "...", "notes": "", "colourSeed": 1, "facePass": true, "born": 1894, "photoYear": 1943, "age": 49, "ageSent": true },
                     "run": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fin_einar_vihma\\round-1\\portrait-run.json",
                     "recipe": { "steps": [ { "template": "K1", "sha256": "..." } ], "gradeStrength": 0.6, "facePass": true },
                     "candidates": [ { "seed": 1, "file": "...\\final\\A3_s1.png", "sha256": "...", "likeness": 0.31 } ],
@@ -122,7 +124,7 @@ Written only by `-MakePortraits` and `-ApplyPortraitReview`. One entry per leade
 }
 ```
 
-- `-MakePortraits -Pack <pack> [-Leader <key>] [-StartComfyUI]` makes one new round of 4 candidates for every `new` and `addRole` leader that has no `chosen` portrait, through the Manager's `New-HoiPortrait.ps1` (skill `hoi4-leader-portraits`) with the photo's cached download and the `portrait` fields. The seeds of round `n` are `4n-3` to `4n`. With `-StartComfyUI` it starts ComfyUI once for the whole batch and stops it at the end, also after an error; a ComfyUI it did not start is left running.
+- `-MakePortraits -Pack <pack> [-Leader <key>] [-StartComfyUI]` makes one new round of 4 candidates for every `new` and `addRole` leader that has no `chosen` portrait, through the Manager's `New-HoiPortrait.ps1` (skill `hoi4-leader-portraits`) with the photo's cached download and the `portrait` fields; `born` and `photoYear` go as `-Age`, their difference, when both are set and the Manager's script takes the parameter; a Manager without it gets a `[WARN]` line and no age. The round's `settings` keep `born`, `photoYear` and `age` (`null` when unknown) and `ageSent`, whether the age reached the Manager. The recipe steps and candidate file names are whatever the Manager's recipe of the day writes (`A3_s1.png` until its round 6 recipe lands, `A4_s1.png` after). The seeds of round `n` are `4n-3` to `4n`. With `-StartComfyUI` it starts ComfyUI once for the whole batch and stops it at the end, also after an error; a ComfyUI it did not start is left running.
   - `-Leader <key>` makes a round for that leader only, also when he has a `chosen` portrait already; a later pick replaces it.
   - A leader whose latest round has no decision yet is skipped (with `-Leader`, exit 1): the owner reviews first.
 - `-ApplyPortraitReview -Pack <pack> -Leader <key> -Pick <seed>` records the owner's pick on the latest round and copies that candidate to `source/<pack>/portraits/<key>.png` with its SHA-256. `-Reject "<reason>"` records the rejection on the latest round; the reason is what the next round must change. A round that has a decision cannot be decided again; a new round can.

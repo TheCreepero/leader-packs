@@ -30,7 +30,7 @@ The licence decision is not yours. The caller runs every file you propose throug
 - The leader's face is visible and large: at least about 150 px tall in the original file, and the file at least 300 px on its shorter side (the fetch tool refuses smaller files). Give the file's pixel size from its page.
 - Frontal or three-quarter view. A profile, a face in shadow, sunglasses or a face partly hidden make a poor portrait.
 - One main face. The portrait tool frames the largest face in the photo, so a group photo works only when the leader's face is clearly the largest; say so when you propose one.
-- From the years he held his commands, in uniform. A photo from the 1930s or the war beats a much earlier or later one; note the year.
+- From the years he held his commands, in uniform. A photo from the 1930s or the war beats a much earlier or later one. Give the year as the file page states it (`1941`, `c. 1940`, `1939-1940`) or `unknown`; it becomes the portrait's `photoYear`, which with the birth year tells the painter how old to paint him.
 - Sharp enough to see the eyes and the insignia. A scan of a printed page or a heavily retouched studio portrait is a last choice.
 - Licence on the file page: public domain with a template that states the reason (`PD-Finland50`, `PD-old-70`, `PD-US`, `PD-Sweden-photo`), CC0, or CC BY with a named author. SA-kuva files are often CC BY 4.0 or `PD-Finland50`. Not CC BY-SA, not NC or ND, not "fair use", not a file with a deletion request or a dispute.
 - Avoid swastikas or other extremist symbols in view on the leader himself; note any you see elsewhere in the frame.

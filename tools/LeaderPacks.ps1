@@ -941,6 +941,9 @@ function Test-LpPackSource {
             if (-not ([string](Get-LpProperty -Object $portrait -Name 'headwear' -Default '')).Trim()) {
                 $problems.Add((New-LpProblem -Level 'WARN' -Where $leaderWhere -Message 'portrait.headwear is empty: name the headwear (or "bareheaded"), or the repaint may put a peaked cap on'))
             }
+            if ($null -eq (Get-LpProperty -Object $portrait -Name 'born') -or $null -eq (Get-LpProperty -Object $portrait -Name 'photoYear')) {
+                $problems.Add((New-LpProblem -Level 'WARN' -Where $leaderWhere -Message 'portrait.born or portrait.photoYear is missing: the repaint gets no age cue and may paint the face too young'))
+            }
             foreach ($optionProblem in (Get-LpPortraitOptionProblems -Portrait $portrait)) {
                 $problems.Add((New-LpProblem -Level 'ERROR' -Where $leaderWhere -Message $optionProblem))
             }
@@ -1727,6 +1730,12 @@ function Test-LpColourSeedValue {
     return (($Value -is [int] -or $Value -is [long]) -and $Value -ge 0 -and $Value -le [int]::MaxValue)
 }
 
+function Test-LpYearValue {
+    param($Value)
+
+    return (($Value -is [int] -or $Value -is [long]) -and $Value -ge 1000 -and $Value -le 9999)
+}
+
 function Get-LpPortraitOptionProblems {
     param($Portrait)
 
@@ -1739,7 +1748,29 @@ function Get-LpPortraitOptionProblems {
     if ($null -ne $facePass -and $facePass -isnot [bool]) {
         $messages.Add('portrait.facePass must be true or false')
     }
+    $born = Get-LpProperty -Object $Portrait -Name 'born'
+    if ($null -ne $born -and -not (Test-LpYearValue -Value $born)) {
+        $messages.Add('portrait.born must be a four-digit year')
+    }
+    $photoYear = Get-LpProperty -Object $Portrait -Name 'photoYear'
+    if ($null -ne $photoYear -and -not (Test-LpYearValue -Value $photoYear)) {
+        $messages.Add('portrait.photoYear must be a four-digit year')
+    }
+    if ((Test-LpYearValue -Value $born) -and (Test-LpYearValue -Value $photoYear)) {
+        if ($photoYear -lt $born) {
+            $messages.Add('portrait.photoYear must not be before portrait.born')
+        } elseif (-not (Test-LpAgeValue -Value ($photoYear - $born))) {
+            $messages.Add('portrait.photoYear - portrait.born must give an age of 15 to 100: check the years')
+        }
+    }
     return , $messages
+}
+
+function Test-LpAgeValue {
+    param($Value)
+
+    # The range New-HoiPortrait.ps1 -Age takes.
+    return ($Value -ge 15 -and $Value -le 100)
 }
 
 function Get-LpPortraitSettings {
@@ -1754,6 +1785,14 @@ function Get-LpPortraitSettings {
     $settings['colourSeed'] = $(if (Test-LpColourSeedValue -Value $colourSeed) { [int]$colourSeed } else { 1 })
     $facePass = Get-LpProperty -Object $portrait -Name 'facePass'
     $settings['facePass'] = $(if ($facePass -is [bool]) { $facePass } else { $true })
+    $born = Get-LpProperty -Object $portrait -Name 'born'
+    $photoYear = Get-LpProperty -Object $portrait -Name 'photoYear'
+    $settings['born'] = $(if (Test-LpYearValue -Value $born) { [int]$born } else { $null })
+    $settings['photoYear'] = $(if (Test-LpYearValue -Value $photoYear) { [int]$photoYear } else { $null })
+    # The age cue of the portrait prompt: the photo's year less the birth year, when both are known and the age is one the Manager takes.
+    $settings['age'] = $(if ($null -ne $settings['born'] -and $null -ne $settings['photoYear'] -and (Test-LpAgeValue -Value ($settings['photoYear'] - $settings['born']))) { [int]($settings['photoYear'] - $settings['born']) } else { $null })
+    # Whether the age reached New-HoiPortrait.ps1; -MakePortraits sets it per round.
+    $settings['ageSent'] = $false
     return $settings
 }
 
@@ -1834,6 +1873,16 @@ function Invoke-LpMakePortraits {
         return $exitCode
     }
     $newPortraitScript = Join-Path $ManagerRoot 'Scripts\Portraits\New-HoiPortrait.ps1'
+    # The age cue reached New-HoiPortrait.ps1 with its round 6 recipe (2026-11-01); an older Manager takes no -Age.
+    $newPortraitTakesAge = $false
+    try {
+        $newPortraitTakesAge = (Get-Command -Name $newPortraitScript -ErrorAction Stop).Parameters.ContainsKey('Age')
+    } catch {
+        $newPortraitTakesAge = $false
+    }
+    if (-not $newPortraitTakesAge) {
+        Write-Host '  [WARN] New-HoiPortrait.ps1 takes no -Age: the age cue from born and photoYear is left out of this round' -ForegroundColor Yellow
+    }
     $startedHere = $false
     try {
         if ($StartComfyUI) {
@@ -1872,6 +1921,10 @@ function Invoke-LpMakePortraits {
             $portraitArguments['ColourSeed'] = [int]$settings['colourSeed']
             if (-not $settings['facePass']) {
                 $portraitArguments['NoFacePass'] = $true
+            }
+            if ($null -ne $settings['age'] -and $newPortraitTakesAge) {
+                $portraitArguments['Age'] = [int]$settings['age']
+                $settings['ageSent'] = $true
             }
             Write-Host "Portraits of $leaderKey, round $roundNumber, seeds $($seeds -join ', ')" -ForegroundColor Cyan
             $global:LASTEXITCODE = 0
