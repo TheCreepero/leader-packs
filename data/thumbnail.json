@@ -3,5 +3,9 @@
     "crop": "center",
     "blur": 4,
     "scrim": 0.35,
-    "packs": {}
+    "packs": {
+        "finland": {
+            "portraits": ["kaarlo_heiskanen", "oiva_koivisto", "armas_eino_martola"]
+        }
+    }
 }
