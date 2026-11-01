@@ -21,7 +21,8 @@ The licence decision is not yours. The caller runs every file you propose throug
 - A category page lists many files at once; fetch it with one prompt that asks for every file that shows the person's face.
 <!-- hoi-agent-block:web-research-method:begin -->
 - Use WebSearch only to find the right page, then answer from WebFetch with one prompt that asks about every entry that page can settle.
-- Never guess URLs: take them from search results or from links on a fetched page. After a failed fetch (404, blocked, empty), do not retry that site; use search snippets or another source.
+- A search result's snippet only points to a page; it is never a source. An entry counts as checked only when a page you fetched states it, and it cites that page.
+- Never guess URLs: take them from search results or from links on a fetched page. After a failed fetch (404, blocked, empty), do not retry that site: fetch another page that states the entry, or mark the entry `UNVERIFIED`.
 - Work through the caller's topics in the order given. If they will not all fit in the budget, finish the early ones properly and mark the rest `UNVERIFIED` instead of skimming every topic.
 - When the budget runs out, stop and mark every entry left unchecked `UNVERIFIED`. An honest `UNVERIFIED` beats a guess: the caller can drop such an entry, flag it for author confirmation, or send a second, narrower request.
 <!-- hoi-agent-block:web-research-method:end -->
