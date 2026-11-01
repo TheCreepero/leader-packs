@@ -113,8 +113,8 @@ Written only by `-MakePortraits` and `-ApplyPortraitReview`. One entry per leade
                     "seeds": [1, 2, 3, 4],
                     "settings": { "role": "Finnish general", "headwear": "...", "uniform": "...", "avoidHeadwear": "...", "notes": "", "colourSeed": 1, "facePass": true, "born": 1894, "photoYear": 1943, "age": 49, "ageSent": true },
                     "run": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fin_einar_vihma\\round-1\\portrait-run.json",
-                    "recipe": { "steps": [ { "template": "K1", "sha256": "..." } ], "gradeStrength": 0.6, "facePass": true },
-                    "candidates": [ { "seed": 1, "file": "...\\final\\A3_s1.png", "sha256": "...", "likeness": 0.31 } ],
+                    "recipe": { "steps": [ { "template": "K1", "sha256": "..." }, { "template": "M1", "sha256": "..." }, { "template": "A4", "sha256": "..." }, { "template": "F2", "sha256": "..." } ], "gradeStrength": 0.6, "facePass": true },
+                    "candidates": [ { "seed": 1, "file": "...\\final\\A4_s1.png", "sha256": "...", "likeness": 0.51 } ],
                     "decision": { "pick": 2 }
                 }
             ],
@@ -124,7 +124,7 @@ Written only by `-MakePortraits` and `-ApplyPortraitReview`. One entry per leade
 }
 ```
 
-- `-MakePortraits -Pack <pack> [-Leader <key>] [-StartComfyUI]` makes one new round of 4 candidates for every `new` and `addRole` leader that has no `chosen` portrait, through the Manager's `New-HoiPortrait.ps1` (skill `hoi4-leader-portraits`) with the photo's cached download and the `portrait` fields; `born` and `photoYear` go as `-Age`, their difference, when both are set and the Manager's script takes the parameter; a Manager without it gets a `[WARN]` line and no age. The round's `settings` keep `born`, `photoYear` and `age` (`null` when unknown) and `ageSent`, whether the age reached the Manager. The recipe steps and candidate file names are whatever the Manager's recipe of the day writes (`A3_s1.png` until its round 6 recipe lands, `A4_s1.png` after). The seeds of round `n` are `4n-3` to `4n`. With `-StartComfyUI` it starts ComfyUI once for the whole batch and stops it at the end, also after an error; a ComfyUI it did not start is left running.
+- `-MakePortraits -Pack <pack> [-Leader <key>] [-StartComfyUI]` makes one new round of 4 candidates for every `new` and `addRole` leader that has no `chosen` portrait, through the Manager's `New-HoiPortrait.ps1` (skill `hoi4-leader-portraits`) with the photo's cached download and the `portrait` fields; `born` and `photoYear` go as `-Age`, their difference, when both are set and the Manager's script takes the parameter; a Manager without it gets a `[WARN]` line and no age. The round's `settings` keep `born`, `photoYear` and `age` (`null` when unknown) and `ageSent`, whether the age reached the Manager. The recipe steps and candidate file names are whatever the Manager's recipe of the day writes (`A4_s1.png` since its round 6 recipe). The seeds of round `n` are `4n-3` to `4n`. With `-StartComfyUI` it starts ComfyUI once for the whole batch and stops it at the end, also after an error; a ComfyUI it did not start is left running.
   - `-Leader <key>` makes a round for that leader only, also when he has a `chosen` portrait already; a later pick replaces it.
   - A leader whose latest round has no decision yet is skipped (with `-Leader`, exit 1): the owner reviews first.
 - `-ApplyPortraitReview -Pack <pack> -Leader <key> -Pick <seed>` records the owner's pick on the latest round and copies that candidate to `source/<pack>/portraits/<key>.png` with its SHA-256. `-Reject "<reason>"` records the rejection on the latest round; the reason is what the next round must change. A round that has a decision cannot be decided again; a new round can.

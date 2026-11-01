@@ -96,13 +96,13 @@ $outDir = Join-Path $nameFolder ('round-' + $round)
 New-Item -ItemType Directory -Path (Join-Path $outDir 'final') -Force | Out-Null
 $candidates = [System.Collections.Generic.List[object]]::new()
 foreach ($seed in @($Seeds -split ',')) {
-    $candidateFile = 'final/A3_s' + $seed + '.png'
+    $candidateFile = 'final/A4_s' + $seed + '.png'
     $candidatePath = Join-Path $outDir $candidateFile.Replace('/', '\')
     [System.IO.File]::WriteAllText($candidatePath, ('stub ' + $Name + ' ' + $seed))
     $candidates.Add([PSCustomObject]@{ seed = [int]$seed; file = $candidateFile; sha256 = (Get-FileHash -LiteralPath $candidatePath -Algorithm SHA256).Hash.ToLowerInvariant(); likeness = 0.5; seconds = 0 })
 }
 $runPath = Join-Path $outDir 'portrait-run.json'
-$run = [ordered]@{ round = $round; recipe = [ordered]@{ steps = @([ordered]@{ template = 'K1'; sha256 = 'k1' }, [ordered]@{ template = 'A3'; sha256 = 'a3' }); facePass = (-not $NoFacePass); gradeStrength = 0.6 } }
+$run = [ordered]@{ round = $round; recipe = [ordered]@{ steps = @([ordered]@{ template = 'K1'; sha256 = 'k1' }, [ordered]@{ template = 'A4'; sha256 = 'a4' }); facePass = (-not $NoFacePass); gradeStrength = 0.6 } }
 [System.IO.File]::WriteAllText($runPath, (ConvertTo-Json -InputObject $run -Depth 6))
 [PSCustomObject]@{ OutDir = $outDir; Round = $round; Run = $runPath; Sheet = (Join-Path $outDir 'sheet.png'); Candidates = $candidates.ToArray(); ServerMessages = @() }
 '@
@@ -522,7 +522,7 @@ Describe 'MakePortraits with a stand-in New-HoiPortrait' {
         $entry.rounds[0].round | Should -Be 1
         @($entry.rounds[0].seeds) | Should -Be @(1, 2, 3, 4)
         $entry.rounds[0].settings.headwear | Should -Be 'wearing a soft grey field cap'
-        @($entry.rounds[0].recipe.steps | ForEach-Object { $_.template }) | Should -Be @('K1', 'A3')
+        @($entry.rounds[0].recipe.steps | ForEach-Object { $_.template }) | Should -Be @('K1', 'A4')
         $entry.rounds[0].recipe.gradeStrength | Should -Be 0.6
         @($entry.rounds[0].candidates).Count | Should -Be 4
         foreach ($candidate in @($entry.rounds[0].candidates)) {
@@ -672,7 +672,7 @@ Describe 'MakePortraits against the Manager with its stand-in ComfyUI server' -S
         [System.IO.File]::WriteAllText((Join-Path $comfyFolder 'main.py'), "import runpy, sys`nsys.argv = [r'$fakeServer'] + sys.argv[1:]`nrunpy.run_path(r'$fakeServer', run_name='__main__')`n")
         $nodes = [System.Collections.Generic.List[string]]::new()
         $models = [ordered]@{}
-        foreach ($templateName in @('K1', 'M1', 'A3', 'F1')) {
+        foreach ($templateName in @('K1', 'M1', 'A4', 'F2')) {
             $template = Read-LpJson -Path (Join-Path $script:ManagerRoot "Scripts\Portraits\workflows\$templateName.json")
             foreach ($node in @($template.requires.nodes)) {
                 if (-not $nodes.Contains([string]$node)) { $nodes.Add([string]$node) }
@@ -731,7 +731,7 @@ Describe 'MakePortraits against the Manager with its stand-in ComfyUI server' -S
             Test-Path -LiteralPath $candidate.file | Should -BeTrue
             $candidate.sha256 | Should -Be (Get-LpSha256 -Path $candidate.file)
         }
-        @($entry.rounds[0].recipe.steps | ForEach-Object { $_.template }) | Should -Be @('K1', 'M1', 'A3', 'F1')
+        @($entry.rounds[0].recipe.steps | ForEach-Object { $_.template }) | Should -Be @('K1', 'M1', 'A4', 'F2')
         $entry.rounds[0].recipe.facePass | Should -BeTrue
         Test-Path -LiteralPath $entry.rounds[0].run | Should -BeTrue
         { Invoke-WebRequest -Uri "$($script:Url)/system_stats" -UseBasicParsing -TimeoutSec 2 } | Should -Throw
