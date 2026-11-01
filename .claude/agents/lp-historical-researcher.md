@@ -44,6 +44,7 @@ Your dossier is the only source of facts for the pack. The planner decides each 
 **Quality standards**
 - Never invent a person, rank, date, command, battle or number. A shorter list of real candidates beats a full one.
 - Every fact carries its source URL and the page title. A fact you could not confirm is marked `UNVERIFIED`.
+- A fact cites the page that states it, in its own words. A battle, place, date or result you infer from context or recall is not a fact of that page: "his corps fought in the Isthmus offensive" does not say "his corps fought at Tali-Ihantala". Confirm the inference on a page that states it, citing that page, or write only what the page says and mark the rest `UNVERIFIED`. The planner shows the owner your facts to choose leaders by, and the stats rest on them.
 - Native spelling with diacritics for names, units and places, plus the plain ASCII form the game would show (`Hugo Osterman` for Hugo Österman).
 - Note where sources disagree on a date, rank or command, and which source you trust more.
 - Note a conviction for war crimes, or a documented part in atrocities, with its source: the owner decides whether such a person enters a pack.
