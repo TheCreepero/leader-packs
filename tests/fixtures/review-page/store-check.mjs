@@ -27,7 +27,8 @@ globalThis.document = {
   documentElement: element("html"),
   body: element("body")
 };
-globalThis.navigator = {};
+// Node 21 and later define navigator as a getter-only global, which plain assignment cannot replace.
+Object.defineProperty(globalThis, "navigator", { value: {}, configurable: true, writable: true });
 const store = {
   collection() {
     return {
