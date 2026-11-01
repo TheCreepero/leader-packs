@@ -328,6 +328,43 @@ Describe 'Check rules' {
         ($warnings -join "`n") | Should -Match "name 'Hotel Minister' matches TST_hotel_minister in vanilla: list it in sameAs"
     }
 
+    It 'warns about a trait Road to 56 does not define and names its counterpart' {
+        $fixtureRoot = New-LpGeneratedFixture
+        Set-LpFixtureLeaders -Root $fixtureRoot -Change { param($s) $s.leaders[0].traits = @('trait_engineer') }
+        $warnings = @(Test-LpPack -RepoRoot $fixtureRoot -Pack 'testland' | Where-Object { $_.Level -eq 'WARN' } | ForEach-Object { $_.Message })
+        ($warnings -join "`n") | Should -Match ([regex]::Escape("trait 'trait_engineer' is not defined on Road to 56, where the leader loses it without an error.log line [CHR-017]: Road to 56 defines 'engineer_trait', whose name holds it: if its definition is the same trait, list both names"))
+    }
+
+    It 'warns about a trait Road to 56 does not define and has no counterpart for' {
+        $fixtureRoot = New-LpGeneratedFixture
+        $seawolfWarnings = @(Test-LpPack -RepoRoot $fixtureRoot -Pack 'testland' | Where-Object { $_.Level -eq 'WARN' -and $_.Message -like "trait 'seawolf'*" })
+        $seawolfWarnings.Count | Should -Be 1
+        $seawolfWarnings[0].Where | Should -Be 'leader echo_admiral'
+        $seawolfWarnings[0].Message | Should -Match 'choose another trait, or accept that the leader lacks it on Road to 56'
+    }
+
+    It 'accepts Road to 56''s name for a trait beside the vanilla name, and writes both' {
+        $fixtureRoot = New-LpGeneratedFixture
+        Set-LpFixtureLeaders -Root $fixtureRoot -Change { param($s) $s.leaders[0].traits = @('trait_engineer', 'engineer_trait') }
+        Invoke-LpGenerate -RepoRoot $fixtureRoot -Pack 'testland' 6>$null | Out-Null
+        @(Test-LpPack -RepoRoot $fixtureRoot -Pack 'testland' | Where-Object { $_.Level -eq 'ERROR' -or $_.Message -like "*trait_engineer*" -or $_.Message -like "*engineer_trait*" } | ForEach-Object { $_.Message }) | Should -BeNullOrEmpty
+        [System.IO.File]::ReadAllText((Join-Path $fixtureRoot 'packs\testland\common\characters\lp_tst_characters.txt')) | Should -Match 'traits = \{ trait_engineer engineer_trait \}'
+    }
+
+    It 'refuses Road to 56''s name for a trait without the vanilla name' {
+        $fixtureRoot = New-LpGeneratedFixture
+        Set-LpFixtureLeaders -Root $fixtureRoot -Change { param($s) $s.leaders[0].traits = @('engineer_trait') }
+        (Get-LpFixtureErrors -Root $fixtureRoot) -join "`n" | Should -Match ([regex]::Escape("trait 'engineer_trait' is Road to 56's name for 'trait_engineer': list it only beside 'trait_engineer'"))
+    }
+
+    It 'warns when the start traits predate the Road to 56 trait list' {
+        $fixtureRoot = New-LpGeneratedFixture
+        Set-LpFixtureJson -Path (Join-Path $fixtureRoot 'data\testland\start-traits.json') -Change { param($s) $s.PSObject.Properties.Remove('rt56') }
+        $warnings = @(Test-LpPack -RepoRoot $fixtureRoot -Pack 'testland' | Where-Object { $_.Level -eq 'WARN' } | ForEach-Object { "$($_.Where): $($_.Message)" })
+        ($warnings -join "`n") | Should -Match ([regex]::Escape('data/testland/start-traits.json: has no Road to 56 trait list'))
+        Invoke-LpCheck -RepoRoot $fixtureRoot -Pack 'testland' 6>$null | Select-Object -Last 1 | Should -Be 0
+    }
+
     It 'compares names without accents and case' {
         ConvertTo-LpComparableName -Name ('Hugo ' + [char]0x00D6 + 'sterman') | Should -Be 'hugo osterman'
         ConvertTo-LpComparableName -Name 'Carl-Gustaf  MANNERHEIM' | Should -Be 'carl gustaf mannerheim'
@@ -1100,6 +1137,19 @@ Describe 'Game data snapshot' {
         @($finland.army) | Should -Be @('FIN_winter_war_hero', 'infantry_officer')
         @($finland.navy) | Should -Be @('FIN_archipelago_sailor', 'spotter')
         @((Select-LpStartTraits -TraitUses $traitUses -Tag 'EST').army) | Should -Be @('BALTIC_anti_bolshevik', 'infantry_officer')
+    }
+
+    It 'lists the start traits vanilla defines and Road to 56 does not, with the one Road to 56 trait named after each' {
+        $rt56Traits = Select-LpRt56Traits -StartTraits @('jaeger', 'infantry_officer', 'seawolf', 'trait_cautious', 'never_defined') -VanillaTraits @('jaeger', 'infantry_officer', 'seawolf', 'trait_cautious', 'CHI_watched_officer') -Rt56Traits @('jaeger_trait', 'infantry_officer', 'seawolf_one', 'seawolf_two', 'cautious_planner', 'lucky') -Rt56UnitLeaderTraits @('jaeger_trait', 'infantry_officer', 'seawolf_one', 'seawolf_two', 'cautious_planner', 'lucky')
+        @($rt56Traits.undefined) | Should -Be @('jaeger', 'seawolf', 'trait_cautious')
+        @($rt56Traits.counterparts.Keys) | Should -Be @('jaeger')
+        $rt56Traits.counterparts['jaeger'] | Should -Be 'jaeger_trait'
+    }
+
+    It 'takes a counterpart only from the traits vanilla does not define' {
+        $rt56Traits = Select-LpRt56Traits -StartTraits @('ranger') -VanillaTraits @('ranger', 'ranger_elite') -Rt56Traits @('ranger_elite', 'ranger_trait') -Rt56UnitLeaderTraits @('ranger_elite', 'ranger_trait')
+        @($rt56Traits.undefined) | Should -Be @('ranger')
+        $rt56Traits.counterparts['ranger'] | Should -Be 'ranger_trait'
     }
 
     It 'refuses to refresh where the Manager is missing' {

@@ -24,7 +24,7 @@ Finds what an existing pack needs: photos whose licence changed or that left Com
 
 ## Phase 1: snapshot
 1. `powershell -File .\build.ps1 -RefreshGameData -Pack <pack>` (needs the game and the Road to 56 files). `git diff --stat data/<pack>/` shows whether the game or Road to 56 moved.
-2. `powershell -File .\build.ps1 -Check -Pack <pack>`: on the fresh snapshot, an error that a `new` leader's name or `sameAs` id is now a unit leader, that a `sameAs` or `target` id is gone, or that an `addRole` target gained a unit-leader role, is Critical [RT56-011]. A trait gone from `start-traits.json` is Important.
+2. `powershell -File .\build.ps1 -Check -Pack <pack>`: on the fresh snapshot, an error that a `new` leader's name or `sameAs` id is now a unit leader, that a `sameAs` or `target` id is gone, or that an `addRole` target gained a unit-leader role, is Critical [RT56-011]. A trait gone from `start-traits.json` is Important, and so is a warning that Road to 56 no longer defines a chosen trait [CHR-017].
 3. Read the `git diff` of `game-characters.json` for persons the pack has under another spelling: a new id for one of them belongs in his `sameAs` [SCR-035].
 
 ## Phase 2: facts

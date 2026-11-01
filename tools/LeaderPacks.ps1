@@ -832,6 +832,17 @@ function Test-LpPackSource {
     }
     if ($null -eq $Pack.StartTraits) {
         $problems.Add((New-LpProblem -Level 'ERROR' -Where ('data/' + $Pack.Name + '/start-traits.json') -Message ('missing: run build.ps1 -RefreshGameData -Pack ' + $Pack.Name)))
+    } elseif ($null -eq (Get-LpProperty -Object $Pack.StartTraits -Name 'rt56')) {
+        $problems.Add((New-LpProblem -Level 'WARN' -Where ('data/' + $Pack.Name + '/start-traits.json') -Message ('has no Road to 56 trait list, so traits Road to 56 does not define go unnoticed: run build.ps1 -RefreshGameData -Pack ' + $Pack.Name)))
+    }
+    $rt56StartTraits = Get-LpProperty -Object $Pack.StartTraits -Name 'rt56'
+    $rt56UndefinedTraits = @(ConvertTo-LpArray (Get-LpProperty -Object $rt56StartTraits -Name 'undefined') | ForEach-Object { [string]$_ })
+    $rt56Counterparts = @{}
+    foreach ($undefinedTrait in $rt56UndefinedTraits) {
+        $counterpartTrait = [string](Get-LpProperty -Object (Get-LpProperty -Object $rt56StartTraits -Name 'counterparts') -Name $undefinedTrait -Default '')
+        if ($counterpartTrait) {
+            $rt56Counterparts[$undefinedTrait] = $counterpartTrait
+        }
     }
     if ($null -eq $Pack.StatBands) {
         $problems.Add((New-LpProblem -Level 'ERROR' -Where 'data/stat-bands.json' -Message 'missing'))
@@ -917,8 +928,25 @@ function Test-LpPackSource {
         if ($null -ne $Pack.StartTraits -and $roleKinds.Contains($role)) {
             $allowedTraits = @(ConvertTo-LpArray (Get-LpProperty -Object $Pack.StartTraits -Name $roleKinds[$role]) | ForEach-Object { [string]$_ })
             foreach ($trait in $traits) {
+                $vanillaNames = @($rt56Counterparts.Keys | Where-Object { $rt56Counterparts[$_] -ceq $trait })
                 if ($allowedTraits -cnotcontains $trait) {
-                    $problems.Add((New-LpProblem -Level 'ERROR' -Where $leaderWhere -Message "trait '$trait' is not a trait a vanilla $($roleKinds[$role]) leader has at the start, shared or of $($Pack.Tag) (data/$($Pack.Name)/start-traits.json)"))
+                    if ($vanillaNames.Count -gt 0 -and $traits -ccontains $vanillaNames[0]) {
+                        continue
+                    }
+                    if ($vanillaNames.Count -gt 0) {
+                        $problems.Add((New-LpProblem -Level 'ERROR' -Where $leaderWhere -Message "trait '$trait' is Road to 56's name for '$($vanillaNames[0])': list it only beside '$($vanillaNames[0])', the name the game alone defines (data/$($Pack.Name)/start-traits.json)"))
+                    } else {
+                        $problems.Add((New-LpProblem -Level 'ERROR' -Where $leaderWhere -Message "trait '$trait' is not a trait a vanilla $($roleKinds[$role]) leader has at the start, shared or of $($Pack.Tag) (data/$($Pack.Name)/start-traits.json)"))
+                    }
+                    continue
+                }
+                if ($rt56UndefinedTraits -ccontains $trait) {
+                    $counterpartTrait = if ($rt56Counterparts.ContainsKey($trait)) { $rt56Counterparts[$trait] } else { '' }
+                    if ($counterpartTrait -and $traits -ccontains $counterpartTrait) {
+                        continue
+                    }
+                    $advice = if ($counterpartTrait) { "Road to 56 defines '$counterpartTrait', whose name holds it: if its definition is the same trait, list both names to keep the trait on both" } else { 'choose another trait, or accept that the leader lacks it on Road to 56' }
+                    $problems.Add((New-LpProblem -Level 'WARN' -Where $leaderWhere -Message "trait '$trait' is not defined on Road to 56, where the leader loses it without an error.log line [CHR-017]: $advice"))
                 }
             }
         }
@@ -2576,6 +2604,51 @@ function Select-LpStartTraits {
     return [ordered]@{ army = [object[]]@($traitsByKind.army); navy = [object[]]@($traitsByKind.navy) }
 }
 
+function Select-LpRt56Traits {
+    param(
+        [Parameter(Mandatory = $true)][AllowEmptyCollection()][string[]]$StartTraits,
+        [Parameter(Mandatory = $true)][AllowEmptyCollection()][string[]]$VanillaTraits,
+        [Parameter(Mandatory = $true)][AllowEmptyCollection()][string[]]$Rt56Traits,
+        [Parameter(Mandatory = $true)][AllowEmptyCollection()][string[]]$Rt56UnitLeaderTraits
+    )
+
+    $vanillaSet = [System.Collections.Generic.HashSet[string]]::new([string[]]$VanillaTraits, [System.StringComparer]::Ordinal)
+    $rt56Set = [System.Collections.Generic.HashSet[string]]::new([string[]]$Rt56Traits, [System.StringComparer]::Ordinal)
+    $rt56OnlyUnitLeaderTraits = @($Rt56UnitLeaderTraits | Where-Object { -not $vanillaSet.Contains($_) } | Sort-Object -Unique -CaseSensitive)
+    $undefinedTraits = [System.Collections.Generic.SortedSet[string]]::new([System.StringComparer]::Ordinal)
+    foreach ($startTrait in $StartTraits) {
+        if ($vanillaSet.Contains($startTrait) -and -not $rt56Set.Contains($startTrait)) {
+            [void]$undefinedTraits.Add($startTrait)
+        }
+    }
+    $counterparts = [ordered]@{}
+    foreach ($undefinedTrait in $undefinedTraits) {
+        $namePattern = '(^|_)' + [regex]::Escape($undefinedTrait) + '(_|$)'
+        $candidates = @($rt56OnlyUnitLeaderTraits | Where-Object { $_ -cmatch $namePattern })
+        if ($candidates.Count -eq 1) {
+            $counterparts[$undefinedTrait] = $candidates[0]
+        }
+    }
+    return [ordered]@{ undefined = [object[]]@($undefinedTraits); counterparts = $counterparts }
+}
+
+function Get-LpTraitDefinitions {
+    param([Parameter(Mandatory = $true)][string]$Script, [AllowEmptyString()][string]$Mod = '')
+
+    $lookupArguments = @{ Name = '*'; Type = 'trait'; NoBlock = $true; Limit = 100000; PassThru = $true }
+    if ($Mod) {
+        $lookupArguments['Mod'] = $Mod
+    }
+    $definitions = @(Invoke-LpVanillaLookup -Script $Script -Arguments $lookupArguments)
+    if ($definitions.Count -eq 0) {
+        throw "the trait lookup$(if ($Mod) { " with $Mod" }) gave no trait definitions"
+    }
+    return [PSCustomObject]@{
+        All         = [string[]]@($definitions | ForEach-Object { [string]$_.Name } | Sort-Object -Unique -CaseSensitive)
+        UnitLeaders = [string[]]@($definitions | Where-Object { [string]$_.File -match '(^|\s)common/unit_leader/' } | ForEach-Object { [string]$_.Name } | Sort-Object -Unique -CaseSensitive)
+    }
+}
+
 function Invoke-LpVanillaLookup {
     param([Parameter(Mandatory = $true)][string]$Script, [Parameter(Mandatory = $true)][hashtable]$Arguments)
 
@@ -2603,6 +2676,7 @@ function Invoke-LpRefreshGameData {
     $characterScript = Join-Path $ManagerRoot 'Scripts\Vanilla\Get-HoiCharacter.ps1'
     $countryScript = Join-Path $ManagerRoot 'Scripts\Vanilla\Get-HoiCountry.ps1'
     $gameInfoScript = Join-Path $ManagerRoot 'Scripts\Vanilla\Get-HoiGameInfo.ps1'
+    $definitionScript = Join-Path $ManagerRoot 'Scripts\Vanilla\Find-HoiDefinition.ps1'
     $packNames = if ($Pack) { @($Pack) } else { @(Get-LpPackNames -RepoRoot $RepoRoot) }
     try {
         $gameInfo = @(Invoke-LpVanillaLookup -Script $gameInfoScript -Arguments @{ PassThru = $true }) | Select-Object -Last 1
@@ -2655,22 +2729,27 @@ function Invoke-LpRefreshGameData {
         if ($failedJobs.Count -gt 0) {
             throw "$($failedJobs.Count) trait lookup job(s) failed"
         }
+        Write-Host '  reading the trait definitions of vanilla and of Road to 56 ...' -ForegroundColor Gray
+        $vanillaDefinitions = Get-LpTraitDefinitions -Script $definitionScript
+        $rt56Definitions = Get-LpTraitDefinitions -Script $definitionScript -Mod $RoadTo56
         foreach ($packName in $packNames) {
             $packData = Get-LpPack -RepoRoot $RepoRoot -Pack $packName
             $packTraits = Select-LpStartTraits -TraitUses $traitUses -Tag $packData.Tag
             if (@($packTraits.army).Count -eq 0 -or @($packTraits.navy).Count -eq 0) {
                 throw 'the lookups gave no unit leader traits'
             }
+            $rt56Traits = Select-LpRt56Traits -StartTraits ([string[]]@(@($packTraits.army) + @($packTraits.navy))) -VanillaTraits $vanillaDefinitions.All -Rt56Traits $rt56Definitions.All -Rt56UnitLeaderTraits $rt56Definitions.UnitLeaders
             $startTraits = [ordered]@{
-                about     = 'Written by build.ps1 -RefreshGameData: every trait a vanilla unit leader of each kind has at the start, read from the characters of every country tag; a trait named after a country (an upper-case prefix such as JAP_) only when the pack''s own tag uses it.'
+                about     = 'Written by build.ps1 -RefreshGameData: every trait a vanilla unit leader of each kind has at the start, read from the characters of every country tag; a trait named after a country (an upper-case prefix such as JAP_) only when the pack''s own tag uses it. rt56.undefined: the start traits vanilla defines and Road to 56 does not; rt56.counterparts: the one unit-leader trait of Road to 56 alone whose name holds such a trait''s name.'
                 tag       = $packData.Tag
                 refreshed = $today
                 game      = [string]$gameInfo.RawVersion
                 army      = $packTraits.army
                 navy      = $packTraits.navy
+                rt56      = [ordered]@{ mod = $RoadTo56; undefined = $rt56Traits.undefined; counterparts = $rt56Traits.counterparts }
             }
             Write-LpJson -Path (Join-Path $packData.DataDir ($packName + '\start-traits.json')) -Value $startTraits -Depth 4
-            Write-Host "Wrote data\$packName\start-traits.json: $(@($packTraits.army).Count) army and $(@($packTraits.navy).Count) navy trait(s)." -ForegroundColor Green
+            Write-Host "Wrote data\$packName\start-traits.json: $(@($packTraits.army).Count) army and $(@($packTraits.navy).Count) navy trait(s), $(@($rt56Traits.undefined).Count) of them not defined on Road to 56." -ForegroundColor Green
         }
     } catch {
         Write-Host "RefreshGameData failed: $($_.Exception.Message)" -ForegroundColor Red

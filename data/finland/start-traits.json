@@ -1,5 +1,5 @@
 {
-    "about": "Written by build.ps1 -RefreshGameData: every trait a vanilla unit leader of each kind has at the start, read from the characters of every country tag; a trait named after a country (an upper-case prefix such as JAP_) only when the pack\u0027s own tag uses it.",
+    "about": "Written by build.ps1 -RefreshGameData: every trait a vanilla unit leader of each kind has at the start, read from the characters of every country tag; a trait named after a country (an upper-case prefix such as JAP_) only when the pack\u0027s own tag uses it. rt56.undefined: the start traits vanilla defines and Road to 56 does not; rt56.counterparts: the one unit-leader trait of Road to 56 alone whose name holds such a trait\u0027s name.",
     "tag": "FIN",
     "refreshed": "2026-11-01",
     "game": "1.19.4.1",
@@ -123,5 +123,14 @@
         "trait_SPA_nationalist_sympathies",
         "trait_TUR_kemalist_champion",
         "war_hero"
-    ]
+    ],
+    "rt56": {
+        "mod": "The Road to 56",
+        "undefined": [
+            "jaeger"
+        ],
+        "counterparts": {
+            "jaeger": "jaeger_trait"
+        }
+    }
 }
