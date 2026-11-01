@@ -10,8 +10,15 @@ Historical generals, field marshals and admirals for Finland that the base game 
 - Adds characters, so it changes the game checksum: not Ironman compatible.
 - Needs a new game.
 
+[h1]Commanders[/h1]
+[list]
+[*]Armas-Eino Martola, general
+[*]Kaarlo Heiskanen, general
+[*]Oiva Koivisto, admiral
+[/list]
+
 [h1]Portraits[/h1]
-The portraits are AI-assisted repaints of period photographs from Wikimedia Commons, used under licences that allow it. Each photograph was coloured and repainted in the style of the game with a local image model, then cropped and resized for the game. The source, author and licence of each photograph are on the [url=https://github.com/TheCreepero/leader-packs/wiki/Commanders-Pack-Finland]wiki page of this pack[/url].
+The portraits are AI-assisted repaints of period photographs from Wikimedia Commons, used under licences that allow it (public domain). Each photograph was coloured and repainted in the style of the game with a local image model, then cropped and resized for the game. The source, author and licence of each photograph are on the [url=https://github.com/TheCreepero/leader-packs/wiki/Commanders-Pack-Finland]wiki page of this pack[/url].
 
 [h1]More from the author[/h1]
 [list]

@@ -1,0 +1,11 @@
+on_actions = {
+	on_startup = {
+		effect = {
+			FIN = {
+				recruit_character = lp_fin_armas_eino_martola
+				recruit_character = lp_fin_kaarlo_heiskanen
+				recruit_character = lp_fin_oiva_koivisto
+			}
+		}
+	}
+}

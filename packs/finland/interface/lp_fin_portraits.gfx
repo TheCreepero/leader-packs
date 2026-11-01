@@ -1,0 +1,26 @@
+spriteTypes = {
+	spriteType = {
+		name = "GFX_portrait_lp_fin_armas_eino_martola"
+		texturefile = "gfx/leaders/FIN/lp_fin_armas_eino_martola.dds"
+	}
+	spriteType = {
+		name = "GFX_portrait_lp_fin_armas_eino_martola_small"
+		texturefile = "gfx/interface/ideas/lp_fin_armas_eino_martola_small.dds"
+	}
+	spriteType = {
+		name = "GFX_portrait_lp_fin_kaarlo_heiskanen"
+		texturefile = "gfx/leaders/FIN/lp_fin_kaarlo_heiskanen.dds"
+	}
+	spriteType = {
+		name = "GFX_portrait_lp_fin_kaarlo_heiskanen_small"
+		texturefile = "gfx/interface/ideas/lp_fin_kaarlo_heiskanen_small.dds"
+	}
+	spriteType = {
+		name = "GFX_portrait_lp_fin_oiva_koivisto"
+		texturefile = "gfx/leaders/FIN/lp_fin_oiva_koivisto.dds"
+	}
+	spriteType = {
+		name = "GFX_portrait_lp_fin_oiva_koivisto_small"
+		texturefile = "gfx/interface/ideas/lp_fin_oiva_koivisto_small.dds"
+	}
+}

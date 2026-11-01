@@ -3,5 +3,78 @@
     "tag": "FIN",
     "prefix": "lp_fin",
     "displayName": "Finland",
-    "leaders": []
+    "leaders": [
+        {
+            "key": "armas_eino_martola",
+            "name": "Armas-Eino Martola",
+            "mode": "new",
+            "sameAs": [],
+            "role": "corps_commander",
+            "skill": 2,
+            "attack": 1,
+            "defense": 2,
+            "planning": 3,
+            "logistics": 2,
+            "traits": ["jaeger", "infantry_officer"],
+            "factSheet": "armas_eino_martola",
+            "portrait": {
+                "photo": "armas_eino_martola",
+                "role": "Finnish general",
+                "headwear": "wearing a grey Finnish officer's peaked cap with a round cockade, a small metal badge above the band and a braided cord above the black visor",
+                "uniform": "grey Finnish M36 officer's tunic with open collar, light shirt and dark tie, collar patches with a rank rosette",
+                "avoidHeadwear": "field cap, side cap, helmet, fur hat",
+                "notes": "clean-shaven",
+                "born": 1896,
+                "photoYear": 1938
+            }
+        },
+        {
+            "key": "kaarlo_heiskanen",
+            "name": "Kaarlo Heiskanen",
+            "mode": "new",
+            "sameAs": [],
+            "role": "corps_commander",
+            "skill": 2,
+            "attack": 3,
+            "defense": 2,
+            "planning": 1,
+            "logistics": 1,
+            "traits": ["jaeger", "infantry_officer"],
+            "factSheet": "kaarlo_heiskanen",
+            "portrait": {
+                "photo": "kaarlo_heiskanen",
+                "role": "Finnish general",
+                "headwear": "bareheaded, short hair combed back from a high forehead",
+                "uniform": "grey Finnish officer's tunic with a high stand-up collar edged with a darker band, a collar patch with a small button",
+                "avoidHeadwear": "peaked cap, field cap, side cap, helmet, fur hat",
+                "notes": "clean-shaven, calm stern expression",
+                "born": 1894,
+                "photoYear": 1938
+            }
+        },
+        {
+            "key": "oiva_koivisto",
+            "name": "Oiva Koivisto",
+            "mode": "new",
+            "sameAs": [],
+            "role": "navy_leader",
+            "skill": 2,
+            "attack": 1,
+            "defense": 1,
+            "maneuvering": 2,
+            "coordination": 3,
+            "traits": ["navy_career_officer"],
+            "factSheet": "oiva_koivisto",
+            "portrait": {
+                "photo": "oiva_koivisto",
+                "role": "Finnish admiral",
+                "headwear": "wearing a dark navy officer's peaked cap with an embroidered anchor badge and a braided cord band above the black visor",
+                "uniform": "dark navy double-breasted officer's coat with brass buttons and rank shoulder boards, binoculars on a strap around the neck",
+                "avoidHeadwear": "field cap, side cap, helmet, fur hat",
+                "notes": "clean-shaven, grey hair, lined face",
+                "born": 1904,
+                "photoYear": 1963
+            }
+        }
+    ]
 }

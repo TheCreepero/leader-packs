@@ -1,0 +1,259 @@
+{
+    "leaders": {
+        "armas_eino_martola": {
+            "rounds": [
+                {
+                    "round": 1,
+                    "date": "2026-11-01",
+                    "seeds": [
+                        1,
+                        2,
+                        3,
+                        4
+                    ],
+                    "settings": {
+                        "role": "Finnish general",
+                        "headwear": "wearing a grey Finnish officer\u0027s peaked cap with a round cockade, a small metal badge above the band and a braided cord above the black visor",
+                        "uniform": "grey Finnish M36 officer\u0027s tunic with open collar, light shirt and dark tie, collar patches with a rank rosette",
+                        "avoidHeadwear": "field cap, side cap, helmet, fur hat",
+                        "notes": "clean-shaven",
+                        "colourSeed": 1,
+                        "facePass": true,
+                        "born": 1896,
+                        "photoYear": 1938,
+                        "age": 42,
+                        "ageSent": true
+                    },
+                    "run": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fin_armas_eino_martola\\round-1\\portrait-run.json",
+                    "recipe": {
+                        "steps": [
+                            {
+                                "template": "K1",
+                                "sha256": "9e7199bcc305eb0bbc2d717691d7d1cbb119911c753ff744deb9e12c171f0887"
+                            },
+                            {
+                                "template": "M1",
+                                "sha256": "2557e8c223cc395302454fbd490cce469d8c9d427280e61911f1bf626b2bb7c3"
+                            },
+                            {
+                                "template": "A4",
+                                "sha256": "863208f1184ba33cf302d8f731a1a771f26c05b6d7d509e10010b1d7fa7a98ec"
+                            },
+                            {
+                                "template": "F2",
+                                "sha256": "224a4184e6b5684d5c05f98cbaad67a33db2a2af6a10a61cab4f45d70289d5cf"
+                            }
+                        ],
+                        "gradeStrength": 0.6,
+                        "facePass": true
+                    },
+                    "candidates": [
+                        {
+                            "seed": 1,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fin_armas_eino_martola\\round-1\\final\\A4_s1.png",
+                            "sha256": "014d570b4cfddc789c5383c0c73cfc6f55e7e7b3d64009ab861a9a358470089b",
+                            "likeness": 0.5628
+                        },
+                        {
+                            "seed": 2,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fin_armas_eino_martola\\round-1\\final\\A4_s2.png",
+                            "sha256": "ebf226324f9d0899b608a6bf8341983bd932024901d4d299a6b305f0e4174d52",
+                            "likeness": 0.5752
+                        },
+                        {
+                            "seed": 3,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fin_armas_eino_martola\\round-1\\final\\A4_s3.png",
+                            "sha256": "d3f3cb759b372bdaff4caa751a99cfa709ac210c30a110e9d8b571b7a765b3ea",
+                            "likeness": 0.5722
+                        },
+                        {
+                            "seed": 4,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fin_armas_eino_martola\\round-1\\final\\A4_s4.png",
+                            "sha256": "68cd1fd4225257d35701edefd87d8826ba9a2c076821b75e93676eddb0c276a8",
+                            "likeness": 0.5566
+                        }
+                    ],
+                    "decision": {
+                        "pick": 1
+                    }
+                }
+            ],
+            "chosen": {
+                "round": 1,
+                "seed": 1,
+                "file": "source/finland/portraits/armas_eino_martola.png",
+                "sha256": "014d570b4cfddc789c5383c0c73cfc6f55e7e7b3d64009ab861a9a358470089b"
+            }
+        },
+        "kaarlo_heiskanen": {
+            "rounds": [
+                {
+                    "round": 1,
+                    "date": "2026-11-01",
+                    "seeds": [
+                        1,
+                        2,
+                        3,
+                        4
+                    ],
+                    "settings": {
+                        "role": "Finnish general",
+                        "headwear": "bareheaded, short hair combed back from a high forehead",
+                        "uniform": "grey Finnish officer\u0027s tunic with a high stand-up collar edged with a darker band, a collar patch with a small button",
+                        "avoidHeadwear": "peaked cap, field cap, side cap, helmet, fur hat",
+                        "notes": "clean-shaven, calm stern expression",
+                        "colourSeed": 1,
+                        "facePass": true,
+                        "born": 1894,
+                        "photoYear": 1938,
+                        "age": 44,
+                        "ageSent": true
+                    },
+                    "run": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fin_kaarlo_heiskanen\\round-1\\portrait-run.json",
+                    "recipe": {
+                        "steps": [
+                            {
+                                "template": "K1",
+                                "sha256": "9e7199bcc305eb0bbc2d717691d7d1cbb119911c753ff744deb9e12c171f0887"
+                            },
+                            {
+                                "template": "M1",
+                                "sha256": "2557e8c223cc395302454fbd490cce469d8c9d427280e61911f1bf626b2bb7c3"
+                            },
+                            {
+                                "template": "A4",
+                                "sha256": "863208f1184ba33cf302d8f731a1a771f26c05b6d7d509e10010b1d7fa7a98ec"
+                            },
+                            {
+                                "template": "F2",
+                                "sha256": "224a4184e6b5684d5c05f98cbaad67a33db2a2af6a10a61cab4f45d70289d5cf"
+                            }
+                        ],
+                        "gradeStrength": 0.6,
+                        "facePass": true
+                    },
+                    "candidates": [
+                        {
+                            "seed": 1,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fin_kaarlo_heiskanen\\round-1\\final\\A4_s1.png",
+                            "sha256": "f26401210df5a62e4c8ac4035d036c2aeeffeec0c9843441b31006f74fb619ef",
+                            "likeness": 0.565
+                        },
+                        {
+                            "seed": 2,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fin_kaarlo_heiskanen\\round-1\\final\\A4_s2.png",
+                            "sha256": "f03d22b0d7d0d64fe424783fe2dee2eebf6413f895fd31587dcd583378746203",
+                            "likeness": 0.6073
+                        },
+                        {
+                            "seed": 3,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fin_kaarlo_heiskanen\\round-1\\final\\A4_s3.png",
+                            "sha256": "2efcc738fa926b1a2fdc67e8a812bbea7705d6af19bda23430f85f823efb6fec",
+                            "likeness": 0.5662
+                        },
+                        {
+                            "seed": 4,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fin_kaarlo_heiskanen\\round-1\\final\\A4_s4.png",
+                            "sha256": "0037bb0191a3e68db13a69412589ab744089443f84bad4193c34cd16067ce259",
+                            "likeness": 0.5168
+                        }
+                    ],
+                    "decision": {
+                        "pick": 2
+                    }
+                }
+            ],
+            "chosen": {
+                "round": 1,
+                "seed": 2,
+                "file": "source/finland/portraits/kaarlo_heiskanen.png",
+                "sha256": "f03d22b0d7d0d64fe424783fe2dee2eebf6413f895fd31587dcd583378746203"
+            }
+        },
+        "oiva_koivisto": {
+            "rounds": [
+                {
+                    "round": 1,
+                    "date": "2026-11-01",
+                    "seeds": [
+                        1,
+                        2,
+                        3,
+                        4
+                    ],
+                    "settings": {
+                        "role": "Finnish admiral",
+                        "headwear": "wearing a dark navy officer\u0027s peaked cap with an embroidered anchor badge and a braided cord band above the black visor",
+                        "uniform": "dark navy double-breasted officer\u0027s coat with brass buttons and rank shoulder boards, binoculars on a strap around the neck",
+                        "avoidHeadwear": "field cap, side cap, helmet, fur hat",
+                        "notes": "clean-shaven, grey hair, lined face",
+                        "colourSeed": 1,
+                        "facePass": true,
+                        "born": 1904,
+                        "photoYear": 1963,
+                        "age": 59,
+                        "ageSent": true
+                    },
+                    "run": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fin_oiva_koivisto\\round-1\\portrait-run.json",
+                    "recipe": {
+                        "steps": [
+                            {
+                                "template": "K1",
+                                "sha256": "9e7199bcc305eb0bbc2d717691d7d1cbb119911c753ff744deb9e12c171f0887"
+                            },
+                            {
+                                "template": "M1",
+                                "sha256": "2557e8c223cc395302454fbd490cce469d8c9d427280e61911f1bf626b2bb7c3"
+                            },
+                            {
+                                "template": "A4",
+                                "sha256": "863208f1184ba33cf302d8f731a1a771f26c05b6d7d509e10010b1d7fa7a98ec"
+                            },
+                            {
+                                "template": "F2",
+                                "sha256": "224a4184e6b5684d5c05f98cbaad67a33db2a2af6a10a61cab4f45d70289d5cf"
+                            }
+                        ],
+                        "gradeStrength": 0.6,
+                        "facePass": true
+                    },
+                    "candidates": [
+                        {
+                            "seed": 1,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fin_oiva_koivisto\\round-1\\final\\A4_s1.png",
+                            "sha256": "be049c598691baaaca761177758d031fefb6250b6b6cd7f90d90285b8340612e",
+                            "likeness": 0.5282
+                        },
+                        {
+                            "seed": 2,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fin_oiva_koivisto\\round-1\\final\\A4_s2.png",
+                            "sha256": "e7229751fb0861a768e076b73406ea83085f3b703c181ec41887ae552ae2a89f",
+                            "likeness": 0.4438
+                        },
+                        {
+                            "seed": 3,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fin_oiva_koivisto\\round-1\\final\\A4_s3.png",
+                            "sha256": "7d1aaac2cab129d9bfd6be3bb41eb025f5d72a3702f57e1eb88657bd4dcdb2aa",
+                            "likeness": 0.4605
+                        },
+                        {
+                            "seed": 4,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fin_oiva_koivisto\\round-1\\final\\A4_s4.png",
+                            "sha256": "bdf1af891d4746c42e3ab75946b5cd22e98b2db1af1117be6a07d005baa24f62",
+                            "likeness": 0.4614
+                        }
+                    ],
+                    "decision": {
+                        "pick": 2
+                    }
+                }
+            ],
+            "chosen": {
+                "round": 1,
+                "seed": 2,
+                "file": "source/finland/portraits/oiva_koivisto.png",
+                "sha256": "e7229751fb0861a768e076b73406ea83085f3b703c181ec41887ae552ae2a89f"
+            }
+        }
+    }
+}

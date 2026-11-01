@@ -1,0 +1,57 @@
+characters = {
+	lp_fin_armas_eino_martola = {
+		name = lp_fin_armas_eino_martola
+		portraits = {
+			army = {
+				large = GFX_portrait_lp_fin_armas_eino_martola
+				small = GFX_portrait_lp_fin_armas_eino_martola_small
+			}
+		}
+		corps_commander = {
+			traits = { jaeger infantry_officer }
+			skill = 2
+			attack_skill = 1
+			defense_skill = 2
+			planning_skill = 3
+			logistics_skill = 2
+		}
+	}
+	lp_fin_kaarlo_heiskanen = {
+		name = lp_fin_kaarlo_heiskanen
+		portraits = {
+			army = {
+				large = GFX_portrait_lp_fin_kaarlo_heiskanen
+				small = GFX_portrait_lp_fin_kaarlo_heiskanen_small
+			}
+		}
+		corps_commander = {
+			traits = { jaeger infantry_officer }
+			skill = 2
+			attack_skill = 3
+			defense_skill = 2
+			planning_skill = 1
+			logistics_skill = 1
+		}
+	}
+	lp_fin_oiva_koivisto = {
+		name = lp_fin_oiva_koivisto
+		portraits = {
+			army = {
+				large = GFX_portrait_lp_fin_oiva_koivisto
+				small = GFX_portrait_lp_fin_oiva_koivisto_small
+			}
+			navy = {
+				large = GFX_portrait_lp_fin_oiva_koivisto
+				small = GFX_portrait_lp_fin_oiva_koivisto_small
+			}
+		}
+		navy_leader = {
+			traits = { navy_career_officer }
+			skill = 2
+			attack_skill = 1
+			defense_skill = 1
+			maneuvering_skill = 2
+			coordination_skill = 3
+		}
+	}
+}

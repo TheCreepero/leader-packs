@@ -6,3 +6,6 @@ Every portrait is an AI-assisted repaint of a period photograph from Wikimedia C
 
 | Leader | Character | Role | Photo | Licence | Portrait |
 |---|---|---|---|---|---|
+| Armas-Eino Martola | `lp_fin_armas_eino_martola` | general | [Martola.jpg](https://commons.wikimedia.org/wiki/File:Martola.jpg) | Public domain (PD-Finland50), WSOY kirjapaino Porvoo | AI-assisted repaint |
+| Kaarlo Heiskanen | `lp_fin_kaarlo_heiskanen` | general | [K a heiskanen.jpg](https://commons.wikimedia.org/wiki/File:K_a_heiskanen.jpg) | Public domain (PD-Finland50), WSOY kirjapaino Porvoo | AI-assisted repaint |
+| Oiva Koivisto | `lp_fin_oiva_koivisto` | admiral | [Oiva-Koivisto-1960s.jpg](https://commons.wikimedia.org/wiki/File:Oiva-Koivisto-1960s.jpg) | Public domain (PD-Finland50), Jussi Pohjakallio | AI-assisted repaint |
