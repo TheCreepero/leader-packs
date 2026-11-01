@@ -1,0 +1,5 @@
+{
+    "about": "Fixture: a few start traits per role kind.",
+    "army": ["brilliant_strategist", "infantry_officer", "trait_engineer"],
+    "navy": ["seawolf", "spotter"]
+}

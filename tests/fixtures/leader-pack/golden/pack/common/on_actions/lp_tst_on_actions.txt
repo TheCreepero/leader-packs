@@ -1,0 +1,55 @@
+on_actions = {
+	on_startup = {
+		effect = {
+			TST = {
+				recruit_character = lp_tst_alpha_leader
+				if = {
+					limit = {
+						NOT = { has_character = TST_bravo_old }
+						NOT = { has_character = TST_bravo_renamed }
+					}
+					recruit_character = lp_tst_bravo_leader
+				}
+				recruit_character = lp_tst_charlie_leader
+				if = {
+					limit = { has_character = TST_delta_advisor }
+					TST_delta_advisor = {
+						if = {
+							limit = { NOT = { is_army_leader = yes } }
+							add_corps_commander_role = {
+								skill = 3
+								attack_skill = 2
+								defense_skill = 3
+								planning_skill = 3
+								logistics_skill = 2
+							}
+							set_portraits = {
+								army = { large = GFX_portrait_lp_tst_delta_advisor }
+							}
+						}
+					}
+				}
+				if = {
+					limit = { has_character = TST_echo_navy_chief }
+					TST_echo_navy_chief = {
+						if = {
+							limit = { NOT = { is_navy_leader = yes } }
+							add_naval_commander_role = {
+								traits = { seawolf }
+								skill = 3
+								attack_skill = 2
+								defense_skill = 2
+								maneuvering_skill = 3
+								coordination_skill = 3
+							}
+							set_portraits = {
+								army = { large = GFX_portrait_lp_tst_echo_admiral }
+								navy = { large = GFX_portrait_lp_tst_echo_admiral }
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

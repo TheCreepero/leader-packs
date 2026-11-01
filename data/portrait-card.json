@@ -1,0 +1,31 @@
+{
+    "about": "Geometry of the code-drawn 65x67 small portrait card. Accepted by the owner on 2026-10-31 after a review beside vanilla cards. Positions are in pixels of the 65x67 image; the card is drawn at 'scale' times the size and scaled down.",
+    "size": [65, 67],
+    "scale": 4,
+    "card": {
+        "box": [5, 4, 43, 58],
+        "angle": 4.5,
+        "fill": [24, 27, 30],
+        "outerEdge": [10, 11, 12],
+        "bevel": [92, 96, 100],
+        "photoInset": 2,
+        "photoDarken": 0.78,
+        "vignette": { "steps": 26, "startAlpha": 170, "fall": 7 }
+    },
+    "note": {
+        "box": [30, 26, 57, 58],
+        "angle": -3.5,
+        "paper": [232, 220, 192],
+        "edge": [150, 132, 102],
+        "ink": [88, 80, 70, 170],
+        "notch": [70, 62, 52],
+        "seed": 7
+    },
+    "shadow": { "cardRadius": 6, "noteRadius": 4, "offset": 4, "cardOpacity": 0.75, "noteOpacity": 0.7 },
+    "face": {
+        "about": "Where the face goes inside the card's photo window, as fractions of the window, for Measure-PortraitFaces.py crop. The window is the card box minus photoInset on every side.",
+        "heightFraction": 0.5,
+        "eyeLine": 0.36,
+        "centreX": 0.43
+    }
+}

@@ -1,0 +1,16 @@
+{
+    "army": {
+        "skill": [1, 5],
+        "attack": [1, 6],
+        "defense": [0, 6],
+        "planning": [0, 5],
+        "logistics": [0, 5]
+    },
+    "navy": {
+        "skill": [1, 5],
+        "attack": [1, 6],
+        "defense": [0, 6],
+        "maneuvering": [1, 4],
+        "coordination": [1, 6]
+    }
+}

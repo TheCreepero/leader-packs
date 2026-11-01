@@ -1,0 +1,34 @@
+spriteTypes = {
+	spriteType = {
+		name = "GFX_portrait_lp_tst_alpha_leader"
+		texturefile = "gfx/leaders/TST/lp_tst_alpha_leader.dds"
+	}
+	spriteType = {
+		name = "GFX_portrait_lp_tst_alpha_leader_small"
+		texturefile = "gfx/interface/ideas/lp_tst_alpha_leader_small.dds"
+	}
+	spriteType = {
+		name = "GFX_portrait_lp_tst_bravo_leader"
+		texturefile = "gfx/leaders/TST/lp_tst_bravo_leader.dds"
+	}
+	spriteType = {
+		name = "GFX_portrait_lp_tst_bravo_leader_small"
+		texturefile = "gfx/interface/ideas/lp_tst_bravo_leader_small.dds"
+	}
+	spriteType = {
+		name = "GFX_portrait_lp_tst_charlie_leader"
+		texturefile = "gfx/leaders/TST/lp_tst_charlie_leader.dds"
+	}
+	spriteType = {
+		name = "GFX_portrait_lp_tst_charlie_leader_small"
+		texturefile = "gfx/interface/ideas/lp_tst_charlie_leader_small.dds"
+	}
+	spriteType = {
+		name = "GFX_portrait_lp_tst_delta_advisor"
+		texturefile = "gfx/leaders/TST/lp_tst_delta_advisor.dds"
+	}
+	spriteType = {
+		name = "GFX_portrait_lp_tst_echo_admiral"
+		texturefile = "gfx/leaders/TST/lp_tst_echo_admiral.dds"
+	}
+}

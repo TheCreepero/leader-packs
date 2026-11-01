@@ -1,0 +1,91 @@
+{
+    "pack": "testland",
+    "tag": "TST",
+    "prefix": "lp_tst",
+    "displayName": "Testland",
+    "leaders": [
+        {
+            "key": "alpha_leader",
+            "name": "Alpha Leader",
+            "mode": "new",
+            "sameAs": [],
+            "role": "corps_commander",
+            "skill": 3,
+            "attack": 3,
+            "defense": 2,
+            "planning": 2,
+            "logistics": 2,
+            "traits": ["infantry_officer"],
+            "factSheet": "alpha_leader",
+            "portrait": { "photo": "alpha", "role": "Testland general", "headwear": "wearing a soft grey field cap", "uniform": "grey field uniform with collar patches", "avoidHeadwear": "peaked cap, helmet", "notes": "" }
+        },
+        {
+            "key": "bravo_leader",
+            "name": "Bravo Leader",
+            "mode": "new",
+            "sameAs": ["TST_bravo_old", "TST_bravo_renamed"],
+            "role": "field_marshal",
+            "skill": 4,
+            "attack": 3,
+            "defense": 4,
+            "planning": 3,
+            "logistics": 2,
+            "traits": ["brilliant_strategist", "infantry_officer"],
+            "factSheet": "bravo_leader",
+            "portrait": { "photo": "bravo", "role": "Testland field marshal", "headwear": "bareheaded", "uniform": "grey general's uniform", "avoidHeadwear": "cap, hat, helmet", "notes": "" }
+        },
+        {
+            "key": "charlie_leader",
+            "name": "Charlie Leader",
+            "mode": "new",
+            "sameAs": [],
+            "role": "navy_leader",
+            "skill": 2,
+            "attack": 1,
+            "defense": 3,
+            "maneuvering": 2,
+            "coordination": 2,
+            "traits": ["spotter"],
+            "factSheet": "charlie_leader",
+            "portrait": { "photo": "charlie", "role": "Testland admiral", "headwear": "wearing a naval peaked cap with an anchor badge", "uniform": "dark blue naval uniform", "avoidHeadwear": "field cap, helmet", "notes": "" }
+        },
+        {
+            "key": "delta_advisor",
+            "name": "Delta Advisor",
+            "mode": "addRole",
+            "target": "TST_delta_advisor",
+            "sameAs": [],
+            "role": "corps_commander",
+            "skill": 3,
+            "attack": 2,
+            "defense": 3,
+            "planning": 3,
+            "logistics": 2,
+            "traits": [],
+            "factSheet": "delta_advisor",
+            "portrait": { "photo": "delta", "role": "Testland general", "headwear": "bareheaded", "uniform": "grey general's uniform", "avoidHeadwear": "cap, hat, helmet", "notes": "" }
+        },
+        {
+            "key": "echo_admiral",
+            "name": "Echo Admiral",
+            "mode": "addRole",
+            "target": "TST_echo_navy_chief",
+            "sameAs": [],
+            "role": "navy_leader",
+            "skill": 3,
+            "attack": 2,
+            "defense": 2,
+            "maneuvering": 3,
+            "coordination": 3,
+            "traits": ["seawolf"],
+            "factSheet": "echo_admiral",
+            "portrait": { "photo": "echo", "role": "Testland admiral", "headwear": "wearing a naval peaked cap with an anchor badge", "uniform": "dark blue naval uniform", "avoidHeadwear": "field cap, helmet", "notes": "" }
+        },
+        {
+            "key": "foxtrot_marshal",
+            "name": "Foxtrot Marshal",
+            "mode": "skip",
+            "reason": "A field marshal in Road to 56 (TST_foxtrot_marshal); the base game keeps him an advisor and addRole would make him one twice there."
+        }
+    ]
+}

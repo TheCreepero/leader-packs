@@ -1,0 +1,31 @@
+{
+    "tag": "TST",
+    "refreshed": "2026-11-01",
+    "game": "fixture",
+    "sets": [
+        {
+            "name": "vanilla",
+            "mod": "",
+            "characters": [
+                { "id": "TST_bravo_old", "name": "Bravo Leader", "roles": [ { "kind": "advisor", "slot": "theorist" } ] },
+                { "id": "TST_delta_advisor", "name": "Delta Advisor", "roles": [ { "kind": "advisor", "slot": "high_command" } ] },
+                { "id": "TST_echo_navy_chief", "name": "Echo Admiral", "roles": [ { "kind": "advisor", "slot": "navy_chief" } ] },
+                { "id": "TST_foxtrot_marshal", "name": "Foxtrot Marshal", "roles": [ { "kind": "advisor", "slot": "army_chief" } ] },
+                { "id": "TST_golf_general", "name": "Golf General", "roles": [ { "kind": "corps_commander", "slot": "" } ] },
+                { "id": "TST_hotel_minister", "name": "Hotel Minister", "roles": [ { "kind": "advisor", "slot": "political_advisor" } ] }
+            ]
+        },
+        {
+            "name": "rt56",
+            "mod": "The Road to 56",
+            "characters": [
+                { "id": "TST_bravo_renamed", "name": "Bravo Leader", "roles": [ { "kind": "advisor", "slot": "theorist" } ] },
+                { "id": "TST_delta_advisor", "name": "Delta Advisor", "roles": [ { "kind": "advisor", "slot": "high_command" } ] },
+                { "id": "TST_echo_navy_chief", "name": "Echo Admiral", "roles": [ { "kind": "advisor", "slot": "navy_chief" }, { "kind": "navy_leader", "slot": "" } ] },
+                { "id": "TST_foxtrot_marshal", "name": "Foxtrot Marshal", "roles": [ { "kind": "field_marshal", "slot": "" }, { "kind": "advisor", "slot": "army_chief" } ] },
+                { "id": "TST_golf_general", "name": "Golf General", "roles": [ { "kind": "corps_commander", "slot": "" } ] },
+                { "id": "TST_india_admiral", "name": "India Admiral", "roles": [ { "kind": "navy_leader", "slot": "" } ] }
+            ]
+        }
+    ]
+}

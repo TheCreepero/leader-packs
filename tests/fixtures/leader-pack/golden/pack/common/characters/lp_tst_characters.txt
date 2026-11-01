@@ -1,0 +1,57 @@
+characters = {
+	lp_tst_alpha_leader = {
+		name = lp_tst_alpha_leader
+		portraits = {
+			army = {
+				large = GFX_portrait_lp_tst_alpha_leader
+				small = GFX_portrait_lp_tst_alpha_leader_small
+			}
+		}
+		corps_commander = {
+			traits = { infantry_officer }
+			skill = 3
+			attack_skill = 3
+			defense_skill = 2
+			planning_skill = 2
+			logistics_skill = 2
+		}
+	}
+	lp_tst_bravo_leader = {
+		name = lp_tst_bravo_leader
+		portraits = {
+			army = {
+				large = GFX_portrait_lp_tst_bravo_leader
+				small = GFX_portrait_lp_tst_bravo_leader_small
+			}
+		}
+		field_marshal = {
+			traits = { brilliant_strategist infantry_officer }
+			skill = 4
+			attack_skill = 3
+			defense_skill = 4
+			planning_skill = 3
+			logistics_skill = 2
+		}
+	}
+	lp_tst_charlie_leader = {
+		name = lp_tst_charlie_leader
+		portraits = {
+			army = {
+				large = GFX_portrait_lp_tst_charlie_leader
+				small = GFX_portrait_lp_tst_charlie_leader_small
+			}
+			navy = {
+				large = GFX_portrait_lp_tst_charlie_leader
+				small = GFX_portrait_lp_tst_charlie_leader_small
+			}
+		}
+		navy_leader = {
+			traits = { spotter }
+			skill = 2
+			attack_skill = 1
+			defense_skill = 3
+			maneuvering_skill = 2
+			coordination_skill = 2
+		}
+	}
+}

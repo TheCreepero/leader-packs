@@ -1,0 +1,13 @@
+{
+    "packages": {
+        "finland": {
+            "root": "packs/finland",
+            "modFolderName": "commanders_pack_finland"
+        }
+    },
+    "testSuites": {
+        "Knowledge": ["*.md", "docs/**", "wiki/**"],
+        "Hooks": [".claude/hooks/Protect-ProjectFiles.ps1", ".claude/hooks/Show-PlanState.ps1", ".claude/settings.json", "docs/plans/**"],
+        "LeaderPacks": ["tools/LeaderPacks.ps1", "tools/HoiModBuild.ps1", "tools/HoiModBuild.json", "tools/convert_portraits.py", "tools/review_page.py", "tools/review-page-template.html", "tests/LeaderPacks.Fixture.ps1", "tests/fixtures/**", "data/**", "source/**", "packs/**", "wiki/Commanders-Pack-*.md", "assets/thumbnail_master.png", "build.ps1", ".claude/hooks/Protect-ProjectFiles.ps1"]
+    }
+}

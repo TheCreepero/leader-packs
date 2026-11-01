@@ -1,0 +1,1827 @@
+{
+    "tag": "FIN",
+    "refreshed": "2026-11-01",
+    "game": "1.19.4.1",
+    "sets": [
+        {
+            "name": "vanilla",
+            "mod": "",
+            "characters": [
+                {
+                    "id": "FIN_aarne_juutilainen",
+                    "name": "Aarne Juutilainen",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_aarne_saarinen",
+                    "name": "Aarne Saarinen",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_aarne_sihvo",
+                    "name": "Aarne Sihvo",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_aimo_aaltonen",
+                    "name": "Aimo Aaltonen",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_aimo_cajander",
+                    "name": "Aimo Cajander",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_aimo_lahti",
+                    "name": "Aimo Lahti",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_ake_henrik_gartz",
+                    "name": "Åke Henrik Gartz",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_aksel_airo",
+                    "name": "Aksel Airo",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "army_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_akseli_anttila",
+                    "name": "Akseli Anttila",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "theorist"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_alpo_marttinen",
+                    "name": "Alpo Marttinen",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_antti_hackzell",
+                    "name": "Antti Hackzell",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_arvo_tuominen",
+                    "name": "Arvo Tuominen",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_carl_mannerheim",
+                    "name": "Carl G. Mannerheim",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "field_marshal",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "army_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_eero_rahola",
+                    "name": "Eero Rahola",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "navy_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_elias_simojoki",
+                    "name": "Elias Simojoki",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_emil_vaateri",
+                    "name": "Emil Vaateri",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_erik_heinrichs",
+                    "name": "Erik Heinrichs",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "theorist"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_erkki_raappana",
+                    "name": "Erkki Raappana",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_ernst_von_born",
+                    "name": "Ernst von Born",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_esko_riekki",
+                    "name": "Esko Riekki",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_eyolf_mattsson",
+                    "name": "Eyolf Mattsson",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_fanni_luukkonen",
+                    "name": "Fanni Luukkonen",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_frans_helminen",
+                    "name": "Frans Helminen",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_gustaf_magnusson",
+                    "name": "Gustaf Magnusson",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "theorist"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_hannu_hannuksela",
+                    "name": "Hannu Hannuksela",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_harald_ohquist",
+                    "name": "Harald Öhquist",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_hilja_riipinen",
+                    "name": "Hilja Riipinen",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_hjalmar_siilasvuo",
+                    "name": "Hjalmar Siilasvuo",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_hugo_osterman",
+                    "name": "Hugo Österman",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "army_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_ilmari_kianto",
+                    "name": "Ilmari Kianto",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_jarl_lundqvist",
+                    "name": "Jarl Lundqvist",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "air_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_johan_arajuuri",
+                    "name": "Johan Arajuuri",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_juho_heiskanen",
+                    "name": "Juho Heiskanen",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_juho_kusti_paasikivi",
+                    "name": "Juho Kusti Paasikivi",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_kaarlo_somerto",
+                    "name": "Kaarlo Somerto",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_kaisu_mirjami_rydberg",
+                    "name": "Kaisu-Mirjami Rydberg",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_karl_august_fagerholm",
+                    "name": "Karl August Fagerholm",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_karl_harald_wiik",
+                    "name": "Karl Harald Wiik",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_karl_oesch",
+                    "name": "Karl Oesch",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_kullervo_manner",
+                    "name": "Kullervo Manner",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_kurt_martti_wallenius",
+                    "name": "Kurt Martti Wallenius",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_kyosti_kallio",
+                    "name": "Kyösti Kallio",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_lauri_malmberg",
+                    "name": "Lauri Malmberg",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "army_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_lauri_tiainen",
+                    "name": "Lauri Tiainen",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_lauri_torni",
+                    "name": "Lauri Törni",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_mandi_hannula",
+                    "name": "Mandi Hannula",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_matti_aarnio",
+                    "name": "Matti Aarnio",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_miina_sillanpaa",
+                    "name": "Miina Sillanpää",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_olavi_arho",
+                    "name": "Olavi Arho",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "navy_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_olavi_sarko",
+                    "name": "Olavi Sarko",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "air_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_otto_brusiin",
+                    "name": "Otto Brusiin",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_otto_wille_kuusinen",
+                    "name": "Otto Wille Kuusinen",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_paavo_susitaival",
+                    "name": "Paavo Susitaival",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_paavo_talvela",
+                    "name": "Paavo Talvela",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_pehr_evind_svinhufvud",
+                    "name": "Pehr Evind Svinhufvud",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_prince_wolfgang_von_hesse",
+                    "name": "Prince Wolfgang von Hesse",
+                    "roles": []
+                },
+                {
+                    "id": "FIN_ragnar_hakola",
+                    "name": "Ragnar Hakola",
+                    "roles": [
+                        {
+                            "kind": "navy_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_ralf_torngren",
+                    "name": "Ralf Törngren",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_reino_ala_kulju",
+                    "name": "Reino Ala-Kulju",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_reino_hallamaa",
+                    "name": "Reino Hallamaa",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_risto_ryti",
+                    "name": "Risto Ryti",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_ruben_lagus",
+                    "name": "Ruben Lagus",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_rudolf_holsti",
+                    "name": "Rudolf Holsti",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_sandra_lehtinen",
+                    "name": "Sandra Lehtinen",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_svante_sundman",
+                    "name": "Svante Sundman",
+                    "roles": [
+                        {
+                            "kind": "navy_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_taavetti_laatikainen",
+                    "name": "Taavetti Laatikainen",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_toivo_antikainen",
+                    "name": "Toivo Antikainen",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "army_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_torsti_verkkola",
+                    "name": "Torsti Verkkola",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "theorist"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_urho_kekkonen",
+                    "name": "Urho Kekkonen",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_vaino_tanner",
+                    "name": "Väinö Tanner",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_vaino_valve",
+                    "name": "Väinö Valve",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "theorist"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_valio_porvari",
+                    "name": "Valio Porvari",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_vilho_annala",
+                    "name": "Vilho Annala",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_vilho_helanen",
+                    "name": "Vilho Helanen",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_vilho_petter_nenonen",
+                    "name": "Vilho Petter Nenonen",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_wiljo_einar_tuompo",
+                    "name": "Wiljo Einar Tuompo",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_woldemar_hagglund",
+                    "name": "Woldemar Hägglund",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_yrjo_leino",
+                    "name": "Yrjö Leino",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "rt56",
+            "mod": "The Road to 56",
+            "characters": [
+                {
+                    "id": "FIN_aarne_juutilainen",
+                    "name": "Aarne Juutilainen",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_aarne_saarinen",
+                    "name": "Aarne Saarinen",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_aarne_sihvo",
+                    "name": "Aarne Sihvo",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_aimo_aaltonen",
+                    "name": "Aimo Aaltonen",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_aimo_cajander",
+                    "name": "Aimo Cajander",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_aimo_lahti",
+                    "name": "Aimo Lahti",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_ake_henrik_gartz",
+                    "name": "Åke Henrik Gartz",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_aksel_airo",
+                    "name": "Aksel Airo",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "army_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_akseli_anttila",
+                    "name": "Akseli Anttila",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "theorist"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_alpo_marttinen",
+                    "name": "Alpo Marttinen",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_antti_hackzell",
+                    "name": "Antti Hackzell",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_armas_aikia",
+                    "name": "Armas Äikiä",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "fin_arne_somersalo",
+                    "name": "Arne Somersalo",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "theorist"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_arvi_kalsta",
+                    "name": "Arvi Kalsta",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_arvo_tuominen",
+                    "name": "Arvo Tuominen",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_bruno_salmiala",
+                    "name": "Bruno Salmiala",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_carl_mannerheim",
+                    "name": "Carl G. Mannerheim",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "army_chief"
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "theorist"
+                        },
+                        {
+                            "kind": "field_marshal",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_eero_rahola",
+                    "name": "Eero Rahola",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "navy_chief"
+                        },
+                        {
+                            "kind": "navy_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_elias_simojoki",
+                    "name": "Elias Simojoki",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_emil_vaateri",
+                    "name": "Emil Vaateri",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_erik_heinrichs",
+                    "name": "Erik Heinrichs",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_erkki_raappana",
+                    "name": "Erkki Raappana",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_ernst_von_born",
+                    "name": "Ernst von Born",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_eyolf_mattsson",
+                    "name": "Eyolf Mattsson",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_fanni_luukkonen",
+                    "name": "Fanni Luukkonen",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_frans_helminen",
+                    "name": "Frans Helminen",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_gustaf_magnusson",
+                    "name": "Gustaf Magnusson",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "theorist"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_hannu_hannuksela",
+                    "name": "Hannu Hannuksela",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_harald_ohquist",
+                    "name": "Harald Öhquist",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_hella_wuolijoki",
+                    "name": "FIN_hella_wuolijoki",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_hilja_riipinen",
+                    "name": "Hilja Riipinen",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_hjalmar_siilasvuo",
+                    "name": "Hjalmar Siilasvuo",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_hugo_osterman",
+                    "name": "Hugo Österman",
+                    "roles": [
+                        {
+                            "kind": "field_marshal",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "army_chief"
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "theorist"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_ilmari_kianto",
+                    "name": "Ilmari Kianto",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_jarl_lundqvist",
+                    "name": "Jarl Lundqvist",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "air_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_johan_arajuuri",
+                    "name": "Johan Arajuuri",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_juho_heiskanen",
+                    "name": "Juho Heiskanen",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_juho_kusti_paasikivi",
+                    "name": "Juho Kusti Paasikivi",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_jukka_lehtosaari",
+                    "name": "Jukka Lehtosaari",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_kaarlo_somerto",
+                    "name": "Kaarlo Somerto",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_kaisu_mirjami_rydberg",
+                    "name": "Kaisu-Mirjami Rydberg",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_karl_august_fagerholm",
+                    "name": "Karl August Fagerholm",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_karl_fredrik_wilkama",
+                    "name": "Karl Fredrik Wilkama",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "army_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_karl_harald_wiik",
+                    "name": "Karl Harald Wiik",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_karl_oesch",
+                    "name": "Karl Oesch",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "theorist"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_kullervo_manner",
+                    "name": "Kullervo Manner",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_kurt_martti_wallenius",
+                    "name": "Kurt Martti Wallenius",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_kyosti_kallio",
+                    "name": "Kyösti Kallio",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_lauri_malmberg",
+                    "name": "Lauri Malmberg",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "army_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_lauri_torni",
+                    "name": "Lauri Törni",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_lennart_simons",
+                    "name": "Lennart Simons",
+                    "roles": [
+                        {
+                            "kind": "scientist",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_mandi_hannula",
+                    "name": "Mandi Hannula",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_matti_aarnio",
+                    "name": "Matti Aarnio",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_mauritz_rosenberg",
+                    "name": "FIN_mauritz_rosenberg",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_miina_sillanpaa",
+                    "name": "Miina Sillanpää",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_olavi_arho",
+                    "name": "Olavi Arho",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "navy_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_olavi_sarko",
+                    "name": "Olavi Sarko",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "air_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_otto_wille_kuusinen",
+                    "name": "Otto Wille Kuusinen",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_paavo_susitaival",
+                    "name": "Paavo Susitaival",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_paavo_talvela",
+                    "name": "Paavo Talvela",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_pehr_evind_svinhufvud",
+                    "name": "Pehr Evind Svinhufvud",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_prince_wolfgang_von_hesse",
+                    "name": "Wolfgang I",
+                    "roles": []
+                },
+                {
+                    "id": "FIN_ragnar_hakola",
+                    "name": "Ragnar Hakola",
+                    "roles": [
+                        {
+                            "kind": "navy_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_ralf_torngren",
+                    "name": "Ralf Törngren",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_reino_ala_kulju",
+                    "name": "Reino Ala-Kulju",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_reino_hallamaa",
+                    "name": "Reino Hallamaa",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_risto_heikki_ryti",
+                    "name": "Risto Ryti",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_ruben_lagus",
+                    "name": "Ruben Lagus",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "theorist"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_rudolf_holsti",
+                    "name": "Rudolf Holsti",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_rudolf_walden",
+                    "name": "Rudolf Walden",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_sandra_lehtinen",
+                    "name": "Sandra Lehtinen",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_svante_sundman",
+                    "name": "Svante Sundman",
+                    "roles": [
+                        {
+                            "kind": "navy_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_taavetti_laatikainen",
+                    "name": "Taavetti Laatikainen",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_toivo_antikainen",
+                    "name": "Toivo Antikainen",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "army_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_toivo_karanko",
+                    "name": "Toivo Karanko",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_torolf_eklund",
+                    "name": "Torolf Eklund",
+                    "roles": [
+                        {
+                            "kind": "scientist",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_torsti_verkkola",
+                    "name": "Torsti Verkkola",
+                    "roles": [
+                        {
+                            "kind": "scientist",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_urho_kekkonen",
+                    "name": "Urho Kekkonen",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_vaino_tanner",
+                    "name": "Väinö Tanner",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_vaino_valve",
+                    "name": "Väinö Valve",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "theorist"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_valio_porvari",
+                    "name": "Valio Porvari",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_vilho_annala",
+                    "name": "Vilho Annala",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_vilho_helanen",
+                    "name": "Vilho Helanen",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_vilho_petter_nenonen",
+                    "name": "Vilho Petter Nenonen",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "theorist"
+                        },
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_ville_pessi",
+                    "name": "Ville Pessi",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_wilhelm_wahlforss",
+                    "name": "Wilhelm Wahlforss",
+                    "roles": [
+                        {
+                            "kind": "scientist",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_wiljo_tuompo",
+                    "name": "Wiljo Tuompo",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_woldemar_hagglund",
+                    "name": "Woldemar Hägglund",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FIN_yrjo_leino",
+                    "name": "Yrjö Leino",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
