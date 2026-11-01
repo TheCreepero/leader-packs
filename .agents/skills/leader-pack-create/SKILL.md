@@ -24,7 +24,7 @@ Plans a pack or new leaders, down to every id, stat, trait, photo and picked por
 
 ## Phase 0: scope
 1. Ask the owner, in one message: the country (and its tag if not obvious), the number of leaders (default 8 to 12), the mix of generals and admirals, and anything the pack must leave out. Record the answers in the plan's "Decisions".
-2. A new pack: confirm the tag with the `hoi4-vanilla-lookup` skill (`Get-HoiCountry`), then `powershell -File .\build.ps1 -NewPack -Pack <pack> -Tag <TAG> -DisplayName "<Country>"`. Write `source/<pack>/workshop-intro.bbcode`: two or three plain sentences about the pack, and the info lines `-NewPack` drafted.
+2. A new pack: confirm the tag with the `hoi4-vanilla-lookup` skill (`Get-HoiCountry`), then `powershell -File .\build.ps1 -NewPack -Pack <pack> -Tag <TAG> -DisplayName "<Country>"`. Write `source/<pack>/workshop-intro.bbcode`: two or three plain sentences about the pack, and the info lines `-NewPack` drafted. When the Event Packs repository (`../event-packs/packs/<country>/descriptor.mod`) has a published pack for the same country, link it right after the opening sentences, above the info lines: `[h2]Companion mod: [url=https://steamcommunity.com/sharedfiles/filedetails/?id=<remote_file_id>]<name>[/url][/h2]` and one line on what it adds, with `name` and `remote_file_id` read from that descriptor, never guessed.
 3. Copy `docs/plans/TEMPLATE-pack.md` to `docs/plans/<YYYY-MM-DD>-<pack>.md` (`<YYYY-MM-DD>-<pack>-<what>.md` for leaders added to a released pack) and fill the header, "Context" and "Decisions".
 
 ## Phase 1: snapshot and roster
