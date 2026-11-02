@@ -56,10 +56,8 @@
       "Bash(robocopy . scratch*rehearsal *)",
       "PowerShell(Remove-Item -Recurse -Force scratch\\rehearsal)",
       "Bash(rm -rf scratch/rehearsal)",
-      "PowerShell(python \"W:\\Antigravity\\Mod Thumbnail Generator\\generate_branding.py\" *)",
-      "Bash(python \"W:\\Antigravity\\Mod Thumbnail Generator\\generate_branding.py\" *)",
-      "PowerShell(Copy-Item scratch\\thumbnail\\*\\thumbnail.png packs\\*\\thumbnail.png)",
-      "Bash(cp scratch/thumbnail/*/thumbnail.png packs/*/thumbnail.png)",
+      "PowerShell(*New-HoiThumbnail.ps1*)",
+      "Bash(*New-HoiThumbnail.ps1*)",
       "PowerShell(*Find-HoiKnowledge.ps1*)",
       "Bash(*Find-HoiKnowledge.ps1*)"
     ],

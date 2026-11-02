@@ -152,7 +152,7 @@ function New-LpShowcaseSpec {
     $photoList = Read-LpShowcaseJson -Path (Join-Path $sourceDir 'photos.json')
     $showcase = Read-LpShowcaseJson -Path (Join-Path $sourceDir 'showcase.json')
     $startTraits = Read-LpShowcaseJson -Path (Join-Path $RepoRoot "data\$Pack\start-traits.json")
-    $thumbnail = Read-LpShowcaseJson -Path (Join-Path $RepoRoot 'data\thumbnail.json')
+    $thumbnail = Read-LpShowcaseJson -Path (Join-Path $RepoRoot 'assets\thumbnail.json')
     $photosByKey = @{}
     foreach ($photo in @($photoList.photos)) {
         $photosByKey[[string]$photo.key] = $photo
@@ -228,8 +228,9 @@ function New-LpShowcaseSpec {
         brand   = [ordered]@{ label = "Commanders Pack: $displayName"; flag = [ordered]@{ tag = [string]$manifest.tag } }
         pages   = [object[]](@($rosterPage) + $profilePages.ToArray())
     }
-    if ($thumbnail -and $thumbnail.background) {
-        $spec['background'] = [ordered]@{ gamePath = [string]$thumbnail.background; crop = $(if ($thumbnail.crop) { $thumbnail.crop } else { 'center' }); blur = $(if ($null -ne $thumbnail.blur) { $thumbnail.blur } else { 4 }) }
+    if ($thumbnail -and $thumbnail.background -and $thumbnail.background.gamePath) {
+        $background = $thumbnail.background
+        $spec['background'] = [ordered]@{ gamePath = [string]$background.gamePath; crop = $(if ($background.crop) { $background.crop } else { 'center' }); blur = $(if ($null -ne $background.blur) { $background.blur } else { 4 }) }
     }
     return [PSCustomObject]@{ Spec = $spec; MissingPortraits = $missingPortraits.ToArray(); CardlessLeaders = @($profilePages | Where-Object { $_.lines.Count -eq 0 } | ForEach-Object { $_.name }) }
 }

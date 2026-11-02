@@ -271,10 +271,12 @@ Describe 'Packs stand alone' {
     }
 
     It 'creates a new pack beside another, refuses it twice, and refuses a tag another pack has' {
+        Mock Get-LpManagerRoot { '' }
         $fixtureRoot = New-LpGeneratedFixture
         New-Item -ItemType Directory -Path (Join-Path $fixtureRoot 'assets') -Force | Out-Null
         Copy-Item -LiteralPath (Join-Path $script:LpRepoRoot 'assets\thumbnail_master.png') -Destination (Join-Path $fixtureRoot 'assets\thumbnail_master.png')
         Invoke-LpNewPack -RepoRoot $fixtureRoot -Pack 'newland' -Tag 'NEW' -DisplayName 'New Land' 6>$null | Select-Object -Last 1 | Should -Be 0
+        (Get-FileHash -LiteralPath (Join-Path $fixtureRoot 'packs\newland\thumbnail.png')).Hash | Should -Be (Get-FileHash -LiteralPath (Join-Path $fixtureRoot 'assets\thumbnail_master.png')).Hash
         $leaderSource = Read-LpJson -Path (Join-Path $fixtureRoot 'source\newland\leaders.json')
         $leaderSource.prefix | Should -Be 'lp_new'
         @($leaderSource.leaders).Count | Should -Be 0
@@ -287,6 +289,27 @@ Describe 'Packs stand alone' {
         Invoke-LpNewPack -RepoRoot $fixtureRoot -Pack 'newland' -Tag 'NEW' -DisplayName 'New Land' 6>$null | Select-Object -Last 1 | Should -Be 1
         Invoke-LpNewPack -RepoRoot $fixtureRoot -Pack 'twinland' -Tag 'TST' -DisplayName 'Twin' 6>$null | Select-Object -Last 1 | Should -Be 1
         Invoke-LpNewPack -RepoRoot $fixtureRoot -Pack 'badland' -Tag 'bad' -DisplayName 'Bad' 6>$null | Select-Object -Last 1 | Should -Be 1
+    }
+
+    It 'renders a new pack''s thumbnail with the Manager''s New-HoiThumbnail.ps1, and keeps the master when the call fails' {
+        $fixtureRoot = New-LpGeneratedFixture
+        New-Item -ItemType Directory -Path (Join-Path $fixtureRoot 'assets') -Force | Out-Null
+        Copy-Item -LiteralPath (Join-Path $script:LpRepoRoot 'assets\thumbnail_master.png') -Destination (Join-Path $fixtureRoot 'assets\thumbnail_master.png')
+        $script:StubManagerRoot = Join-Path $fixtureRoot 'stub-manager'
+        $stubScriptPath = Join-Path $script:StubManagerRoot 'Scripts\Showcase\New-HoiThumbnail.ps1'
+        New-Item -ItemType Directory -Path (Split-Path -Parent $stubScriptPath) -Force | Out-Null
+        $stubScript = @(
+            'param([string]$Path, [string]$Pack, [switch]$Apply, [switch]$PassThru)',
+            'if ($Pack -eq ''brokenland'') { throw ''no game'' }',
+            '[System.IO.File]::WriteAllText((Join-Path $Path "packs\$Pack\thumbnail.png"), ("rendered " + $Pack + " " + $Apply.IsPresent + " " + $PassThru.IsPresent))',
+            '[PSCustomObject]@{ status = ''ok'' }'
+        ) -join "`r`n"
+        [System.IO.File]::WriteAllText($stubScriptPath, $stubScript + "`r`n")
+        Mock Get-LpManagerRoot { $script:StubManagerRoot }
+        Invoke-LpNewPack -RepoRoot $fixtureRoot -Pack 'newland' -Tag 'NEW' -DisplayName 'New Land' 6>$null | Select-Object -Last 1 | Should -Be 0
+        [System.IO.File]::ReadAllText((Join-Path $fixtureRoot 'packs\newland\thumbnail.png')) | Should -Be 'rendered newland True True'
+        Invoke-LpNewPack -RepoRoot $fixtureRoot -Pack 'brokenland' -Tag 'BRK' -DisplayName 'Broken Land' 6>$null | Select-Object -Last 1 | Should -Be 0
+        (Get-FileHash -LiteralPath (Join-Path $fixtureRoot 'packs\brokenland\thumbnail.png')).Hash | Should -Be (Get-FileHash -LiteralPath (Join-Path $fixtureRoot 'assets\thumbnail_master.png')).Hash
     }
 }
 

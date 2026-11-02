@@ -123,7 +123,7 @@ Optional; the owner's approved text for the pack's Workshop gallery images. It c
 - **Stats:** the skill, then the four attribute skills of the role kind, with the game's icons.
 - **Traits:** with their game names and icons, leaving out the Road to 56 counterpart traits of `data/<pack>/start-traits.json`.
 - **Credit line:** "AI-assisted repaint", with the author and licence of a CC BY photo.
-- **Background and flag:** the loading screen of `data/thumbnail.json`, and the pack's flag in its 1936 variant.
+- **Background and flag:** the loading screen of `background` in `assets/thumbnail.json`, and the pack's flag in its 1936 variant.
 
 The owner uploads the images on the Workshop page by hand ("Add/edit images & videos").
 
@@ -215,9 +215,12 @@ Written only by `-ConvertPortraits -Pack <pack> [-Force]`: for each DDS of the p
 | `data/stat-bands.json` | Hand-written: the start ranges of `skill` and the attribute skills per role kind [CHR-006] [CHR-012]. |
 | `data/workshop.json` | The wiki address and the author's other mods, shared by every pack. |
 | `data/portrait-card.json` | The small card's geometry and the face position inside its photo window [CHR-005]; read by the converter. The owner approved these values: they change only on the owner's word. |
-| `data/thumbnail.json` | The Workshop thumbnail, shared by every pack: `background` (a loading screen's path under the game root, read at render time and never copied into the repository), `crop`, `blur` and `scrim`; and per pack under `packs.<pack>.portraits` the 2 or 3 leader keys whose chosen portraits the thumbnail shows, left to right. Read by the release skill; changes only on the owner's word. |
 
 `game-characters.json`, `start-traits.json` and `portrait-card.json` are protected from hand edits by the project hook.
+
+## `assets/thumbnail.json`
+
+The spec of the Workshop thumbnails, read by the Manager's `Scripts/Showcase/New-HoiThumbnail.ps1` (skill `hoi4-workshop-showcase`, whose reference lists every field). `version` is 1. The top-level `background`, shared by every pack, is `gamePath` (a loading screen's path under the game root, read at render time and never copied into the repository), `crop`, `blur` and `scrim`; `-RenderShowcase` draws the gallery images over the same `gamePath`, `crop` and `blur`. Per pack, `packs.<pack>.portraits` lists up to 4 chosen portraits as `source/<pack>/portraits/<key>.png`, left to right; the release skill writes them on the owner's word. The title, the country, the flag (the pack's `tag` in its 1936 variant), the layout and the colours come from the tool. The file changes only on the owner's word.
 
 ## Generated files
 

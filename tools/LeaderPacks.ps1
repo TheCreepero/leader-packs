@@ -2766,6 +2766,33 @@ function Invoke-LpRefreshGameData {
     return 0
 }
 
+function New-LpPackThumbnail {
+    param(
+        [Parameter(Mandatory = $true)][string]$RepoRoot,
+        [Parameter(Mandatory = $true)][string]$Pack
+    )
+
+    try {
+        $managerRoot = Get-LpManagerRoot
+        if (-not $managerRoot) {
+            return $false
+        }
+        $thumbnailScript = Join-Path $managerRoot 'Scripts\Showcase\New-HoiThumbnail.ps1'
+        if (-not (Test-Path -LiteralPath $thumbnailScript)) {
+            return $false
+        }
+        $global:LASTEXITCODE = 0
+        & $thumbnailScript -Path $RepoRoot -Pack $Pack -Apply -PassThru | Out-Null
+        if ($LASTEXITCODE -ne 0) {
+            return $false
+        }
+        return (Test-Path -LiteralPath (Join-Path $RepoRoot "packs\$Pack\thumbnail.png"))
+    } catch {
+        Write-Host ('  New-HoiThumbnail.ps1 failed: ' + $_.Exception.Message) -ForegroundColor Gray
+        return $false
+    }
+}
+
 function Invoke-LpNewPack {
     param(
         [Parameter(Mandatory = $true)][string]$RepoRoot,
@@ -2804,10 +2831,6 @@ function Invoke-LpNewPack {
     Write-LpText -Path (Join-Path $sourceDir 'workshop-intro.bbcode') -Text ("Historical generals, field marshals and admirals for $DisplayName that the base game leaves out, each with a portrait painted from a period photograph.`r`n`r`n[h1]Info:[/h1]`r`n- Works alone and beside any other Commanders Pack.`r`n- Adds characters, so it changes the game checksum: not Ironman compatible.`r`n- Needs a new game.`r`n")
     $descriptorText = @('version="1.0"', 'tags={', "`t`"Historical`"", "`t`"Military`"", "`t`"Gameplay`"", '}', "name=`"Commanders Pack: $DisplayName`"", 'picture="thumbnail.png"', "supported_version=`"$SupportedVersion`"") -join "`r`n"
     Write-LpText -Path (Join-Path $packRoot 'descriptor.mod') -Text ($descriptorText + "`r`n")
-    $masterThumbnail = Join-Path $RepoRoot 'assets\thumbnail_master.png'
-    if (Test-Path -LiteralPath $masterThumbnail) {
-        Copy-Item -LiteralPath $masterThumbnail -Destination (Join-Path $packRoot 'thumbnail.png')
-    }
     $settingsPath = Join-Path $RepoRoot 'tools\HoiModBuild.json'
     $settings = if (Test-Path -LiteralPath $settingsPath) { Read-LpJson -Path $settingsPath } else { [PSCustomObject]@{} }
     if ($null -eq (Get-LpProperty -Object $settings -Name 'packages')) {
@@ -2816,7 +2839,15 @@ function Invoke-LpNewPack {
     $settings.packages | Add-Member -NotePropertyName $Pack -NotePropertyValue ([PSCustomObject][ordered]@{ root = "packs/$Pack"; modFolderName = "commanders_pack_$Pack" })
     Write-LpJson -Path $settingsPath -Value $settings -Depth 6
     Write-Host "Created pack '$Pack' ($Tag, prefix $prefix): source\$Pack and packs\$Pack; registered in tools\HoiModBuild.json." -ForegroundColor Green
-    Write-Host ('  Next: build.ps1 -RefreshGameData -Pack ' + $Pack + ', then the leader-pack-create skill; replace packs\' + $Pack + '\thumbnail.png with the mod-thumbnail-generator.') -ForegroundColor Gray
+    $thumbnailCommand = 'New-HoiThumbnail.ps1 "Leader Packs" -Pack ' + $Pack + ' -Apply'
+    if (-not (New-LpPackThumbnail -RepoRoot $RepoRoot -Pack $Pack)) {
+        $masterThumbnail = Join-Path $RepoRoot 'assets\thumbnail_master.png'
+        if (Test-Path -LiteralPath $masterThumbnail) {
+            Copy-Item -LiteralPath $masterThumbnail -Destination (Join-Path $packRoot 'thumbnail.png')
+        }
+        Write-Host ('  The Manager could not render packs\' + $Pack + '\thumbnail.png; it holds assets\thumbnail_master.png until the Manager''s ' + $thumbnailCommand + ' renders it.') -ForegroundColor Gray
+    }
+    Write-Host ('  Next: build.ps1 -RefreshGameData -Pack ' + $Pack + ', then the leader-pack-create skill; the release skill renders the thumbnail with its portraits through the Manager''s ' + $thumbnailCommand + '.') -ForegroundColor Gray
     return (Invoke-LpGenerate -RepoRoot $RepoRoot -Pack $Pack)
 }
 

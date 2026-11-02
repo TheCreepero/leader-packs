@@ -1,0 +1,18 @@
+{
+    "version": 1,
+    "background": {
+        "gamePath": "gfx/loadingscreens/load_6.dds",
+        "crop": "center",
+        "blur": 3,
+        "scrim": 0.5
+    },
+    "packs": {
+        "finland": {
+            "portraits": [
+                "source/finland/portraits/kaarlo_heiskanen.png",
+                "source/finland/portraits/oiva_koivisto.png",
+                "source/finland/portraits/armas_eino_martola.png"
+            ]
+        }
+    }
+}

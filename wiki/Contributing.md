@@ -1,6 +1,6 @@
 # Contributing to Leader Packs
 
-The packs are built from the sources in the repository by `build.ps1`; nothing under `packs/<pack>/` except `descriptor.mod` and `thumbnail.png` is written by hand. `docs/source-format.md` describes the source files and every switch.
+The packs are built from the sources in the repository by `build.ps1`; nothing under `packs/<pack>/` except `descriptor.mod` is written by hand, and its `thumbnail.png` is rendered from `assets/thumbnail.json` by the Modding Manager's `New-HoiThumbnail.ps1`. `docs/source-format.md` describes the source files and every switch.
 
 ## Development Workflow
 1. Clone the repository.

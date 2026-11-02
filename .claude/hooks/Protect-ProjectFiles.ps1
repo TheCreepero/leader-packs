@@ -38,8 +38,8 @@ try {
         $fullPath = [System.IO.Path]::GetFullPath($filePath)
         if (-not $fullPath.StartsWith($repoRootPath + '\', [System.StringComparison]::OrdinalIgnoreCase)) { exit 0 }
         $relativePath = $fullPath.Substring($repoRootPath.Length + 1).Replace('\', '/')
-        if ($relativePath -match '^packs/[^/]+/' -and $relativePath -notmatch '^packs/[^/]+/(descriptor\.mod|thumbnail\.png)$') {
-            [Console]::Error.WriteLine("$relativePath $generatedReason Only descriptor.mod and thumbnail.png of a pack are edited by hand.")
+        if ($relativePath -match '^packs/[^/]+/' -and $relativePath -notmatch '^packs/[^/]+/descriptor\.mod$') {
+            [Console]::Error.WriteLine("$relativePath $generatedReason Only descriptor.mod of a pack is edited by hand; its thumbnail.png is rendered by the Manager's New-HoiThumbnail.ps1 -Apply.")
             exit 2
         }
         foreach ($protected in $protectedPaths) {
@@ -60,7 +60,6 @@ try {
         $plainReadPattern = '^(?!.*\s-(OutVariable|ov|PipelineVariable|pv|ErrorVariable|ev|WarningVariable|wv|InformationVariable|iv)\b)\s*(Get-Content|Get-ChildItem|Get-Item|Get-FileHash|Test-Path|Resolve-Path|Select-String|gc|gci|cat|ls|dir|type|grep|head|tail|wc)\s[^|=]*$'
         $unquotedCommand = $command -replace '"[^"]*"|''[^'']*''', '""'
         $splitIsUnreliable = $command -match '`|\\["'']|\\\r?\n|\$\(|<<|@["'']' -or $unquotedCommand -match '[(){}]|(?<![&>])&(?!&)'
-        $thumbnailCopyPattern = '^\s*(Copy-Item|cp)\s+((-Path|-LiteralPath)\s+)?("[^"$`]*"|''[^'']*''|[^\s"''$`,;&|<>(){}]+)\s+(-Destination\s+)?(?<quote>["'']?)(\.[\\/])?packs[\\/][a-z][a-z0-9_]*[\\/]thumbnail\.png\k<quote>(\s+-Force)?\s*$'
 
         function Split-CommandStatement {
             param([string]$CommandText)
@@ -101,10 +100,9 @@ try {
             $namesProtectedPath = $statement -match $protectedPathPattern
             if ($statement -match $singleBuildCall) { continue }
             if ($statement -match '^\s*git\s' -and $statement -notmatch '[;&|<>`$]') { continue }
-            if (-not $protectedPathCarried -and $statement -match $thumbnailCopyPattern) { continue }
             if ($statement -match $writePattern) {
                 if ($namesProtectedPath -or $protectedPathCarried) {
-                    [Console]::Error.WriteLine("The statement '$statement' writes to a protected path: a pack folder, a photos.json, a portraits.json, a converted.json, a review.json, a chosen portrait, a game snapshot or a generated wiki page changes only through build.ps1 (-Generate, -ConvertPortraits, -FetchPhoto, -MakePortraits, -ApplyPortraitReview, -ReviewPage -PageUrl, -RefreshGameData) run as a statement of its own (see docs/source-format.md); data/portrait-card.json only on the owner's word; a pack's thumbnail.png only through a copy of its own, Copy-Item <file> packs\<pack>\thumbnail.png, of a thumbnail generated under scratch\; a file synced from the Manager or the .agents mirror changes at its source. Git statements and other statements in the same command are not affected.")
+                    [Console]::Error.WriteLine("The statement '$statement' writes to a protected path: a pack folder, a photos.json, a portraits.json, a converted.json, a review.json, a chosen portrait, a game snapshot or a generated wiki page changes only through build.ps1 (-Generate, -ConvertPortraits, -FetchPhoto, -MakePortraits, -ApplyPortraitReview, -ReviewPage -PageUrl, -RefreshGameData) run as a statement of its own (see docs/source-format.md); data/portrait-card.json only on the owner's word; a pack's thumbnail.png only through the Manager's New-HoiThumbnail.ps1 -Apply; a file synced from the Manager or the .agents mirror changes at its source. Git statements and other statements in the same command are not affected.")
                     exit 2
                 }
                 continue

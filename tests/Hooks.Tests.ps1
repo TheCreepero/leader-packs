@@ -49,6 +49,7 @@ Describe 'Protect-ProjectFiles hook' {
         @{ Path = 'packs\finland\interface\lp_fin_portraits.gfx' },
         @{ Path = 'packs\finland\history\x.txt' },
         @{ Path = 'packs\finland\WORKSHOP_DESCRIPTION_GUIDELINES.md' },
+        @{ Path = 'packs\finland\thumbnail.png' },
         @{ Path = 'source\finland\photos.json' },
         @{ Path = 'source\finland\portraits.json' },
         @{ Path = 'source\finland\portraits\einar_vihma.png' },
@@ -68,7 +69,6 @@ Describe 'Protect-ProjectFiles hook' {
 
     It 'allows an edit of <Path>' -TestCases @(
         @{ Path = 'packs\finland\descriptor.mod' },
-        @{ Path = 'packs\finland\thumbnail.png' },
         @{ Path = 'source\finland\leaders.json' },
         @{ Path = 'source\finland\fact-sheets.md' },
         @{ Path = 'source\finland\workshop-intro.bbcode' },
@@ -105,7 +105,8 @@ Describe 'Protect-ProjectFiles hook' {
         @{ Command = 'Remove-Item tests\Run-Tests.ps1' },
         @{ Command = 'Set-Content .agents\skills\leader-pack-create\SKILL.md x' },
         @{ Command = 'Copy-Item scratch\thumbnail\finland\thumbnail.png packs\finland\descriptor.mod' },
-        @{ Command = 'Copy-Item scratch\thumbnail\finland\thumbnail.png packs\finland\thumbnail.png; Remove-Item packs\finland\common\x.txt' },
+        @{ Command = 'Copy-Item scratch\thumbnail\finland\thumbnail.png packs\finland\thumbnail.png' },
+        @{ Command = 'Copy-Item -LiteralPath "C:\dev\Hearts of Iron IV Modding Manager\Artifacts\thumbnails\leader-packs\finland\thumbnail.png" -Destination packs\finland\thumbnail.png -Force' },
         @{ Command = 'git status $(Remove-Item packs\finland\common\x.txt)' }
     ) {
         param($Command)
@@ -138,7 +139,8 @@ Describe 'Protect-ProjectFiles hook' {
         @{ Command = 'Get-ChildItem packs\finland -Recurse 2>$null' },
         @{ Command = 'git add packs/finland source/finland && git commit -m "feat(finland): ten leaders"' },
         @{ Command = 'Copy-Item "C:\dev\Hearts of Iron IV Modding Manager\Artifacts\portraits\lp_fin_x\round-1\sheet.png" scratch\review\x.png' },
-        @{ Command = 'Copy-Item scratch\thumbnail\finland\thumbnail.png packs\finland\thumbnail.png' }
+        @{ Command = '& "C:\dev\Hearts of Iron IV Modding Manager\Scripts\Showcase\New-HoiThumbnail.ps1" "Leader Packs" -Pack finland -Apply' },
+        @{ Command = 'powershell -File "C:\dev\Hearts of Iron IV Modding Manager\Scripts\Showcase\New-HoiThumbnail.ps1" -Path "C:\dev\Hearts of Iron IV Modding Manager\mods\leader-packs" -Pack finland -Apply' }
     ) {
         param($Command)
         Invoke-ProtectHook -ToolName 'PowerShell' -ToolInput @{ command = $Command } | Should -Be 0
