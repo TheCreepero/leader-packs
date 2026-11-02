@@ -7,15 +7,35 @@ BeforeAll {
         param([string]$ToolName, [hashtable]$ToolInput)
 
         $hookJson = ConvertTo-Json -InputObject @{ tool_name = $ToolName; tool_input = $ToolInput } -Depth 4 -Compress
-        $previousErrorAction = $ErrorActionPreference
-        $ErrorActionPreference = 'Continue'
+        $previousIn = [Console]::In
+        $previousError = [Console]::Error
         try {
-            $null = $hookJson | & $script:PowerShellExe -NoProfile -ExecutionPolicy Bypass -File $script:ProtectHook -RepoRoot $script:RepoRoot 2>&1
-            $hookExitCode = $LASTEXITCODE
+            [Console]::SetIn([System.IO.StringReader]::new($hookJson))
+            [Console]::SetError([System.IO.StringWriter]::new())
+            $global:LASTEXITCODE = 0
+            $null = & $script:ProtectHook -RepoRoot $script:RepoRoot
+            $hookExitCode = $global:LASTEXITCODE
         } finally {
-            $ErrorActionPreference = $previousErrorAction
+            [Console]::SetIn($previousIn)
+            [Console]::SetError($previousError)
         }
         return $hookExitCode
+    }
+}
+
+Describe 'Protect-ProjectFiles hook as Claude Code starts it' {
+    It 'refuses a protected edit and allows a plain one from a fresh powershell -File' {
+        foreach ($case in @(@{ Path = 'source\finland\photos.json'; Expected = 2 }, @{ Path = 'source\finland\leaders.json'; Expected = 0 })) {
+            $hookJson = ConvertTo-Json -InputObject @{ tool_name = 'Write'; tool_input = @{ file_path = (Join-Path $script:RepoRoot $case.Path) } } -Compress
+            $previousErrorAction = $ErrorActionPreference
+            $ErrorActionPreference = 'Continue'
+            try {
+                $null = $hookJson | & $script:PowerShellExe -NoProfile -ExecutionPolicy Bypass -File $script:ProtectHook -RepoRoot $script:RepoRoot 2>&1
+                $LASTEXITCODE | Should -Be $case.Expected -Because $case.Path
+            } finally {
+                $ErrorActionPreference = $previousErrorAction
+            }
+        }
     }
 }
 

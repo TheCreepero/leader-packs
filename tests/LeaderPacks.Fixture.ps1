@@ -2,6 +2,28 @@ $script:LpRepoRoot = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '..')).
 $script:LpFixtureDir = Join-Path $PSScriptRoot 'fixtures\leader-pack'
 $script:LpCommonsFixtureDir = Join-Path $PSScriptRoot 'fixtures\commons'
 . (Join-Path $script:LpRepoRoot 'tools\LeaderPacks.ps1')
+Add-Type -AssemblyName Microsoft.VisualBasic
+$script:LpFixtureTemplates = @{}
+
+function Copy-LpFixtureTemplate {
+    param([Parameter(Mandatory = $true)][string]$Key, [Parameter(Mandatory = $true)][scriptblock]$NewTemplate)
+
+    $templateRoot = $script:LpFixtureTemplates[$Key]
+    if (-not $templateRoot -or -not (Test-Path -LiteralPath $templateRoot)) {
+        $templateRoot = & $NewTemplate
+        $script:LpFixtureTemplates[$Key] = $templateRoot
+    }
+    $fixtureRoot = Join-Path $TestDrive ([guid]::NewGuid().ToString('N').Substring(0, 8))
+    [Microsoft.VisualBasic.FileIO.FileSystem]::CopyDirectory($templateRoot, $fixtureRoot)
+    foreach ($recordsFile in @(Get-ChildItem -LiteralPath (Join-Path $fixtureRoot 'source') -Filter 'portraits.json' -Recurse -File)) {
+        $recordsText = [System.IO.File]::ReadAllText($recordsFile.FullName)
+        Write-LpText -Path $recordsFile.FullName -Text $recordsText.Replace($templateRoot.Replace('\', '\\'), $fixtureRoot.Replace('\', '\\'))
+        if ([System.IO.File]::ReadAllText($recordsFile.FullName).Contains($templateRoot.Replace('\', '\\'))) {
+            throw "Copy-LpFixtureTemplate: $($recordsFile.FullName) still points into the template $templateRoot"
+        }
+    }
+    return $fixtureRoot
+}
 
 function Get-LpCommonsFixture {
     param([Parameter(Mandatory = $true)][string]$Name)
@@ -95,6 +117,15 @@ function Add-LpFixturePortraits {
 }
 
 function New-LpFixtureRepo {
+    param([string[]]$Packs = @('testland'), [switch]$NoPortraits)
+
+    if ($NoPortraits) {
+        return (New-LpFreshFixtureRepo -Packs $Packs -NoPortraits)
+    }
+    return (Copy-LpFixtureTemplate -Key ('repo|' + ($Packs -join ',')) -NewTemplate { New-LpFreshFixtureRepo -Packs $Packs })
+}
+
+function New-LpFreshFixtureRepo {
     param([string[]]$Packs = @('testland'), [switch]$NoPortraits)
 
     $fixtureRoot = Join-Path $TestDrive ([guid]::NewGuid().ToString('N').Substring(0, 8))
@@ -225,4 +256,137 @@ function Set-LpFixtureCache {
         $photos.Add($photo)
     }
     Save-LpPhotos -Pack $packData -Photos $photos
+}
+
+function Set-LpFixtureLeaders {
+    param([string]$Root, [scriptblock]$Change, [string]$Pack = 'testland')
+
+    Set-LpFixtureJson -Path (Join-Path $Root "source\$Pack\leaders.json") -Change $Change
+}
+
+function Set-LpFixturePhotos {
+    param([string]$Root, [scriptblock]$Change)
+
+    Set-LpFixtureJson -Path (Join-Path $Root 'source\testland\photos.json') -Change $Change
+}
+
+function Set-LpFixtureRecords {
+    param([string]$Root, [scriptblock]$Change)
+
+    Set-LpFixtureJson -Path (Join-Path $Root 'source\testland\portraits.json') -Change $Change
+}
+
+function New-LpGeneratedFixture {
+    param([string[]]$Packs = @('testland'))
+
+    return (Copy-LpFixtureTemplate -Key ('generated|' + ($Packs -join ',')) -NewTemplate {
+            $templateRoot = New-LpFixtureRepo -Packs $Packs
+            foreach ($packName in $Packs) {
+                Invoke-LpGenerate -RepoRoot $templateRoot -Pack $packName 6>$null | Out-Null
+            }
+            $templateRoot
+        })
+}
+
+function Add-LpUndecidedRound {
+    param([string]$Root, [string]$Leader, [int]$Round = 1)
+
+    $candidateDir = Join-Path $Root "review\$Leader\round-$Round"
+    New-Item -ItemType Directory -Path $candidateDir -Force | Out-Null
+    $candidates = [System.Collections.Generic.List[object]]::new()
+    foreach ($seed in (Get-LpRoundSeeds -Round $Round)) {
+        $candidatePath = Join-Path $candidateDir "A3_s$seed.png"
+        [System.IO.File]::WriteAllText($candidatePath, "review $Leader $seed")
+        $candidates.Add([ordered]@{ seed = $seed; file = $candidatePath; sha256 = (Get-LpSha256 -Path $candidatePath); likeness = 0.3 })
+    }
+    $packData = Get-LpPack -RepoRoot $Root -Pack 'testland'
+    $records = Read-LpPortraitRecords -Pack $packData
+    $entry = $records['leaders'][$Leader]
+    if ($null -eq $entry) {
+        $entry = [ordered]@{ rounds = @(); chosen = $null }
+        $records['leaders'][$Leader] = $entry
+    }
+    $rounds = Get-LpRecordRounds -Entry $entry
+    $rounds.Add([ordered]@{ round = $Round; date = '2026-11-01'; seeds = [object[]]@(Get-LpRoundSeeds -Round $Round); settings = [ordered]@{}; run = ''; recipe = [ordered]@{}; candidates = $candidates.ToArray(); decision = $null })
+    $entry['rounds'] = $rounds.ToArray()
+    Save-LpPortraitRecords -Pack $packData -Records $records
+}
+
+function New-LpStubManager {
+    $managerRoot = Join-Path $TestDrive ('manager-' + [guid]::NewGuid().ToString('N').Substring(0, 6))
+    $portraitFolder = Join-Path $managerRoot 'Scripts\Portraits'
+    New-Item -ItemType Directory -Path $portraitFolder -Force | Out-Null
+    $newPortraitStub = @'
+[CmdletBinding()]
+param(
+    [string]$Photo,
+    [string]$Name,
+    [string]$Tag,
+    [string]$Role = 'military officer',
+    [string]$Headwear,
+    [string]$Uniform,
+    [string]$AvoidHeadwear,
+    [string]$Notes,
+    [string]$Seeds,
+    [int]$ColourSeed = 1,
+    [switch]$NoFacePass,
+    [int]$Age = -1,
+    [switch]$PassThru
+)
+$managerRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
+$call = [ordered]@{ Photo = $Photo; Name = $Name; Tag = $Tag; Role = $Role; Headwear = $Headwear; Uniform = $Uniform; AvoidHeadwear = $AvoidHeadwear; Notes = $Notes; Seeds = $Seeds; ColourSeed = $ColourSeed; NoFacePass = [bool]$NoFacePass; Age = $Age }
+Add-Content -LiteralPath (Join-Path $managerRoot 'calls.jsonl') -Value (ConvertTo-Json -InputObject $call -Compress)
+if ($env:LP_STUB_FAIL -and $Name -like ('*' + $env:LP_STUB_FAIL)) {
+    throw 'TOOL FAILURE: stand-in failure'
+}
+$nameFolder = Join-Path $managerRoot ('work\' + $Name)
+$round = @(Get-ChildItem -LiteralPath $nameFolder -Directory -ErrorAction SilentlyContinue).Count + 1
+$outDir = Join-Path $nameFolder ('round-' + $round)
+New-Item -ItemType Directory -Path (Join-Path $outDir 'final') -Force | Out-Null
+$candidates = [System.Collections.Generic.List[object]]::new()
+foreach ($seed in @($Seeds -split ',')) {
+    $candidateFile = 'final/A4_s' + $seed + '.png'
+    $candidatePath = Join-Path $outDir $candidateFile.Replace('/', '\')
+    [System.IO.File]::WriteAllText($candidatePath, ('stub ' + $Name + ' ' + $seed))
+    $candidates.Add([PSCustomObject]@{ seed = [int]$seed; file = $candidateFile; sha256 = (Get-FileHash -LiteralPath $candidatePath -Algorithm SHA256).Hash.ToLowerInvariant(); likeness = 0.5; seconds = 0 })
+}
+$runPath = Join-Path $outDir 'portrait-run.json'
+$run = [ordered]@{ round = $round; recipe = [ordered]@{ steps = @([ordered]@{ template = 'K1'; sha256 = 'k1' }, [ordered]@{ template = 'A4'; sha256 = 'a4' }); facePass = (-not $NoFacePass); gradeStrength = 0.6 } }
+[System.IO.File]::WriteAllText($runPath, (ConvertTo-Json -InputObject $run -Depth 6))
+[PSCustomObject]@{ OutDir = $outDir; Round = $round; Run = $runPath; Sheet = (Join-Path $outDir 'sheet.png'); Candidates = $candidates.ToArray(); ServerMessages = @() }
+'@
+    $statusStub = @'
+[CmdletBinding()]
+param([switch]$Start, [switch]$Stop)
+$managerRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
+$action = if ($Start) { 'start' } elseif ($Stop) { 'stop' } else { 'status' }
+Add-Content -LiteralPath (Join-Path $managerRoot 'status.log') -Value $action
+if ($Start -and $env:LP_STUB_RUNNING) {
+    'ComfyUI is already running at http://127.0.0.1:1.'
+} elseif ($Start) {
+    'ComfyUI started at http://127.0.0.1:1 in 1 s (process 1).'
+} elseif ($Stop) {
+    'ComfyUI stopped (process 1); http://127.0.0.1:1 is free.'
+}
+exit 0
+'@
+    [System.IO.File]::WriteAllText((Join-Path $portraitFolder 'New-HoiPortrait.ps1'), ($newPortraitStub -replace "`r?`n", "`r`n"))
+    [System.IO.File]::WriteAllText((Join-Path $portraitFolder 'Get-HoiComfyStatus.ps1'), ($statusStub -replace "`r?`n", "`r`n"))
+    return $managerRoot
+}
+
+function Get-LpStubCalls {
+    param([string]$ManagerRoot)
+
+    $callsPath = Join-Path $ManagerRoot 'calls.jsonl'
+    if (-not (Test-Path -LiteralPath $callsPath)) {
+        return @()
+    }
+    return @(Get-Content -LiteralPath $callsPath | ForEach-Object { $_ | ConvertFrom-Json })
+}
+
+function Get-LpRecordEntry {
+    param([string]$Root, [string]$Leader)
+
+    return (Get-LpPortraitEntry -Pack (Get-LpPack -RepoRoot $Root -Pack 'testland') -LeaderKey $Leader)
 }

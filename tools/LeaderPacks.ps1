@@ -168,7 +168,15 @@ function Get-LpToday {
 function Get-LpSha256 {
     param([Parameter(Mandatory = $true)][string]$Path)
 
-    return (Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash.ToLowerInvariant()
+    $fullPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Path)
+    $hasher = [System.Security.Cryptography.SHA256]::Create()
+    $stream = [System.IO.File]::OpenRead($fullPath)
+    try {
+        return ([System.BitConverter]::ToString($hasher.ComputeHash($stream)).Replace('-', '')).ToLowerInvariant()
+    } finally {
+        $stream.Dispose()
+        $hasher.Dispose()
+    }
 }
 
 function Get-LpWholeNumber {
