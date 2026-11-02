@@ -15,7 +15,7 @@
             "defense": 2,
             "planning": 3,
             "logistics": 2,
-            "traits": ["jaeger", "infantry_officer"],
+            "traits": ["jaeger", "jaeger_trait", "infantry_officer"],
             "factSheet": "armas_eino_martola",
             "portrait": {
                 "photo": "armas_eino_martola",
@@ -39,7 +39,7 @@
             "defense": 2,
             "planning": 1,
             "logistics": 1,
-            "traits": ["jaeger", "infantry_officer"],
+            "traits": ["jaeger", "jaeger_trait", "infantry_officer"],
             "factSheet": "kaarlo_heiskanen",
             "portrait": {
                 "photo": "kaarlo_heiskanen",
@@ -74,6 +74,54 @@
                 "notes": "clean-shaven, grey hair, lined face",
                 "born": 1904,
                 "photoYear": 1963
+            }
+        },
+        {
+            "key": "aaro_pajari",
+            "name": "Aaro Pajari",
+            "mode": "new",
+            "sameAs": [],
+            "role": "corps_commander",
+            "skill": 2,
+            "attack": 3,
+            "defense": 2,
+            "planning": 2,
+            "logistics": 1,
+            "traits": ["infantry_officer", "war_hero"],
+            "factSheet": "aaro_pajari",
+            "portrait": {
+                "photo": "aaro_pajari",
+                "role": "Finnish general",
+                "headwear": "wearing a grey Finnish general's peaked cap with a round cockade on the crown, a small lion badge on the band and embroidered oak leaves on the band above the black visor",
+                "uniform": "grey Finnish M36 general's tunic with a stand-up collar, general's collar patches with a lion emblem, the Mannerheim Cross at the throat, a ribbon bar and an Iron Cross on the breast, a leather cross strap",
+                "avoidHeadwear": "field cap, side cap, helmet, fur hat",
+                "notes": "clean-shaven, broad heavy jaw, eyes looking level and straight ahead towards the viewer's left, not upward, irises centred under the lids in the shadow of the visor, stern expression",
+                "born": 1897,
+                "photoYear": 1942
+            }
+        },
+        {
+            "key": "einar_vihma",
+            "name": "Einar Vihma",
+            "mode": "new",
+            "sameAs": [],
+            "role": "corps_commander",
+            "skill": 2,
+            "attack": 2,
+            "defense": 3,
+            "planning": 1,
+            "logistics": 1,
+            "traits": ["jaeger", "jaeger_trait", "brave"],
+            "factSheet": "einar_vihma",
+            "portrait": {
+                "photo": "einar_vihma",
+                "role": "Finnish general",
+                "headwear": "wearing a soft grey Finnish M36 side cap tilted to one side, with a small round cockade at the front and buttons on the side flap",
+                "uniform": "grey Finnish M36 general's tunic with a stand-up collar, general's collar patches with a lion emblem and embroidered oak leaves, the Mannerheim Cross at the throat, a ribbon bar and the Jaeger Battalion 27 badge on the breast pocket, a leather cross strap",
+                "avoidHeadwear": "peaked cap, visor cap, helmet, fur hat",
+                "notes": "clean-shaven, lean deeply lined face, hard stern frontal stare",
+                "born": 1893,
+                "photoYear": 1943
             }
         }
     ]

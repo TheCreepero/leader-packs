@@ -23,4 +23,20 @@ spriteTypes = {
 		name = "GFX_portrait_lp_fin_oiva_koivisto_small"
 		texturefile = "gfx/interface/ideas/lp_fin_oiva_koivisto_small.dds"
 	}
+	spriteType = {
+		name = "GFX_portrait_lp_fin_aaro_pajari"
+		texturefile = "gfx/leaders/FIN/lp_fin_aaro_pajari.dds"
+	}
+	spriteType = {
+		name = "GFX_portrait_lp_fin_aaro_pajari_small"
+		texturefile = "gfx/interface/ideas/lp_fin_aaro_pajari_small.dds"
+	}
+	spriteType = {
+		name = "GFX_portrait_lp_fin_einar_vihma"
+		texturefile = "gfx/leaders/FIN/lp_fin_einar_vihma.dds"
+	}
+	spriteType = {
+		name = "GFX_portrait_lp_fin_einar_vihma_small"
+		texturefile = "gfx/interface/ideas/lp_fin_einar_vihma_small.dds"
+	}
 }

@@ -1,11 +1,25 @@
 {
     "portraits": {
+        "gfx/interface/ideas/lp_fin_aaro_pajari_small.dds": {
+            "leader": "aaro_pajari",
+            "kind": "small",
+            "chosenSha256": "0ba8f5269ac60d668f84f74ebe0a2d4e1fd17e9a8df0489e9373f2c29fa693d3",
+            "cardSha256": "51cded3677ea06067ae0467bfd974daa5f3c59c1797c4546dd70cd47a594a956",
+            "ddsSha256": "5e6064790ca80ad04bce6b87ab98d73418648f4738bd0dcc517dfa6b1559b213"
+        },
         "gfx/interface/ideas/lp_fin_armas_eino_martola_small.dds": {
             "leader": "armas_eino_martola",
             "kind": "small",
             "chosenSha256": "014d570b4cfddc789c5383c0c73cfc6f55e7e7b3d64009ab861a9a358470089b",
             "cardSha256": "51cded3677ea06067ae0467bfd974daa5f3c59c1797c4546dd70cd47a594a956",
             "ddsSha256": "9b81266079159ef11e3c79a91aa81861dfe3616fb347e9dbfe98e63e84dbb8a1"
+        },
+        "gfx/interface/ideas/lp_fin_einar_vihma_small.dds": {
+            "leader": "einar_vihma",
+            "kind": "small",
+            "chosenSha256": "de24eef74ae806fb06f209b738da316a9b2e8498d22c242d6fe43330c04726bd",
+            "cardSha256": "51cded3677ea06067ae0467bfd974daa5f3c59c1797c4546dd70cd47a594a956",
+            "ddsSha256": "2201f8aa893d4d4d5eb47e6a1ac366e537153f5562145f836da671623abc865c"
         },
         "gfx/interface/ideas/lp_fin_kaarlo_heiskanen_small.dds": {
             "leader": "kaarlo_heiskanen",
@@ -21,12 +35,26 @@
             "cardSha256": "51cded3677ea06067ae0467bfd974daa5f3c59c1797c4546dd70cd47a594a956",
             "ddsSha256": "a7504d340d60c20709da9789e5b5357b66e922b3a93ece02b5e68ec627ef0dfa"
         },
+        "gfx/leaders/FIN/lp_fin_aaro_pajari.dds": {
+            "leader": "aaro_pajari",
+            "kind": "large",
+            "chosenSha256": "0ba8f5269ac60d668f84f74ebe0a2d4e1fd17e9a8df0489e9373f2c29fa693d3",
+            "cardSha256": "",
+            "ddsSha256": "71a05ba73adff8ace7d2ac28dc67a3b8031d19ac0cd9685b8825a1f77e921f0f"
+        },
         "gfx/leaders/FIN/lp_fin_armas_eino_martola.dds": {
             "leader": "armas_eino_martola",
             "kind": "large",
             "chosenSha256": "014d570b4cfddc789c5383c0c73cfc6f55e7e7b3d64009ab861a9a358470089b",
             "cardSha256": "",
             "ddsSha256": "a4096aef0b808a6b7850976c44e4d523d8f66a7e4fb3adafae74202f27f0ed2d"
+        },
+        "gfx/leaders/FIN/lp_fin_einar_vihma.dds": {
+            "leader": "einar_vihma",
+            "kind": "large",
+            "chosenSha256": "de24eef74ae806fb06f209b738da316a9b2e8498d22c242d6fe43330c04726bd",
+            "cardSha256": "",
+            "ddsSha256": "cda915181d4d024a5377e2765a2c414b75e344d029356f0cbcf00de15319e4a1"
         },
         "gfx/leaders/FIN/lp_fin_kaarlo_heiskanen.dds": {
             "leader": "kaarlo_heiskanen",

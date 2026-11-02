@@ -1,6 +1,26 @@
 {
     "photos": [
         {
+            "key": "aaro_pajari",
+            "commonsTitle": "File:Kenraalimajuri Pajarin mailla. Aaro Pajari, SAKuva-173084.jpg",
+            "pageUrl": "https://commons.wikimedia.org/wiki/File:Kenraalimajuri_Pajarin_mailla._Aaro_Pajari,_SAKuva-173084.jpg",
+            "downloadUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f7/Kenraalimajuri_Pajarin_mailla._Aaro_Pajari%2C_SAKuva-173084.jpg/1920px-Kenraalimajuri_Pajarin_mailla._Aaro_Pajari%2C_SAKuva-173084.jpg?utm_source=commons.wikimedia.org\u0026utm_campaign=imageinfo\u0026utm_content=thumbnail",
+            "downloadSha256": "e1e1afafddf059af53cafc2912d1a340944e1cbb833310a58eacc3d28a7c5da2",
+            "author": "Unknown author",
+            "credit": "finna.fi",
+            "licenseShortName": "Public domain",
+            "license": "pd",
+            "licenseCategory": "PD",
+            "licenseUrl": "",
+            "usageTerms": "Public domain",
+            "restrictions": "",
+            "dateOriginal": "Taken in 1941-1944",
+            "width": 3467,
+            "height": 4961,
+            "fetched": "2026-11-01",
+            "publicDomainReason": "PD-Finland50"
+        },
+        {
             "key": "armas_eino_martola",
             "commonsTitle": "File:Martola.jpg",
             "pageUrl": "https://commons.wikimedia.org/wiki/File:Martola.jpg",
@@ -17,6 +37,26 @@
             "dateOriginal": "1938",
             "width": 811,
             "height": 1156,
+            "fetched": "2026-11-01",
+            "publicDomainReason": "PD-Finland50"
+        },
+        {
+            "key": "einar_vihma",
+            "commonsTitle": "File:Kenraali Vihma Einar August (SA-kuva 136624).jpg",
+            "pageUrl": "https://commons.wikimedia.org/wiki/File:Kenraali_Vihma_Einar_August_(SA-kuva_136624).jpg",
+            "downloadUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4a/Kenraali_Vihma_Einar_August_%28SA-kuva_136624%29.jpg/1920px-Kenraali_Vihma_Einar_August_%28SA-kuva_136624%29.jpg?utm_source=commons.wikimedia.org\u0026utm_campaign=imageinfo\u0026utm_content=thumbnail",
+            "downloadSha256": "11fa627f46a3dd3f96eb546e530b49c7fb70c17e171d364bfcf6e44eeba6fa57",
+            "author": "Sot.virk. E.Nurmi",
+            "credit": "http://sa-kuva.fi/",
+            "licenseShortName": "Public domain",
+            "license": "pd",
+            "licenseCategory": "PD",
+            "licenseUrl": "",
+            "usageTerms": "Public domain",
+            "restrictions": "",
+            "dateOriginal": "1943-09-10",
+            "width": 4792,
+            "height": 4984,
             "fetched": "2026-11-01",
             "publicDomainReason": "PD-Finland50"
         },

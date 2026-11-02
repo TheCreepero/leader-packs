@@ -41,3 +41,36 @@ Oiva Koivisto (1904-1987), Finnish Navy; ship and staff officer.
 - 1940: chaired the Finnish delegation of the Hanko border commission; staff officer qualification in 1940. Source: https://fi.wikipedia.org/wiki/Oiva_Koivisto (Oiva Koivisto)
 - 1940-1944: commander of the coastal defence ship Väinämöinen. Source: https://fi.wikipedia.org/wiki/Oiva_Koivisto (Oiva Koivisto)
 - 1944-45: commander of the Turku Naval Base; commodore (kommodori) in 1944. Source: https://fi.wikipedia.org/wiki/Oiva_Koivisto (Oiva Koivisto)
+
+## aaro_pajari
+
+Aaro Pajari (1897-1949), Finnish Army; division commander.
+
+- Joined the Suojeluskunta (Civil Guard) in 1917 and fought in the Civil War as a platoon leader and company commander. Source: https://fi.wikipedia.org/wiki/Aaro_Pajari (Aaro Pajari)
+- Staff College, first course 1924-1926; general staff officer from 1931; head of the Suojeluskunta training department for two years. Source: https://fi.wikipedia.org/wiki/Aaro_Pajari (Aaro Pajari)
+- Head of the Pohjois-Häme Suojeluskunta district 1932-1939. Source: https://fi.wikipedia.org/wiki/Aaro_Pajari (Aaro Pajari)
+- Winter War: lieutenant colonel commanding Infantry Regiment 16 (JR 16); at Tolvajärvi on 12 December 1939, then an advance of about 40 km east to Aittojoki. Source: https://fi.wikipedia.org/wiki/Aaro_Pajari (Aaro Pajari)
+- Led Osasto Pajari within Ryhmä Talvela, later the whole group. Source: https://fi.wikipedia.org/wiki/Aaro_Pajari (Aaro Pajari)
+- Continuation War: commander of the 18th Division 1941-1943; the breakthrough on the Karelian Isthmus in August 1941 and the capture of Suursaari in 1942. Source: https://fi.wikipedia.org/wiki/Aaro_Pajari (Aaro Pajari)
+- Major general from 3 October 1941. Source: https://fi.wikipedia.org/wiki/Aaro_Pajari (Aaro Pajari)
+- Commander of the 3rd Division from 21 October 1943 to 21 October 1944: the defensive battles at the VT and VKT lines on the Karelian Isthmus in June 1944. Source: https://fi.wikipedia.org/wiki/Aaro_Pajari (Aaro Pajari)
+- Credited with the capture of Tornio in the Lapland War, October 1944. Source: https://fi.wikipedia.org/wiki/Aaro_Pajari (Aaro Pajari)
+- Knight of the Mannerheim Cross (2nd class) no. 12 on 14 September 1941, and again on 16 October 1944 for the capture of Tornio: a double recipient. Source: https://fi.wikipedia.org/wiki/Aaro_Pajari (Aaro Pajari)
+- Accused of beating political prisoners (Jalkala prisoner camp, from a prisoner's memoir); the charges were found baseless and the Allied Control Commission cleared him. Detained at Päämaja in October 1944 on the Commission's orders; no charges were filed. Source: https://fi.wikipedia.org/wiki/Aaro_Pajari (Aaro Pajari)
+
+## einar_vihma
+
+Einar August Vihma (born Wichmann, surname changed 1936; 1893-1944), Finnish Army; division commander.
+
+- Jääkäri: joined Jäger Battalion 27 on 7 October 1915; sent to Finland on recruiting work in spring 1916, back with the battalion in April 1917, sent to Finland again in October 1917. Source: https://fi.wikipedia.org/wiki/Einar_Vihma (Einar Vihma)
+- Attended the first course of the War College in 1926, without completing the diploma thesis; general staff officer title 8 March 1927. Source: https://fi.wikipedia.org/wiki/Einar_Vihma (Einar Vihma)
+- Colonel from 6 December 1933; director of the Cadet School 1933-1936; commander of the Suomen Valkoinen Kaarti 1936-1939. Source: https://fi.wikipedia.org/wiki/Einar_Vihma (Einar Vihma)
+- Winter War: first commander of the 1st Brigade, then third commander of the 10th Division; from 9 January 1940 to the end of the war commander of the 7th Division. Source: https://fi.wikipedia.org/wiki/Einar_Vihma (Einar Vihma)
+- Interim peace: commander of the Helsinki military district. Source: https://fi.wikipedia.org/wiki/Einar_Vihma (Einar Vihma)
+- Continuation War: commander of the 12th Division, then of the 6th Division from 18 December 1941 until his death; major general from 18 December 1941. Source: https://fi.wikipedia.org/wiki/Einar_Vihma (Einar Vihma)
+- August 1941: the 12th Division under Vihma pushed fast towards Terijoki on the Karelian Isthmus. Source: https://fi.wikipedia.org/wiki/Einar_Vihma (Einar Vihma)
+- Summer 1944: the 6th Division was moved from East Karelia to Ihantala and reinforced Lagus' Panzer Division, which was close to breaking. Mannerheim's memoirs (p. 690) call him "the brave Major General Vihma" and say the division arrived in time to stabilise the defence at Ihantala. Source: https://fi.wikipedia.org/wiki/Einar_Vihma (Einar Vihma), quoting Mannerheim, Muistelmat
+- Knight of the Mannerheim Cross, 12 October 1941. Source: https://fi.wikipedia.org/wiki/Einar_Vihma (Einar Vihma)
+- Led his troops from the front, personally armed, which made him a legend among his men; reported to have been caught in a motti while leading an attack. Source: https://fi.wikipedia.org/wiki/Einar_Vihma (Einar Vihma), citing Kouvolan Sanomat, 22 October 2005
+- Killed by mortar fire on the church hill at Ihantala on 5 August 1944, with his chief of staff Gösta Palkama. Source: https://fi.wikipedia.org/wiki/Einar_Vihma (Einar Vihma)
+- August-September 1941, Saunojankangas: Soviet prisoners were shot on the order of a captain, which Vihma approved; the Supreme Court convicted the captain and treated Vihma's order as a mitigating circumstance. Source: https://fi.wikipedia.org/wiki/Einar_Vihma (Einar Vihma)

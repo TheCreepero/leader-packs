@@ -18,6 +18,8 @@ Historical events for Finland, from the same author.
 [*]Armas-Eino Martola, general
 [*]Kaarlo Heiskanen, general
 [*]Oiva Koivisto, admiral
+[*]Aaro Pajari, general
+[*]Einar Vihma, general
 [/list]
 
 [h1]Portraits[/h1]

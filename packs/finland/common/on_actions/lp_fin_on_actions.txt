@@ -5,6 +5,8 @@ on_actions = {
 				recruit_character = lp_fin_armas_eino_martola
 				recruit_character = lp_fin_kaarlo_heiskanen
 				recruit_character = lp_fin_oiva_koivisto
+				recruit_character = lp_fin_aaro_pajari
+				recruit_character = lp_fin_einar_vihma
 			}
 		}
 	}
