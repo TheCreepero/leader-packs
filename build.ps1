@@ -87,6 +87,9 @@ param(
     [Parameter(ParameterSetName = 'ReviewPage')]
     [string]$PageUrl,
 
+    [Parameter(ParameterSetName = 'RenderShowcase', Mandatory = $true)]
+    [switch]$RenderShowcase,
+
     [switch]$Validate,
     [switch]$NoValidate,
     [switch]$Clean,
@@ -105,6 +108,7 @@ param(
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'tools\HoiModBuild.ps1')
 . (Join-Path $PSScriptRoot 'tools\LeaderPacks.ps1')
+. (Join-Path $PSScriptRoot 'tools\LeaderPacks.Showcase.ps1')
 
 function Get-SelectedPackNames {
     if ($Pack) {
@@ -185,7 +189,9 @@ switch ($PSCmdlet.ParameterSetName) {
         exit ([int](@(Invoke-LpRefreshGameData -RepoRoot $PSScriptRoot -Pack (Get-SelectedPackNames))[-1]))
     }
     'Check' {
-        exit ([int](@(Invoke-LpCheck -RepoRoot $PSScriptRoot -Pack (Get-SelectedPackNames))[-1]))
+        $checkExitCode = [int](@(Invoke-LpCheck -RepoRoot $PSScriptRoot -Pack (Get-SelectedPackNames))[-1])
+        $showcaseExitCode = [int](@(Invoke-LpShowcaseCheck -RepoRoot $PSScriptRoot -Pack (Get-SelectedPackNames))[-1])
+        exit ([math]::Max($checkExitCode, $showcaseExitCode))
     }
     'Audit' {
         Assert-PackGiven -SwitchName '-Audit'
@@ -197,6 +203,9 @@ switch ($PSCmdlet.ParameterSetName) {
     'ReviewPage' {
         Assert-PackGiven -SwitchName '-ReviewPage'
         exit ([int](@(Invoke-LpReviewPage -RepoRoot $PSScriptRoot -Pack $Pack -PageUrl $PageUrl)[-1]))
+    }
+    'RenderShowcase' {
+        exit (Invoke-ForEachSelectedPack -Action { param($packName) Invoke-LpRenderShowcase -RepoRoot $PSScriptRoot -Pack $packName })
     }
 }
 

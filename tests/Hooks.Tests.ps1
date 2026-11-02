@@ -130,7 +130,7 @@ Describe 'Project settings' {
         $settings = Get-Content -LiteralPath (Join-Path $script:RepoRoot '.claude\settings.json') -Raw | ConvertFrom-Json
         @($settings.permissions.ask) | Should -Contain 'Read(tools/LeaderPacks.ps1)'
         @($settings.permissions.ask) | Should -Contain 'Read(tools/HoiModBuild.ps1)'
-        foreach ($switchName in @('Generate', 'FetchPhoto', 'MakePortraits', 'ReviewPage', 'ApplyPortraitReview', 'ConvertPortraits', 'PreviewPortraits', 'RefreshGameData', 'Check', 'Audit', 'SyncMirrors')) {
+        foreach ($switchName in @('Generate', 'FetchPhoto', 'MakePortraits', 'ReviewPage', 'ApplyPortraitReview', 'ConvertPortraits', 'PreviewPortraits', 'RefreshGameData', 'Check', 'Audit', 'SyncMirrors', 'RenderShowcase')) {
             @($settings.permissions.allow) | Should -Contain "PowerShell(powershell -File .\build.ps1 -$switchName*)"
         }
     }

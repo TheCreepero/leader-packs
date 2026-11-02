@@ -1164,6 +1164,191 @@ Describe 'Game data snapshot' {
     }
 }
 
+Describe 'Workshop showcase' {
+    BeforeAll {
+        . (Join-Path $script:LpRepoRoot 'tools\LeaderPacks.Showcase.ps1')
+
+        function Set-LpFixtureShowcase {
+            param([string]$Root, $Value)
+
+            Write-LpJson -Path (Join-Path $Root 'source\testland\showcase.json') -Value $Value
+        }
+
+        function New-LpStubShowcaseManager {
+            param([int]$ExitCode = 0)
+
+            $managerRoot = Join-Path $TestDrive ('showcase-manager-' + [guid]::NewGuid().ToString('N').Substring(0, 6))
+            $showcaseFolder = Join-Path $managerRoot 'Scripts\Showcase'
+            New-Item -ItemType Directory -Path $showcaseFolder -Force | Out-Null
+            $rendererStub = @'
+[CmdletBinding()]
+param([string]$SpecPath, [string]$OutputDir)
+$managerRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
+Copy-Item -LiteralPath $SpecPath -Destination (Join-Path $managerRoot 'received-spec.json')
+[System.IO.File]::WriteAllText((Join-Path $managerRoot 'received-output.txt'), $OutputDir)
+'Rendered 0 image(s) to ' + $OutputDir
+exit 0
+'@
+            $rendererStub = $rendererStub.Replace('exit 0', "exit $ExitCode")
+            [System.IO.File]::WriteAllText((Join-Path $showcaseFolder 'New-HoiShowcaseImage.ps1'), ($rendererStub -replace "`r?`n", "`r`n"))
+            return $managerRoot
+        }
+
+        function Get-LpShowcaseErrors {
+            param([string]$Root)
+
+            return @(Test-LpShowcaseSource -RepoRoot $Root -Pack 'testland' | Where-Object { $_.Level -eq 'ERROR' } | ForEach-Object { "$($_.Where): $($_.Message)" })
+        }
+    }
+
+    It 'builds a roster and a card for every leader that is not skip, with the role labels, colours and stats' {
+        $fixtureRoot = New-LpFixtureRepo
+        $spec = (New-LpShowcaseSpec -RepoRoot $fixtureRoot -Pack 'testland').Spec
+        $pages = @($spec.pages)
+        $spec.brand.label | Should -Be 'Commanders Pack: Testland'
+        $spec.brand.flag.tag | Should -Be 'TST'
+        $pages[0].layout | Should -Be 'roster'
+        @($pages[0].items | ForEach-Object { $_.caption }) | Should -Be @('General', 'Field marshal', 'Admiral', 'General', 'Admiral')
+        @($pages[0].items | ForEach-Object { $_.accent }) | Should -Be @('#7FA35B', '#C9A866', '#5B93D6', '#7FA35B', '#5B93D6')
+        @($pages | Select-Object -Skip 1 | ForEach-Object { $_.file }) | Should -Be @('01-alpha_leader', '02-bravo_leader', '03-charlie_leader', '04-delta_advisor', '05-echo_admiral')
+        @($pages[1].stats | ForEach-Object { $_.label }) | Should -Be @('Skill', 'Attack', 'Defense', 'Planning', 'Logistics')
+        @($pages[3].stats | ForEach-Object { $_.label }) | Should -Be @('Skill', 'Attack', 'Defense', 'Maneuvering', 'Coordination')
+        @($pages[3].stats | ForEach-Object { $_.value }) | Should -Be @(2, 1, 3, 2, 2)
+        $pages[3].stats[1].icon | Should -Be 'GFX_trait_attack'
+        $pages[3].roleAccent | Should -Be '#5B93D6'
+    }
+
+    It 'drops the Road to 56 counterpart of a trait and gives every trait its game name and icon' {
+        $fixtureRoot = New-LpFixtureRepo
+        Set-LpFixtureLeaders -Root $fixtureRoot -Change { param($s) $s.leaders[0].traits = @('infantry_officer', 'engineer_trait') }
+        $alphaCard = @((New-LpShowcaseSpec -RepoRoot $fixtureRoot -Pack 'testland').Spec.pages)[1]
+        @($alphaCard.traits | ForEach-Object { $_.name.locKey }) | Should -Be @('infantry_officer')
+        $alphaCard.traits[0].name.fallback | Should -Be 'Infantry Officer'
+        $alphaCard.traits[0].icon | Should -Be 'GFX_trait_infantry_officer'
+    }
+
+    It 'credits a CC BY photo with its author and licence, and every portrait as AI-assisted' {
+        $fixtureRoot = New-LpFixtureRepo
+        $pages = @((New-LpShowcaseSpec -RepoRoot $fixtureRoot -Pack 'testland').Spec.pages)
+        $photos = Read-LpJson -Path (Join-Path $fixtureRoot 'source\testland\photos.json')
+        $alphaPhoto = @($photos.photos | Where-Object { $_.key -eq 'alpha' })[0]
+        $pages[1].note | Should -Be ('Portrait: AI-assisted repaint of a photograph by {0} ({1})' -f $alphaPhoto.author, $alphaPhoto.licenseShortName)
+        $pages[2].note | Should -Be 'Portrait: AI-assisted repaint of a period photograph'
+    }
+
+    It 'takes the card lines and years from showcase.json, and the birth year alone without them' {
+        $fixtureRoot = New-LpFixtureRepo
+        Set-LpFixtureShowcase -Root $fixtureRoot -Value ([ordered]@{ leaders = [ordered]@{ alpha_leader = [ordered]@{ card = @('First line.', 'Second line.'); years = @(1894, 1960) } } })
+        $built = New-LpShowcaseSpec -RepoRoot $fixtureRoot -Pack 'testland'
+        $pages = @($built.Spec.pages)
+        @($pages[1].lines) | Should -Be @('First line.', 'Second line.')
+        @($pages[1].years) | Should -Be @(1894, 1960)
+        @($pages[2].lines).Count | Should -Be 0
+        @($pages[2].years) | Should -Be @(1892)
+        $built.CardlessLeaders | Should -Contain 'Bravo Leader'
+        $built.CardlessLeaders | Should -Not -Contain 'Alpha Leader'
+        Get-LpShowcaseErrors -Root $fixtureRoot | Should -BeNullOrEmpty
+    }
+
+    It 'rejects an unknown or skip leader, an unknown field, a fifth or empty line, and warns about a birth year that differs' {
+        $fixtureRoot = New-LpFixtureRepo
+        Set-LpFixtureShowcase -Root $fixtureRoot -Value ([ordered]@{
+                leaders = [ordered]@{
+                    nobody          = [ordered]@{ card = @('x') }
+                    foxtrot_marshal = [ordered]@{ card = @('x') }
+                    alpha_leader    = [ordered]@{ card = @('1', '2', '3', '4', '5'); bio = 'x' }
+                    bravo_leader    = [ordered]@{ card = @(' '); years = @(1893) }
+                }
+            })
+        $errors = Get-LpShowcaseErrors -Root $fixtureRoot
+        $errors | Should -Contain 'source/testland/showcase.json leaders.nobody: no leader with this key in leaders.json'
+        $errors | Should -Contain 'source/testland/showcase.json leaders.foxtrot_marshal: the leader is skip and gets no showcase card'
+        $errors | Should -Contain "source/testland/showcase.json leaders.alpha_leader: unknown field 'bio'; a leader has 'card' and 'years'"
+        $errors | Should -Contain 'source/testland/showcase.json leaders.alpha_leader: card has 5 lines; at most 4 fit'
+        $errors | Should -Contain 'source/testland/showcase.json leaders.bravo_leader: a card line is empty'
+        $warnings = @(Test-LpShowcaseSource -RepoRoot $fixtureRoot -Pack 'testland' | Where-Object { $_.Level -eq 'WARN' } | ForEach-Object { $_.Message })
+        $warnings | Should -Contain 'born 1893 here but 1892 in leaders.json portrait.born'
+        Invoke-LpShowcaseCheck -RepoRoot $fixtureRoot -Pack @('testland') 6>$null | Should -Be 1
+    }
+
+    It 'accepts a card of 4 lines with a line of 160 characters and a birth year that matches, without a finding' {
+        $fixtureRoot = New-LpFixtureRepo
+        Set-LpFixtureShowcase -Root $fixtureRoot -Value ([ordered]@{ leaders = [ordered]@{ bravo_leader = [ordered]@{ card = @('One.', 'Two.', 'Three.', ('x' * 160)); years = @(1892, 1950) } } })
+        @(Test-LpShowcaseSource -RepoRoot $fixtureRoot -Pack 'testland') | Should -BeNullOrEmpty
+        Invoke-LpShowcaseCheck -RepoRoot $fixtureRoot -Pack @('testland') 6>$null | Should -Be 0
+    }
+
+    It 'rejects a line over 160 characters, a line break, three years, a year that is not whole, a leader without card lines and an unknown top-level field' {
+        $fixtureRoot = New-LpFixtureRepo
+        Set-LpFixtureShowcase -Root $fixtureRoot -Value ([ordered]@{
+                leaders = [ordered]@{
+                    alpha_leader   = [ordered]@{ card = @(('x' * 161)) }
+                    bravo_leader   = [ordered]@{ card = @("One`nTwo") }
+                    charlie_leader = [ordered]@{ card = @('x'); years = @(1890, 1950, 1960) }
+                    delta_advisor  = [ordered]@{ card = @('x'); years = @(1890.5) }
+                    echo_admiral   = [ordered]@{ years = @(1890) }
+                }
+                extra   = 'x'
+            })
+        Get-LpShowcaseErrors -Root $fixtureRoot | Should -Be @(
+            "source/testland/showcase.json: unknown field 'extra'; only 'leaders' is read",
+            'source/testland/showcase.json leaders.alpha_leader: a card line has 161 characters; at most 160 fit',
+            'source/testland/showcase.json leaders.bravo_leader: a card line holds a line break',
+            'source/testland/showcase.json leaders.charlie_leader: years is [born] or [born, died], whole numbers',
+            'source/testland/showcase.json leaders.delta_advisor: years is [born] or [born, died], whole numbers',
+            'source/testland/showcase.json leaders.echo_admiral: card needs 1 to 4 lines'
+        )
+    }
+
+    It 'wires the showcase check into build.ps1 -Check and -RenderShowcase' {
+        $fixtureRoot = New-LpFixtureRepo
+        Copy-Item -LiteralPath (Join-Path $script:LpRepoRoot 'build.ps1') -Destination $fixtureRoot
+        foreach ($toolFile in @(Get-ChildItem -LiteralPath (Join-Path $script:LpRepoRoot 'tools') -File | Where-Object { $_.Name -ne 'HoiModBuild.json' })) {
+            Copy-Item -LiteralPath $toolFile.FullName -Destination (Join-Path $fixtureRoot 'tools')
+        }
+        $fixtureBuild = Join-Path $fixtureRoot 'build.ps1'
+        $generateOutput = @(& powershell -NoProfile -ExecutionPolicy Bypass -File $fixtureBuild -Generate -Pack testland)
+        $LASTEXITCODE | Should -Be 0 -Because ($generateOutput -join "`n")
+        $cleanOutput = @(& powershell -NoProfile -ExecutionPolicy Bypass -File $fixtureBuild -Check -Pack testland)
+        $LASTEXITCODE | Should -Be 0 -Because ($cleanOutput -join "`n")
+        Set-LpFixtureShowcase -Root $fixtureRoot -Value ([ordered]@{ leaders = [ordered]@{ nobody = [ordered]@{ card = @('x') } } })
+        $checkOutput = @(& powershell -NoProfile -ExecutionPolicy Bypass -File $fixtureBuild -Check -Pack testland)
+        $LASTEXITCODE | Should -Be 1
+        ($checkOutput -join "`n") | Should -Match 'leaders\.nobody: no leader with this key in leaders\.json'
+        $renderOutput = @(& powershell -NoProfile -ExecutionPolicy Bypass -File $fixtureBuild -RenderShowcase -Pack testland)
+        $LASTEXITCODE | Should -Be 1
+        ($renderOutput -join "`n") | Should -Match 'RenderShowcase: source/testland/showcase\.json has errors; nothing rendered\.'
+    }
+
+    It 'hands the spec to the Manager renderer and writes it under artifacts/workshop-images/<pack>' {
+        $fixtureRoot = New-LpFixtureRepo
+        $managerRoot = New-LpStubShowcaseManager
+        $exitCode = @(Invoke-LpRenderShowcase -RepoRoot $fixtureRoot -Pack 'testland' -ManagerRoot $managerRoot 6>$null)[-1]
+        $exitCode | Should -Be 0
+        $outputDir = Join-Path $fixtureRoot 'artifacts\workshop-images\testland'
+        [System.IO.File]::ReadAllText((Join-Path $managerRoot 'received-output.txt')) | Should -Be $outputDir
+        $received = Read-LpJson -Path (Join-Path $managerRoot 'received-spec.json')
+        @($received.pages).Count | Should -Be 6
+        Test-Path -LiteralPath (Join-Path $outputDir 'showcase-spec.json') | Should -BeTrue
+    }
+
+    It 'passes the exit code of the renderer back' {
+        $managerRoot = New-LpStubShowcaseManager -ExitCode 2
+        @(Invoke-LpRenderShowcase -RepoRoot (New-LpFixtureRepo) -Pack 'testland' -ManagerRoot $managerRoot 6>$null)[-1] | Should -Be 2
+    }
+
+    It 'stops before the renderer on a showcase error, a missing portrait or a missing Manager' {
+        $managerRoot = New-LpStubShowcaseManager
+        $fixtureRoot = New-LpFixtureRepo
+        Set-LpFixtureShowcase -Root $fixtureRoot -Value ([ordered]@{ leaders = [ordered]@{ nobody = [ordered]@{ card = @('x') } } })
+        @(Invoke-LpRenderShowcase -RepoRoot $fixtureRoot -Pack 'testland' -ManagerRoot $managerRoot 6>$null)[-1] | Should -Be 1
+        $noPortraitRoot = New-LpFixtureRepo -NoPortraits
+        @(Invoke-LpRenderShowcase -RepoRoot $noPortraitRoot -Pack 'testland' -ManagerRoot $managerRoot 6>$null)[-1] | Should -Be 1
+        @(Invoke-LpRenderShowcase -RepoRoot (New-LpFixtureRepo) -Pack 'testland' -ManagerRoot '' 6>$null)[-1] | Should -Be 1
+        Test-Path -LiteralPath (Join-Path $managerRoot 'received-spec.json') | Should -BeFalse
+    }
+}
+
 Describe 'This repository' {
     It 'every pack passes the check' {
         $packNames = @(Get-LpPackNames -RepoRoot $script:LpRepoRoot)
@@ -1201,8 +1386,15 @@ Describe 'This repository' {
         }
     }
 
+    It 'every pack passes the showcase check' {
+        . (Join-Path $script:LpRepoRoot 'tools\LeaderPacks.Showcase.ps1')
+        foreach ($packName in @(Get-LpPackNames -RepoRoot $script:LpRepoRoot)) {
+            @(Test-LpShowcaseSource -RepoRoot $script:LpRepoRoot -Pack $packName | Where-Object { $_.Level -eq 'ERROR' } | ForEach-Object { "$($_.Where): $($_.Message)" }) | Should -BeNullOrEmpty
+        }
+    }
+
     It 'keeps the PowerShell tools in ASCII' {
-        foreach ($toolPath in @('tools\LeaderPacks.ps1', 'build.ps1', 'tests\LeaderPacks.Fixture.ps1', '.claude\hooks\Protect-ProjectFiles.ps1')) {
+        foreach ($toolPath in @('tools\LeaderPacks.ps1', 'tools\LeaderPacks.Showcase.ps1', 'build.ps1', 'tests\LeaderPacks.Fixture.ps1', '.claude\hooks\Protect-ProjectFiles.ps1')) {
             $toolBytes = [System.IO.File]::ReadAllBytes((Join-Path $script:LpRepoRoot $toolPath))
             @($toolBytes | Where-Object { $_ -gt 0x7E }).Count | Should -Be 0 -Because $toolPath
         }

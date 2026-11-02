@@ -1,0 +1,49 @@
+{
+    "leaders": {
+        "armas_eino_martola": {
+            "card": [
+                "Jäger: fought with the Jäger Battalion at Misse, the Gulf of Riga and the Aa river, 1916-17.",
+                "First Finnish officer to earn the diploma of the French École Supérieure de Guerre (1921).",
+                "Winter War: commander of the 1st Division on the Karelian Isthmus.",
+                "Commanded VI Army Corps in the 1944 Soviet offensive; Mannerheim Cross no. 130."
+            ],
+            "years": [1896, 1986]
+        },
+        "kaarlo_heiskanen": {
+            "card": [
+                "Jäger: served in the Jäger pioneer company.",
+                "Winter War: commanded Infantry Regiment 17 in the defence of Summa.",
+                "Continuation War: commander of the 11th Division; captured Prääsä in 1941.",
+                "Knight of the Mannerheim Cross no. 21 (1941)."
+            ],
+            "years": [1894, 1962]
+        },
+        "oiva_koivisto": {
+            "card": [
+                "Captain of the gunboat Karjala, 1930-32.",
+                "Winter War: chief of staff of the Coastal Fleet.",
+                "Commanded the coastal defence ship Väinämöinen, 1940-44.",
+                "Commander of the Turku Naval Base and commodore, 1944."
+            ],
+            "years": [1904, 1987]
+        },
+        "aaro_pajari": {
+            "card": [
+                "Winter War: led Infantry Regiment 16 at Tolvajärvi, December 1939.",
+                "Continuation War: commander of the 18th Division, then the 3rd Division.",
+                "Credited with the capture of Tornio in the Lapland War, 1944.",
+                "Double Knight of the Mannerheim Cross (1941 and 1944)."
+            ],
+            "years": [1897, 1949]
+        },
+        "einar_vihma": {
+            "card": [
+                "Jäger: joined Jäger Battalion 27 in 1915.",
+                "Winter War: commander of the 7th Division from January 1940.",
+                "Led the 6th Division at Ihantala in 1944; killed there by mortar fire.",
+                "Knight of the Mannerheim Cross (1941); Mannerheim called him \"the brave Major General Vihma\"."
+            ],
+            "years": [1893, 1944]
+        }
+    }
+}

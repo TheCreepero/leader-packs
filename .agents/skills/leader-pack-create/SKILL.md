@@ -17,10 +17,10 @@ Plans a pack or new leaders, down to every id, stat, trait, photo and picked por
 - **The licence is the tool's decision.** A photo enters the pack only after `build.ps1 -FetchPhoto` printed `ACCEPTED` for it.
 - **The owner picks every portrait.** No agent picks or rejects a candidate, and no portrait enters the plan without the owner's pick on the review page.
 - **What planning writes.** The plan, the dossier under `research/<pack>/`, files under `scratch/`, and the pack's working sources that the portrait loop needs: `source/<pack>/leaders.json` (roster and `portrait` fields, written by hand), `photos.json` (only by `-FetchPhoto`), `portraits.json` and `portraits/*.png` (only by `-MakePortraits` and `-ApplyPortraitReview`), `review.json` (only by `-ReviewPage -PageUrl`), the snapshot under `data/<pack>/` (only by `-RefreshGameData`). `packs/` is not touched, except by `-NewPack` for a brand-new pack.
-- **No vanilla image** goes on the review page, into the plan or into the repository. The page shows only the licensed photos and the generated candidates.
+- **No vanilla image** goes on the review page, into the plan or into the repository. The page shows only the licensed photos and the generated candidates. The Workshop gallery images that `leader-pack-release` renders with game art stay git-ignored under `artifacts/`.
 - **Dossiers are kept.** Every dossier stays in `research/<pack>/`, never deleted or trimmed, also when the plan is dropped: the candidates not chosen are where the pack's next leaders start.
 - **ComfyUI.** The portrait creator starts it only when it is off and stops what it started. A ComfyUI the owner opened stays running.
-- Ask the owner only in Phase 0, Phase 2 and the review loop of Phase 4.
+- Ask the owner only in Phase 0, Phase 2, the review loop of Phase 4 and the card lines of Phase 5.
 
 ## Phase 0: scope
 1. Ask the owner, in one message: the country (and its tag if not obvious), the number of leaders (default 8 to 12), the mix of generals and admirals, and anything the pack must leave out. Record the answers in the plan's "Decisions".
@@ -72,6 +72,7 @@ Fallback when the page's store is unavailable (the publish refuses the capabilit
 2. Choose each `new` and `addRole` leader's role, `skill`, attribute skills and traits by `docs/stat-guide.md`, from his fact-sheet section, the bands of `data/stat-bands.json` and the traits of `data/<pack>/start-traits.json`. Write one line per leader in the plan's "Stat notes": the facts each value rests on.
 3. Write the plan's `json leaders` block: the whole `source/<pack>/leaders.json` as it should ship, from the working copy with the stats, traits and `factSheet` added. For an existing pack, start from the current file and add to it.
 4. Fill the plan's "Leaders" table.
+5. Propose the Workshop card of each `new` and `addRole` leader: 3 or 4 short lines, each restating one sourced bullet of his fact-sheet section (his best-known command, a decoration, a defining fact), and his years from the section's first line. Leave out a bullet about an accusation or a crime unless the owner asks for it. Show the owner the lines; on their word, write them into the plan's `json showcase` block.
 
 ## Phase 6: gate
 1. Rehearse the plan without touching the repository: `robocopy . scratch\rehearsal /MIR /XD .git scratch artifacts sources-cache skills`, then in `scratch\rehearsal` run implementation steps 1 to 6 of the plan exactly as written (they write only the copy). The copy leaves out the skill folders: a copy of them inside the Manager tree is a duplicate skill to the knowledge audit, and `-Test` would fail on it. Every step must give what it says to expect; fix the plan, not the copy, and rehearse again. List in "Kept on judgment" any `[WARN]` of the rehearsal's `-Check -Pack <pack>` that stays, with the reason. Then, from the repository root (a shell still inside the copy keeps it locked), `Remove-Item -Recurse -Force scratch\rehearsal`.

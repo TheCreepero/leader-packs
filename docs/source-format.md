@@ -94,6 +94,39 @@ One section per leader, `## <key>`, with the facts behind the leader, his role a
 
 The opening of the pack's Workshop description in Steam BBCode. `-Generate` adds the leader list, a sentence that the portraits are AI-assisted repaints of period photographs with a link to the pack's wiki page for the photo credits, and the author's other mods (`data/workshop.json`).
 
+## `source/<pack>/showcase.json`
+
+Optional; the owner's approved text for the pack's Workshop gallery images. It changes only on the owner's word.
+
+```json
+{
+    "leaders": {
+        "<leader key>": {
+            "card": ["<line>", "<line>", "<line>"],
+            "years": [1896, 1986]
+        }
+    }
+}
+```
+
+- `card`: 1 to 4 lines, each a restatement of a sourced bullet of the leader's fact-sheet section, one line of at most 160 characters.
+- `years`: `[born, died]`, or `[born]` for a man whose death year the fact sheet does not give.
+- A leader without an entry gets a card with role, birth year (`portrait.born`), stats and traits only, and `-RenderShowcase` warns about it.
+
+`-Check` fails on a key that is not a leader or is a `skip` leader, on an unknown field, and on an empty, broken or fifth line. It warns when `years` starts with another year than `portrait.born`.
+
+`build.ps1 -RenderShowcase [-Pack <pack>]` draws the images with the Manager's `Scripts/Showcase/New-HoiShowcaseImage.ps1` (skill `hoi4-workshop-showcase`) into the git-ignored `artifacts/workshop-images/<pack>/`, with the spec it built beside them:
+
+- **`00-roster.png`:** every leader that is not `skip`. It splits into pages of 10 as `00-roster-1.png`, `00-roster-2.png` and so on.
+- **One card per leader:** `NN-<key>.png`, in `leaders.json` order.
+- **Role:** "General" in green, "Field marshal" in brass, "Admiral" in blue.
+- **Stats:** the skill, then the four attribute skills of the role kind, with the game's icons.
+- **Traits:** with their game names and icons, leaving out the Road to 56 counterpart traits of `data/<pack>/start-traits.json`.
+- **Credit line:** "AI-assisted repaint", with the author and licence of a CC BY photo.
+- **Background and flag:** the loading screen of `data/thumbnail.json`, and the pack's flag in its 1936 variant.
+
+The owner uploads the images on the Workshop page by hand ("Add/edit images & videos").
+
 ## `source/<pack>/photos.json`
 
 Written only by `build.ps1 -FetchPhoto -Pack <pack> -File "File:<Commons title>" -Key <photo key> [-DryRun]`. The licence gate is Event Packs': public domain with a `PD-` template stating why, CC0, or CC BY with a named author; it refuses a file tagged for deletion or dispute, a file that is not a picture, a download outside Wikimedia's servers, and a picture under 300 px on its shorter side. The download is kept in `sources-cache/<pack>/` (git-ignored). A request that Wikimedia answers with 429 or 503 is tried again up to five times in all, waiting 5, 10, 20 and 40 seconds, or longer when its `Retry-After` asks (at most 120), and prints Wikimedia's own message each time. The User-Agent names the repository as its contact, as Wikimedia's User-Agent policy asks. Each row keeps the Commons title and page, the download URL and its SHA-256, author, credit, licence, licence URL, Commons restrictions, the original size and the fetch date. `-Check` derives the licence category from the recorded Commons code again and compares the hash with the cached download when it is there; `-Audit` reads every licence from Commons again and warns about one read more than 180 days ago.

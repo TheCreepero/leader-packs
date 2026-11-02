@@ -15,7 +15,12 @@ Shared rules for every mod in this tree (file encodings, build commands, engine 
 - Nobody appears twice: each leader is `new`, `addRole` or `skip`, decided against the committed snapshot of vanilla and Road to 56; `sameAs` holds every id the person has [RT56-011] [SCR-035]. `addRole` keeps the advisor role and its small card [CHR-013].
 - Stats stay within `data/stat-bands.json` [CHR-006] [CHR-012], traits within `data/<pack>/start-traits.json`, both chosen from the fact sheet by `docs/stat-guide.md`.
 - Photos come from Wikimedia Commons, licensed public domain (with the `PD-` reason Commons gives), CC0 or CC BY, and only through `-FetchPhoto`, which decides the licence. A portrait from a CC BY photo is credited as an adaptation on the pack's generated wiki page; every Workshop description says the portraits are AI-assisted.
-- No vanilla image is ever committed, uploaded or shown on a review page: no vanilla portrait, card art or loading screen, nor anything converted from one. The one exception is a pack's Workshop thumbnail: its background, the loading screen `data/thumbnail.json` names, and the country's flag, both read from the game install when the thumbnail is rendered, committed and uploaded only inside `packs/<pack>/thumbnail.png`, never as files of their own. Style references are read from the game install at run time and kept as numbers only.
+- No vanilla image is ever committed, uploaded or shown on a review page: no vanilla portrait, card art or loading screen, nor anything converted from one. Two exceptions, both read from the game install when they are rendered and never kept as files of their own:
+  - a pack's Workshop thumbnail, with the loading screen `data/thumbnail.json` names and the country's flag, committed and uploaded only inside `packs/<pack>/thumbnail.png`;
+  - its Workshop gallery images from `-RenderShowcase`, with that loading screen, the flag, the game's interface frames, icons and bitmap fonts, written only to the git-ignored `artifacts/workshop-images/<pack>/` and uploaded by the owner on the Workshop page.
+
+  Style references are read from the game install at run time and kept as numbers only.
+- A showcase card line restates a sourced bullet of the leader's fact sheet; `source/<pack>/showcase.json` changes only on the owner's word.
 - The owner picks every portrait on the review page; no agent picks or rejects one. The picked PNG is committed, because generation is not reproducible.
 - An agent that starts ComfyUI stops it at the end of its run; a ComfyUI the owner opened stays running.
 - Every claim behind a leader's role, stats and traits is in his fact-sheet section with a source; the `lp-reviewer` agent passes every plan before it is READY.
@@ -23,9 +28,9 @@ Shared rules for every mod in this tree (file encodings, build commands, engine 
 - Work goes plan first: `leader-pack-create` writes a READY plan in `docs/plans/`, `leader-pack-implement` carries it out, the commit waits for the owner.
 
 ## Commands beyond build.ps1
-- Pack switches: `-NewPack -Pack <pack> -Tag <TAG> -DisplayName "<Country>"`, `-RefreshGameData [-Pack]`, `-FetchPhoto -Pack -File "File:<title>" -Key <photo key> [-DryRun]`, `-MakePortraits -Pack [-Leader <key>] [-StartComfyUI]`, `-ReviewPage -Pack [-PageUrl <url>]`, `-ApplyPortraitReview -Pack -Leader <key> (-Pick <seed> | -Reject "<reason>")`, `-Generate [-Pack] [-DryRun]`, `-ConvertPortraits [-Pack] [-Force]`, `-PreviewPortraits [-Pack]`, `-Check [-Pack]`, `-Audit -Pack`, `-SyncMirrors`. `Get-Help .\build.ps1` lists the parameters.
+- Pack switches: `-NewPack -Pack <pack> -Tag <TAG> -DisplayName "<Country>"`, `-RefreshGameData [-Pack]`, `-FetchPhoto -Pack -File "File:<title>" -Key <photo key> [-DryRun]`, `-MakePortraits -Pack [-Leader <key>] [-StartComfyUI]`, `-ReviewPage -Pack [-PageUrl <url>]`, `-ApplyPortraitReview -Pack -Leader <key> (-Pick <seed> | -Reject "<reason>")`, `-Generate [-Pack] [-DryRun]`, `-ConvertPortraits [-Pack] [-Force]`, `-PreviewPortraits [-Pack]`, `-Check [-Pack]`, `-Audit -Pack`, `-RenderShowcase [-Pack]`, `-SyncMirrors`. `Get-Help .\build.ps1` lists the parameters.
 - Run the tools; don't read `tools/LeaderPacks.ps1` or `tools/HoiModBuild.ps1` (a read asks the user first). If one seems broken, report the command and its output.
-- `-MakePortraits` and the small cards of `-ConvertPortraits` need the Modding Manager and its ComfyUI venv (`Config/comfyui.json`); `-RefreshGameData` needs the game; `-ConvertPortraits`, `-PreviewPortraits` and `-ReviewPage` need Python 3 with Pillow.
+- `-MakePortraits` and the small cards of `-ConvertPortraits` need the Modding Manager and its ComfyUI venv (`Config/comfyui.json`); `-RefreshGameData` needs the game; `-ConvertPortraits`, `-PreviewPortraits` and `-ReviewPage` need Python 3 with Pillow; `-RenderShowcase` needs the Modding Manager (`Scripts/Showcase`, skill `hoi4-workshop-showcase`), the game and Python 3 with Pillow.
 
 ## Agents and skills
 | Name | Kind | Does |

@@ -62,13 +62,14 @@ One line per leader and round: the round, its seeds, the owner's decision (pick 
 - [ ] Every `new` and `addRole` leader has a portrait the owner picked, recorded as `chosen` in `portraits.json`.
 - [ ] Every `new` and `addRole` leader has a role, stats and traits by `docs/stat-guide.md`, with a "Stat notes" line.
 - [ ] Every `skip` leader has a reason that names the covering id.
+- [ ] Every `new` and `addRole` leader has card lines and years in the `json showcase` block, each line restating a sourced fact-sheet bullet, approved by the owner.
 - [ ] The rehearsal of steps 1 to 6 gave what each step expects.
 - [ ] `lp-reviewer` returned ready on the plan.
 
 ## Implementation steps
 
 - [ ] 1. Write the leaders: replace `source/<pack>/leaders.json` with the `json leaders` block below, whole.
-- [ ] 2. Write the fact sheets: add each section of the `markdown fact-sheets` block below to `source/<pack>/fact-sheets.md`, replacing a section of the same key.
+- [ ] 2. Write the fact sheets: add each section of the `markdown fact-sheets` block below to `source/<pack>/fact-sheets.md`, replacing a section of the same key. Then add each leader of the `json showcase` block to `leaders` of `source/<pack>/showcase.json` (create the file when the pack has none), replacing an entry of the same key.
 - [ ] 3. `powershell -File .\build.ps1 -Generate -Pack <pack>`: expect `Generated pack '<pack>'`.
 - [ ] 4. `powershell -File .\build.ps1 -ConvertPortraits -Pack <pack>`: expect `Pack '<pack>': <n> portrait file(s) converted, <m> up to date.` and exit 0.
 - [ ] 5. `powershell -File .\build.ps1 -Check -Pack <pack>`: expect `Check OK`, with no warning outside "Kept on judgment".
@@ -91,6 +92,21 @@ One line per leader and round: the round, its seeds, the owner's decision (pick 
 ## <key>
 
 - <fact>. Source: <URL> (<page title>)
+```
+
+## Showcase cards
+
+The owner's approved Workshop card lines (`docs/source-format.md`, `source/<pack>/showcase.json`): 3 or 4 lines per leader, each restating a bullet of his fact-sheet section above, and his years.
+
+```json showcase
+{
+    "leaders": {
+        "<key>": {
+            "card": ["<line>", "<line>", "<line>"],
+            "years": [1890, 1960]
+        }
+    }
+}
 ```
 
 ## Leaders source
