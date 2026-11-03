@@ -355,7 +355,7 @@ Describe 'CC BY-SA photos' {
         $workshopText | Should -Match ([regex]::Escape('The portraits of Alpha Leader adapt photographs licensed CC BY-SA and are themselves licensed [url=https://creativecommons.org/licenses/by-sa/4.0/]CC BY-SA 4.0[/url].'))
         Get-LpFixtureErrors -Root $fixtureRoot | Should -BeNullOrEmpty
         $alphaCard = @((New-LpShowcaseSpec -RepoRoot $fixtureRoot -Pack 'testland').Spec.pages)[1]
-        $alphaCard.note | Should -Be 'Portrait (CC BY-SA 4.0): AI-assisted repaint of a photograph by Bundesarchiv, Bild 183-S37772 / CC-BY-SA 3.0 (CC BY-SA 3.0 de)'
+        $alphaCard.note | Should -Be 'Portrait (CC BY-SA 4.0) adapted from a photograph by Bundesarchiv, Bild 183-S37772 / CC-BY-SA 3.0 (CC BY-SA 3.0 de)'
     }
 }
 
@@ -539,13 +539,15 @@ exit 0
         $alphaCard.traits[0].icon | Should -Be 'GFX_trait_infantry_officer'
     }
 
-    It 'credits a CC BY photo with its author and licence, and every portrait as AI-assisted' {
+    It 'credits a CC BY photo with its author and licence, and puts no note on a public domain portrait or AI wording on any image' {
         $fixtureRoot = New-LpFixtureRepo
         $pages = @((New-LpShowcaseSpec -RepoRoot $fixtureRoot -Pack 'testland').Spec.pages)
         $photos = Read-LpJson -Path (Join-Path $fixtureRoot 'source\testland\photos.json')
         $alphaPhoto = @($photos.photos | Where-Object { $_.key -eq 'alpha' })[0]
-        $pages[1].note | Should -Be ('Portrait: AI-assisted repaint of a photograph by {0} ({1})' -f $alphaPhoto.author, $alphaPhoto.licenseShortName)
-        $pages[2].note | Should -Be 'Portrait: AI-assisted repaint of a period photograph'
+        $pages[1].note | Should -Be ('Portrait adapted from a photograph by {0} ({1})' -f $alphaPhoto.author, $alphaPhoto.licenseShortName)
+        $pages[2].Contains('note') | Should -BeFalse
+        $pages[0].subtitle | Should -Be '5 leaders for Testland'
+        ($pages | ConvertTo-Json -Depth 10) | Should -Not -Match 'AI-assisted'
     }
 
     It 'takes the card lines and years from showcase.json, and the birth year alone without them' {

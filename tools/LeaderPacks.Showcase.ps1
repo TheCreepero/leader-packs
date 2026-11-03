@@ -113,13 +113,14 @@ function Test-LpShowcaseSource {
 function Get-LpShowcaseCredit {
     param($Photo)
 
+    # Only the attribution a CC BY or CC BY-SA photo requires; the AI disclosure is in the Workshop description.
     if ($Photo -and [string]$Photo.licenseCategory -eq 'CC BY-SA') {
-        return ('Portrait ({0}): AI-assisted repaint of a photograph by {1} ({2})' -f (Get-HoiShareAlikePortraitLicence).ShortName, (Get-LpPhotoCreditName -Photo $Photo), [string]$Photo.licenseShortName)
+        return ('Portrait ({0}) adapted from a photograph by {1} ({2})' -f (Get-HoiShareAlikePortraitLicence).ShortName, (Get-LpPhotoCreditName -Photo $Photo), [string]$Photo.licenseShortName)
     }
     if ($Photo -and [string]$Photo.licenseCategory -eq 'CC BY') {
-        return ('Portrait: AI-assisted repaint of a photograph by {0} ({1})' -f (Get-LpPhotoCreditName -Photo $Photo), [string]$Photo.licenseShortName)
+        return ('Portrait adapted from a photograph by {0} ({1})' -f (Get-LpPhotoCreditName -Photo $Photo), [string]$Photo.licenseShortName)
     }
-    return 'Portrait: AI-assisted repaint of a period photograph'
+    return $null
 }
 
 function Invoke-LpShowcaseCheck {
@@ -205,25 +206,29 @@ function New-LpShowcaseSpec {
             $lines = [object[]]@($entry.card)
         }
         $photoKey = if ($leader.portrait) { [string]$leader.portrait.photo } else { '' }
-        $profilePages.Add([ordered]@{
-                layout     = 'profile'
-                file       = ('{0:D2}-{1}' -f $leaderIndex, $leaderKey)
-                portrait   = $portraitPath
-                name       = [string]$leader.name
-                role       = $style.Label
-                roleAccent = $style.Accent
-                years      = $years
-                lines      = $lines
-                stats      = $stats.ToArray()
-                traits     = $traits.ToArray()
-                note       = (Get-LpShowcaseCredit -Photo $photosByKey[$photoKey])
-            })
+        $profilePage = [ordered]@{
+            layout     = 'profile'
+            file       = ('{0:D2}-{1}' -f $leaderIndex, $leaderKey)
+            portrait   = $portraitPath
+            name       = [string]$leader.name
+            role       = $style.Label
+            roleAccent = $style.Accent
+            years      = $years
+            lines      = $lines
+            stats      = $stats.ToArray()
+            traits     = $traits.ToArray()
+        }
+        $credit = Get-LpShowcaseCredit -Photo $photosByKey[$photoKey]
+        if ($credit) {
+            $profilePage['note'] = $credit
+        }
+        $profilePages.Add($profilePage)
     }
     $rosterPage = [ordered]@{
         layout   = 'roster'
         file     = '00-roster'
         title    = 'The commanders'
-        subtitle = ('{0} leaders for {1}; portraits AI-assisted from period photographs' -f $leaders.Count, $displayName)
+        subtitle = ('{0} leaders for {1}' -f $leaders.Count, $displayName)
         items    = $rosterItems.ToArray()
     }
     $spec = [ordered]@{
