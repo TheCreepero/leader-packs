@@ -56,6 +56,68 @@ Describe 'Portrait rounds and the owner''s review, without ComfyUI' {
         (Get-LpRecordEntry -Root $fixtureRoot -Leader 'alpha_leader').rounds[0].decision | Should -BeNullOrEmpty
     }
 
+    It 'withdraws the record of a leader who left the pack: keeps the rounds, clears the pick and its PNG, and -Check passes without the warning' {
+        $fixtureRoot = New-LpGeneratedFixture
+        Add-LpUndecidedRound -Root $fixtureRoot -Leader 'zulu_leader'
+        Invoke-LpApplyPortraitReview -RepoRoot $fixtureRoot -Pack 'testland' -Leader 'zulu_leader' -Pick 1 6>$null | Select-Object -Last 1 | Should -Be 0
+        $chosenPath = Join-Path $fixtureRoot 'source\testland\portraits\zulu_leader.png'
+        $checkOutput = @(Invoke-LpCheck -RepoRoot $fixtureRoot -Pack 'testland' 6>&1 | ForEach-Object { [string]$_ })
+        $checkOutput[-1] | Should -Be '0'
+        (@($checkOutput | Where-Object { $_.StartsWith('  [WARN] ') }) -join "`n") | Should -Match ([regex]::Escape('portraits.json zulu_leader: no leader of leaders.json has this key: withdraw the record with build.ps1 -ApplyPortraitReview -Pack testland -Leader zulu_leader -Withdraw "<reason>"'))
+        Invoke-LpApplyPortraitReview -RepoRoot $fixtureRoot -Pack 'testland' -Leader 'zulu_leader' -Withdraw ' photo licence refused ' 6>$null | Select-Object -Last 1 | Should -Be 0
+        Test-Path -LiteralPath $chosenPath | Should -BeFalse
+        $entry = Get-LpRecordEntry -Root $fixtureRoot -Leader 'zulu_leader'
+        $entry.chosen | Should -BeNullOrEmpty
+        @($entry.rounds).Count | Should -Be 1
+        $entry.rounds[0].decision.pick | Should -Be 1
+        @($entry.rounds[0].candidates).Count | Should -Be 4
+        $entry.rounds[0].withdrawn.reason | Should -Be 'photo licence refused'
+        $entry.rounds[0].withdrawn.date | Should -Match '^\d{4}-\d{2}-\d{2}$'
+        $checkOutput = @(Invoke-LpCheck -RepoRoot $fixtureRoot -Pack 'testland' 6>&1 | ForEach-Object { [string]$_ })
+        $checkOutput[-1] | Should -Be '0'
+        @($checkOutput | Where-Object { $_ -like '*zulu_leader*' }) | Should -BeNullOrEmpty
+    }
+
+    It 'refuses to withdraw a leader still in leaders.json, an undecided round, a blank reason, a second withdrawal and two decisions at once' {
+        $fixtureRoot = New-LpGeneratedFixture
+        Invoke-LpApplyPortraitReview -RepoRoot $fixtureRoot -Pack 'testland' -Leader 'alpha_leader' -Withdraw 'dropped' 6>$null | Select-Object -Last 1 | Should -Be 1
+        Test-Path -LiteralPath (Join-Path $fixtureRoot 'source\testland\portraits\alpha_leader.png') | Should -BeTrue
+        (Get-LpRecordEntry -Root $fixtureRoot -Leader 'alpha_leader').chosen.seed | Should -Be 2
+        Invoke-LpApplyPortraitReview -RepoRoot $fixtureRoot -Pack 'testland' -Leader 'zulu_leader' -Withdraw 'dropped' 6>$null | Select-Object -Last 1 | Should -Be 1
+        Add-LpUndecidedRound -Root $fixtureRoot -Leader 'zulu_leader'
+        Invoke-LpApplyPortraitReview -RepoRoot $fixtureRoot -Pack 'testland' -Leader 'zulu_leader' -Withdraw 'dropped' 6>$null | Select-Object -Last 1 | Should -Be 1
+        Invoke-LpApplyPortraitReview -RepoRoot $fixtureRoot -Pack 'testland' -Leader 'zulu_leader' -Reject 'stains on the photo' 6>$null | Select-Object -Last 1 | Should -Be 0
+        Invoke-LpApplyPortraitReview -RepoRoot $fixtureRoot -Pack 'testland' -Leader 'zulu_leader' -Withdraw '  ' 6>$null | Select-Object -Last 1 | Should -Be 1
+        Invoke-LpApplyPortraitReview -RepoRoot $fixtureRoot -Pack 'testland' -Leader 'zulu_leader' -Reject 'no' -Withdraw 'dropped' 6>$null | Select-Object -Last 1 | Should -Be 1
+        (Get-LpRecordEntry -Root $fixtureRoot -Leader 'zulu_leader').rounds[0].withdrawn | Should -BeNullOrEmpty
+        Invoke-LpApplyPortraitReview -RepoRoot $fixtureRoot -Pack 'testland' -Leader 'zulu_leader' -Withdraw 'swapped out' 6>$null | Select-Object -Last 1 | Should -Be 0
+        Invoke-LpApplyPortraitReview -RepoRoot $fixtureRoot -Pack 'testland' -Leader 'zulu_leader' -Withdraw 'again' 6>$null | Select-Object -Last 1 | Should -Be 1
+        Invoke-LpApplyPortraitReview -RepoRoot $fixtureRoot -Pack 'testland' -Leader 'zulu_leader' -Pick 2 6>$null | Select-Object -Last 1 | Should -Be 1
+        $entry = Get-LpRecordEntry -Root $fixtureRoot -Leader 'zulu_leader'
+        $entry.rounds[0].decision.reject | Should -Be 'stains on the photo'
+        $entry.rounds[0].withdrawn.reason | Should -Be 'swapped out'
+    }
+
+    It 'keeps a withdrawal as history when the leader returns with a new round and a pick' {
+        $fixtureRoot = New-LpFixtureRepo -NoPortraits
+        Add-LpUndecidedRound -Root $fixtureRoot -Leader 'zulu_leader'
+        Invoke-LpApplyPortraitReview -RepoRoot $fixtureRoot -Pack 'testland' -Leader 'zulu_leader' -Pick 1 6>$null | Out-Null
+        Invoke-LpApplyPortraitReview -RepoRoot $fixtureRoot -Pack 'testland' -Leader 'zulu_leader' -Withdraw 'photo licence refused' 6>$null | Out-Null
+        Set-LpFixtureLeaders -Root $fixtureRoot -Change { param($s) $returning = $s.leaders[0] | ConvertTo-Json -Depth 8 | ConvertFrom-Json; $returning.key = 'zulu_leader'; $s.leaders += $returning }
+        $returningLeader = @((Get-LpPack -RepoRoot $fixtureRoot -Pack 'testland').Leaders | Where-Object { $_.key -eq 'zulu_leader' })[0]
+        Get-LpPortraitState -Pack (Get-LpPack -RepoRoot $fixtureRoot -Pack 'testland') -Leader $returningLeader | Should -Be 'round 1 withdrawn'
+        Add-LpUndecidedRound -Root $fixtureRoot -Leader 'zulu_leader' -Round 2
+        $reviewLeaders = Get-LpReviewLeaders -Pack (Get-LpPack -RepoRoot $fixtureRoot -Pack 'testland')
+        $reviewLeader = @($reviewLeaders | Where-Object { $_['key'] -eq 'zulu_leader' })[0]
+        $reviewLeader['previous'] | Should -Be 'withdrawn, "photo licence refused"'
+        Invoke-LpApplyPortraitReview -RepoRoot $fixtureRoot -Pack 'testland' -Leader 'zulu_leader' -Pick 6 6>$null | Select-Object -Last 1 | Should -Be 0
+        $entry = Get-LpRecordEntry -Root $fixtureRoot -Leader 'zulu_leader'
+        $entry.rounds[0].withdrawn.reason | Should -Be 'photo licence refused'
+        $entry.chosen.round | Should -Be 2
+        $entry.chosen.seed | Should -Be 6
+        @(Test-LpPortraitRecords -Pack (Get-LpPack -RepoRoot $fixtureRoot -Pack 'testland') | Where-Object { $_.Where -like '*zulu_leader*' }) | Should -BeNullOrEmpty
+    }
+
     It 'refuses to make portraits where the Manager is missing' {
         $fixtureRoot = New-LpFixtureRepo -NoPortraits
         Invoke-LpMakePortraits -RepoRoot $fixtureRoot -Pack 'testland' -ManagerRoot '' 6>$null | Select-Object -Last 1 | Should -Be 1

@@ -1149,10 +1149,14 @@ function Test-LpPortraitRecords {
             $leaderKey = $entryProperty.Name
             $entry = $entryProperty.Value
             $entryWhere = $recordsWhere + ' ' + $leaderKey
-            if ($leaderKeys -notcontains $leaderKey) {
-                $problems.Add((New-LpProblem -Level 'WARN' -Where $entryWhere -Message 'no leader of leaders.json has this key'))
-            }
             $rounds = @(ConvertTo-LpArray (Get-LpProperty -Object $entry -Name 'rounds'))
+            $isWithdrawn = $rounds.Count -gt 0 -and $null -ne (Get-LpProperty -Object $rounds[-1] -Name 'withdrawn')
+            if ($leaderKeys -notcontains $leaderKey -and -not $isWithdrawn) {
+                $problems.Add((New-LpProblem -Level 'WARN' -Where $entryWhere -Message "no leader of leaders.json has this key: withdraw the record with build.ps1 -ApplyPortraitReview -Pack $($Pack.Name) -Leader $leaderKey -Withdraw `"<reason>`""))
+            }
+            if ($isWithdrawn -and $null -ne (Get-LpProperty -Object $entry -Name 'chosen')) {
+                $problems.Add((New-LpProblem -Level 'ERROR' -Where $entryWhere -Message 'the record is withdrawn, but it still has a chosen portrait'))
+            }
             for ($roundIndex = 0; $roundIndex -lt $rounds.Count; $roundIndex++) {
                 $roundRecord = $rounds[$roundIndex]
                 $roundNumber = $roundIndex + 1
@@ -1171,6 +1175,15 @@ function Test-LpPortraitRecords {
                     }
                 }
                 $decision = Get-LpProperty -Object $roundRecord -Name 'decision'
+                $withdrawal = Get-LpProperty -Object $roundRecord -Name 'withdrawn'
+                if ($null -ne $withdrawal) {
+                    if ($null -eq $decision) {
+                        $problems.Add((New-LpProblem -Level 'ERROR' -Where $roundWhere -Message 'is withdrawn without a decision'))
+                    }
+                    if (-not ([string](Get-LpProperty -Object $withdrawal -Name 'reason' -Default '')).Trim()) {
+                        $problems.Add((New-LpProblem -Level 'ERROR' -Where $roundWhere -Message 'the withdrawal has no reason'))
+                    }
+                }
                 if ($null -eq $decision) {
                     if ($roundNumber -lt $rounds.Count) {
                         $problems.Add((New-LpProblem -Level 'ERROR' -Where $roundWhere -Message 'has no decision, but a later round exists'))
@@ -1429,6 +1442,9 @@ function Get-LpPortraitState {
     $rounds = @(ConvertTo-LpArray (Get-LpProperty -Object $entry -Name 'rounds'))
     if ($rounds.Count -eq 0) {
         return 'no round yet'
+    }
+    if ($null -ne (Get-LpProperty -Object $rounds[-1] -Name 'withdrawn')) {
+        return 'round ' + $rounds.Count + ' withdrawn'
     }
     $lastDecision = Get-LpProperty -Object $rounds[-1] -Name 'decision'
     if ($null -eq $lastDecision) {
@@ -2102,15 +2118,20 @@ function Invoke-LpApplyPortraitReview {
         [Parameter(Mandatory = $true)][string]$Pack,
         [Parameter(Mandatory = $true)][string]$Leader,
         [Nullable[int]]$Pick,
-        [string]$Reject
+        [string]$Reject,
+        [string]$Withdraw
     )
 
-    if (($null -eq $Pick) -eq (-not $Reject)) {
-        Write-Host '-ApplyPortraitReview takes either -Pick <seed> or -Reject "<reason>".' -ForegroundColor Red
+    if (@(@(($null -ne $Pick), [bool]$Reject, [bool]$Withdraw) | Where-Object { $_ }).Count -ne 1) {
+        Write-Host '-ApplyPortraitReview takes one of -Pick <seed>, -Reject "<reason>" or -Withdraw "<reason>".' -ForegroundColor Red
         return 1
     }
-    if ($null -eq $Pick -and -not $Reject.Trim()) {
+    if ($Reject -and -not $Reject.Trim()) {
         Write-Host '-Reject needs the reason: what the next round must change.' -ForegroundColor Red
+        return 1
+    }
+    if ($Withdraw -and -not $Withdraw.Trim()) {
+        Write-Host '-Withdraw needs the reason: why the leader and his portrait left the pack.' -ForegroundColor Red
         return 1
     }
     $packData = Get-LpPack -RepoRoot $RepoRoot -Pack $Pack
@@ -2122,6 +2143,33 @@ function Invoke-LpApplyPortraitReview {
         return 1
     }
     $latestRound = $rounds[$rounds.Count - 1]
+    if ($Withdraw) {
+        if (@($packData.Leaders | Where-Object { [string]$_.key -eq $Leader }).Count -gt 0) {
+            Write-Host "'$Leader' is still in source\$Pack\leaders.json: only the record of a leader who left the pack is withdrawn." -ForegroundColor Red
+            return 1
+        }
+        if ($null -ne $latestRound['withdrawn']) {
+            Write-Host "The portrait record of '$Leader' is withdrawn already (round $($latestRound['round']))." -ForegroundColor Red
+            return 1
+        }
+        if ($null -eq $latestRound['decision']) {
+            Write-Host "Round $($latestRound['round']) of '$Leader' waits for the owner's review: record the decision with -Pick or -Reject first." -ForegroundColor Red
+            return 1
+        }
+        $chosenRelativePath = Get-LpChosenRelativePath -Pack $packData -LeaderKey $Leader
+        $chosenPath = Join-Path $packData.RepoRoot $chosenRelativePath.Replace('/', '\')
+        $removedText = 'no chosen portrait to remove'
+        if (Test-Path -LiteralPath $chosenPath) {
+            Remove-Item -LiteralPath $chosenPath -Force
+            $removedText = "removed $chosenRelativePath"
+        }
+        $latestRound['withdrawn'] = [ordered]@{ date = (Get-LpToday); reason = $Withdraw.Trim() }
+        $entry['rounds'] = $rounds.ToArray()
+        $entry['chosen'] = $null
+        Save-LpPortraitRecords -Pack $packData -Records $records
+        Write-Host "Withdrew the portrait record of '$Leader' at round $($latestRound['round']) ($removedText): $($Withdraw.Trim())" -ForegroundColor Green
+        return 0
+    }
     if ($null -ne $latestRound['decision']) {
         Write-Host "Round $($latestRound['round']) of '$Leader' is decided already; make a new round with build.ps1 -MakePortraits -Leader $Leader." -ForegroundColor Red
         return 1
@@ -2183,7 +2231,10 @@ function Get-LpReviewLeaders {
         $previousText = $null
         if ($rounds.Count -gt 1) {
             $previousDecision = $rounds[$rounds.Count - 2]['decision']
-            if ($null -ne $previousDecision -and $previousDecision.Contains('reject')) {
+            $previousWithdrawal = $rounds[$rounds.Count - 2]['withdrawn']
+            if ($null -ne $previousWithdrawal) {
+                $previousText = 'withdrawn, "' + [string]$previousWithdrawal['reason'] + '"'
+            } elseif ($null -ne $previousDecision -and $previousDecision.Contains('reject')) {
                 $previousText = 'rejected, "' + [string]$previousDecision['reject'] + '"'
             } elseif ($null -ne $previousDecision -and $previousDecision.Contains('pick')) {
                 $previousText = 'picked seed ' + [string]$previousDecision['pick']

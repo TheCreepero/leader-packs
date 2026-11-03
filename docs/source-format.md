@@ -161,9 +161,11 @@ Written only by `-MakePortraits` and `-ApplyPortraitReview`. One entry per leade
   - `-Leader <key>` makes a round for that leader only, also when he has a `chosen` portrait already; a later pick replaces it.
   - A leader whose latest round has no decision yet is skipped (with `-Leader`, exit 1): the owner reviews first.
 - `-ApplyPortraitReview -Pack <pack> -Leader <key> -Pick <seed>` records the owner's pick on the latest round and copies that candidate to `source/<pack>/portraits/<key>.png` with its SHA-256. `-Reject "<reason>"` records the rejection on the latest round; the reason is what the next round must change. A round that has a decision cannot be decided again; a new round can.
+- `-ApplyPortraitReview -Pack <pack> -Leader <key> -Withdraw "<reason>"` withdraws the record of a leader who has left `leaders.json`, so that nothing made from his photo is committed: it deletes `source/<pack>/portraits/<key>.png`, sets `chosen` to `null` and writes `withdrawn` on the latest round, whose decision and candidates stay as history. It refuses a key still in `leaders.json` (in any mode), a latest round that waits for its decision, and a record withdrawn already. `-Check` warns about a record whose key no leader has until it is withdrawn, and is silent about it afterwards. A leader who comes back gets a new round from `-MakePortraits -Leader <key>`; the withdrawn round stays in his history.
 - The record's shapes:
   - `decision` is `null` while the round waits, `{ "pick": <seed> }` or `{ "reject": "<reason>" }`.
-  - `chosen` is `null` until the first pick.
+  - `withdrawn` is absent, or `{ "date": "<yyyy-MM-dd>", "reason": "<reason>" }` on a decided round. A record is withdrawn while its latest round has it; `chosen` is then `null`.
+  - `chosen` is `null` until the first pick, and again after a withdrawal.
   - `run` and each candidate's `file` are absolute paths in the Manager's `Artifacts/portraits/<prefix>_<key>/round-<n>/` (git-ignored, on the machine that made them). The Manager numbers its `round-<n>` folders by itself; the pack's `round` is the one that counts, and the two can differ.
 - The chosen PNG is committed: generation is not reproducible across ComfyUI versions and GPUs.
 

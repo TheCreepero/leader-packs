@@ -24,7 +24,7 @@ Carries out one plan written by `leader-pack-create` or `leader-pack-audit`. The
 2. `PLANNING`: stop; the plan belongs to its planning skill. `READY` or `IN PROGRESS`: section 2. `DONE`: section 3.
 
 ## 2. Dispatch
-Dispatch `lp-implementer` with the prompt `Carry out docs/plans/<file>.md` and nothing else. One plan per dispatch. It writes `leaders.json` and the fact sheets from the plan, then runs `-Generate`, `-ConvertPortraits`, `-Check`, `-ValidateOnly` and `-Test`. Antigravity: pass the brief's path to `invoke_subagent`; where no subagent can be dispatched, read the brief and follow it yourself.
+Dispatch `lp-implementer` with the prompt `Carry out docs/plans/<file>.md` and nothing else. One plan per dispatch. It writes `leaders.json` and the fact sheets from the plan, then runs `-Generate`, `-ConvertPortraits`, `-Check`, `-ValidateOnly` and `-Test`; a plan with a `-ApplyPortraitReview -Withdraw` step also has it delete that leader's chosen PNG and withdraw his portrait record. Antigravity: pass the brief's path to `invoke_subagent`; where no subagent can be dispatched, read the brief and follow it yourself.
 
 ## 3. Verify
 The report is a claim. Check:

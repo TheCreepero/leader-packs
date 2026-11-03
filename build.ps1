@@ -50,11 +50,13 @@ param(
 
     [Parameter(ParameterSetName = 'ReviewPick', Mandatory = $true)]
     [Parameter(ParameterSetName = 'ReviewReject', Mandatory = $true)]
+    [Parameter(ParameterSetName = 'ReviewWithdraw', Mandatory = $true)]
     [switch]$ApplyPortraitReview,
 
     [Parameter(ParameterSetName = 'MakePortraits')]
     [Parameter(ParameterSetName = 'ReviewPick', Mandatory = $true)]
     [Parameter(ParameterSetName = 'ReviewReject', Mandatory = $true)]
+    [Parameter(ParameterSetName = 'ReviewWithdraw', Mandatory = $true)]
     [string]$Leader,
 
     [Parameter(ParameterSetName = 'ReviewPick', Mandatory = $true)]
@@ -62,6 +64,9 @@ param(
 
     [Parameter(ParameterSetName = 'ReviewReject', Mandatory = $true)]
     [string]$Reject,
+
+    [Parameter(ParameterSetName = 'ReviewWithdraw', Mandatory = $true)]
+    [string]$Withdraw,
 
     [Parameter(ParameterSetName = 'ConvertPortraits', Mandatory = $true)]
     [switch]$ConvertPortraits,
@@ -178,6 +183,10 @@ switch ($PSCmdlet.ParameterSetName) {
     'ReviewReject' {
         Assert-PackGiven -SwitchName '-ApplyPortraitReview'
         exit ([int](@(Invoke-LpApplyPortraitReview -RepoRoot $PSScriptRoot -Pack $Pack -Leader $Leader -Reject $Reject)[-1]))
+    }
+    'ReviewWithdraw' {
+        Assert-PackGiven -SwitchName '-ApplyPortraitReview'
+        exit ([int](@(Invoke-LpApplyPortraitReview -RepoRoot $PSScriptRoot -Pack $Pack -Leader $Leader -Withdraw $Withdraw)[-1]))
     }
     'ConvertPortraits' {
         exit (Invoke-ForEachSelectedPack -Action { param($packName) Invoke-LpConvertPortraits -RepoRoot $PSScriptRoot -Pack $packName -Force:$Force })

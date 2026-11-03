@@ -15,7 +15,7 @@ try {
     $protectedPaths = @(
         [PSCustomObject]@{ Pattern = 'source/*/photos.json'; Reason = 'is written only by build.ps1 -FetchPhoto, which records the licence it read from Wikimedia Commons.' },
         [PSCustomObject]@{ Pattern = 'source/*/portraits.json'; Reason = 'is written only by build.ps1 -MakePortraits and -ApplyPortraitReview, which record each round of candidates and the owner''s decision.' },
-        [PSCustomObject]@{ Pattern = 'source/*/portraits/*'; Reason = 'is copied only by build.ps1 -ApplyPortraitReview -Pick, from the candidate the owner picked, with its SHA-256 in portraits.json.' },
+        [PSCustomObject]@{ Pattern = 'source/*/portraits/*'; Reason = 'is copied only by build.ps1 -ApplyPortraitReview -Pick, from the candidate the owner picked, with its SHA-256 in portraits.json, and removed only by -ApplyPortraitReview -Withdraw "<reason>" once the leader has left leaders.json.' },
         [PSCustomObject]@{ Pattern = 'source/*/converted.json'; Reason = 'is written only by build.ps1 -ConvertPortraits: it records what each DDS was built from, so build.ps1 -Check can tell a stale DDS.' },
         [PSCustomObject]@{ Pattern = 'source/*/review.json'; Reason = 'is written only by build.ps1 -ReviewPage -Pack <pack> -PageUrl <url>, which records the address of the pack''s portrait review page.' },
         [PSCustomObject]@{ Pattern = 'data/*/game-characters.json'; Reason = 'is the game snapshot written only by build.ps1 -RefreshGameData -Pack <pack>, from the game files.' },

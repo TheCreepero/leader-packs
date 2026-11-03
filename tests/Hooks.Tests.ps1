@@ -128,6 +128,7 @@ Describe 'Protect-ProjectFiles hook' {
         @{ Command = 'powershell -File .\build.ps1 -MakePortraits -Pack finland -StartComfyUI' },
         @{ Command = 'powershell -File .\build.ps1 -ApplyPortraitReview -Pack finland -Leader einar_vihma -Reject "wrong cap: he wore a field cap"' },
         @{ Command = 'powershell -File .\build.ps1 -ApplyPortraitReview -Pack finland -Leader einar_vihma -Pick 2' },
+        @{ Command = 'powershell -File .\build.ps1 -ApplyPortraitReview -Pack finland -Leader einar_vihma -Withdraw "photo licence refused: a re-shot print under PD-self"' },
         @{ Command = 'powershell -File .\build.ps1 -ConvertPortraits -Pack finland -Force' },
         @{ Command = '.\build.ps1 -Check' },
         @{ Command = 'git status --short -- packs/finland' },
