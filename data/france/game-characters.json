@@ -1,0 +1,2194 @@
+{
+    "tag": "FRA",
+    "refreshed": "2026-11-02",
+    "game": "1.19.4.1",
+    "sets": [
+        {
+            "name": "vanilla",
+            "mod": "",
+            "characters": [
+                {
+                    "id": "FRA_alfred_heurtaux",
+                    "name": "Alfred Heurtaux",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_alphonse_georges",
+                    "name": "Alphonse Georges",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "army_chief"
+                        },
+                        {
+                            "kind": "field_marshal",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_alphonse_juin",
+                    "name": "Alphonse Juin",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_antoinemariebenoit_besson",
+                    "name": "Antoine-Marie-Benoît Besson",
+                    "roles": [
+                        {
+                            "kind": "field_marshal",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_charles_de_gaulle",
+                    "name": "Charles de Gaulle",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "theorist"
+                        },
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_charles_huntziger",
+                    "name": "Charles Huntziger",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        },
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_charles_maurras",
+                    "name": "Charles Maurras",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_charles_tillon",
+                    "name": "Charles Tillon",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_denis_guillaumat",
+                    "name": "Denis Guillaumat",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_edouard_daladier",
+                    "name": "Édouard Daladier",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_emile_laure",
+                    "name": "Émile Laure",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_emile_muselier",
+                    "name": "Émile Muselier",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_emile_rimailho",
+                    "name": "Émile Rimailho",
+                    "roles": [
+                        {
+                            "kind": "scientist",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_eugene_schneider_ii",
+                    "name": "Eugène Schneider II",
+                    "roles": [
+                        {
+                            "kind": "scientist",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_felix_gouin",
+                    "name": "Félix Gouin",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_francois_darlan",
+                    "name": "François Darlan",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "navy_chief"
+                        },
+                        {
+                            "kind": "navy_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_francois_hussenot",
+                    "name": "François Hussenot",
+                    "roles": [
+                        {
+                            "kind": "scientist",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_frederic_joliot_curie",
+                    "name": "Frédéric Joliot-Curie",
+                    "roles": [
+                        {
+                            "kind": "scientist",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_gaston_henry_haye",
+                    "name": "Gaston Henry-Haye",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_gastonhenri_billotte",
+                    "name": "Gaston-Henri Billotte",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_georges_bonnet",
+                    "name": "Georges Bonnet",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_georges_valois",
+                    "name": "Georges Valois",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_henri_dentz",
+                    "name": "Henri Fernand Dentz",
+                    "roles": []
+                },
+                {
+                    "id": "FRA_henri_edmond_fouche",
+                    "name": "Henri-Edmond Fouché",
+                    "roles": [
+                        {
+                            "kind": "scientist",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_henri_giraud",
+                    "name": "Henri Giraud",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "theorist"
+                        },
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_henri_marie_auguste_bineau",
+                    "name": "Henri Marie Auguste Bineau",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "army_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_henry_freydenberg",
+                    "name": "Henry Freydenberg",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_irene_joliot_curie",
+                    "name": "Irène Joliot-Curie",
+                    "roles": [
+                        {
+                            "kind": "scientist",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_jacques_duclos",
+                    "name": "Jacques Duclos",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_jean_de_laborde",
+                    "name": "Jean de Laborde",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        },
+                        {
+                            "kind": "navy_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_jean_de_lattre_de_tassigny",
+                    "name": "Jean de Lattre de Tassigny",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_jean_decoux",
+                    "name": "Jean Decoux",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "theorist"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_jean_francois_jannekeyn",
+                    "name": "Jean-Francois Jannekeyn",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_jean_marie_abrial",
+                    "name": "Jean-Marie Abrial",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "navy_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_jean_marie_bergeret",
+                    "name": "Jean-Marie Bergeret",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "theorist"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_jean_romatet",
+                    "name": "Jean C. Romatet",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "air_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_jeanmarie_charles_abrial",
+                    "name": "Jean-Marie Charles Abrial",
+                    "roles": [
+                        {
+                            "kind": "navy_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_jeanpierre_esteva",
+                    "name": "Jean-Pierre Esteva",
+                    "roles": [
+                        {
+                            "kind": "navy_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_joseph_bethenod",
+                    "name": "Joseph Bethenod",
+                    "roles": [
+                        {
+                            "kind": "scientist",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_joseph_doumenc",
+                    "name": "Joseph Doumenc",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_joseph_vuillemin",
+                    "name": "Joseph Vuillemin",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "air_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_leon_blum",
+                    "name": "Léon Blum",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_louis_kahn",
+                    "name": "Louis Kahn",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "theorist"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_louis_renault",
+                    "name": "Louis Renault",
+                    "roles": [
+                        {
+                            "kind": "scientist",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_marcel_bucard",
+                    "name": "Marcel Bucard",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_marcel_deat",
+                    "name": "Marcel Déat",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_marcel_gensoul",
+                    "name": "Marcel Gensoul",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "navy_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_martial_valin",
+                    "name": "Martial Valin",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_maurice_gamelin",
+                    "name": "Maurice Gamelin",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "army_chief"
+                        },
+                        {
+                            "kind": "field_marshal",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_maurice_gauche",
+                    "name": "Maurice-Henri Gauché",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_maurice_thorez",
+                    "name": "Maurice Thorez",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        },
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_maxime_weygand",
+                    "name": "Maxime Weygand",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "army_chief"
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "theorist"
+                        },
+                        {
+                            "kind": "field_marshal",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_paul_baudouin",
+                    "name": "Paul Baudouin",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_paul_reynaud",
+                    "name": "Paul Reynaud",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_philippe_fequant",
+                    "name": "Phillipe Féquant",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "air_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_philippe_henriot",
+                    "name": "Philippe Henriot",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_philippe_leclerc",
+                    "name": "Philippe Leclerc",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        },
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_philippe_petain",
+                    "name": "Philippe Pétain",
+                    "roles": []
+                },
+                {
+                    "id": "FRA_pierre_alombert_goget",
+                    "name": "Pierre Alombert Goget",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "army_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_pierre_laval",
+                    "name": "Pierre Laval",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_pierre_pucheu",
+                    "name": "Pierre Pucheu",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_rene_emile_godfroy",
+                    "name": "René-Emile Godfroy",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        },
+                        {
+                            "kind": "navy_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_rene_massigli",
+                    "name": "René Massigli",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_rene_nicod",
+                    "name": "René Nicod",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_rene_olry",
+                    "name": "René Olry",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_rene_prioux",
+                    "name": "René Prioux",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_robert_odic",
+                    "name": "Robert Odic",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "air_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_roger_salengro",
+                    "name": "Roger Salengro",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_victor_denain",
+                    "name": "Victor Denain",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "theorist"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_vincent_auriol",
+                    "name": "Vincent Auriol",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_zivony_peshkov",
+                    "name": "Zinovy Peshkov",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "rt56",
+            "mod": "The Road to 56",
+            "characters": [
+                {
+                    "id": "FRA_abel_bonnard",
+                    "name": "Abel Bonnard",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_adolphe_cise",
+                    "name": "Adolphe Cise",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_adolphe_guillaumat",
+                    "name": "Adolphe Guillaumat",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_aimé_doumenc",
+                    "name": "Aimé Doumenc",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_albert_sarraut",
+                    "name": "Albert Sarraut",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_alfred_heurtaux",
+                    "name": "Alfred Heurtaux",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_alphonse_de_chateaubriant",
+                    "name": "Alphonse de Châteaubriant",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_alphonse_georges",
+                    "name": "Alphonse Georges",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "army_chief"
+                        },
+                        {
+                            "kind": "field_marshal",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_alphonse_juin",
+                    "name": "Alphonse Juin",
+                    "roles": []
+                },
+                {
+                    "id": "FRA_andre_chapelon",
+                    "name": "André Chapelon",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_andre_gaston_pretelat",
+                    "name": "André-Gaston Pretelat",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "theorist"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_antoinemariebenoit_besson",
+                    "name": "Benoit Besson",
+                    "roles": [
+                        {
+                            "kind": "field_marshal",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_aubert_frere",
+                    "name": "Aubert Frère",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_benoit_frachon",
+                    "name": "Benoît Frachon",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_camille_chautemps",
+                    "name": "Camille Chautemps",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_charles_de_gaulle",
+                    "name": "Charles de Gaulle",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "theorist"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_charles_detmar",
+                    "name": "Charles Detmar",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_charles_huntziger",
+                    "name": "Charles Huntziger",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        },
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_charles_laurent",
+                    "name": "Charles Laurent",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_charles_maurras",
+                    "name": "Charles Maurras",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        },
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_charles_noguès",
+                    "name": "Charles Noguès",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_charles_tillon",
+                    "name": "Charles Tillon",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_daniel_mayer",
+                    "name": "Daniel Mayer",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_edgard_de_larminat",
+                    "name": "Edgard de Larminat",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "army_chief"
+                        },
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_edmond_barrachin",
+                    "name": "Edmond Barrachin",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_edouard_daladier",
+                    "name": "Édouard Daladier",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_edouard_herriot",
+                    "name": "Edouard Herriot",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_edouard_requin",
+                    "name": "Édouard Réquin",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_emile_laure",
+                    "name": "Émile Laure",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_emile_muselier",
+                    "name": "Emile Muselier",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "navy_chief"
+                        },
+                        {
+                            "kind": "navy_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_emile_rimailho",
+                    "name": "Émile Rimailho",
+                    "roles": [
+                        {
+                            "kind": "scientist",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_eugene_bridoux",
+                    "name": "Eugène Bridoux",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "army_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_eugene_deloncle",
+                    "name": "Eugene Deloncle",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_eugene_schneider_ii",
+                    "name": "Eugène Schneider II",
+                    "roles": [
+                        {
+                            "kind": "scientist",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_felix_eboue",
+                    "name": "Félix Éboué",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_felix_gouin",
+                    "name": "Félix Gouin",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_françois_darlan",
+                    "name": "François Darlan",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "navy_chief"
+                        },
+                        {
+                            "kind": "navy_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_francois_hussenot",
+                    "name": "François Hussenot",
+                    "roles": [
+                        {
+                            "kind": "scientist",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_frederic_irene_joliot_curie",
+                    "name": "Frédéric \u0026 Iréne Joliot-Curie",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "theorist"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_frederic_joliot_curie",
+                    "name": "Frédéric Joliot-Curie",
+                    "roles": [
+                        {
+                            "kind": "scientist",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_frix_michelier",
+                    "name": "Frix Michelier",
+                    "roles": [
+                        {
+                            "kind": "navy_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_gaston_billotte",
+                    "name": "Gaston Billotte",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_gaston_henry_haye",
+                    "name": "Gaston Henry-Haye",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_gastonhenri_billotte",
+                    "name": "Gaston-Henri Billotte",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_georges_blanchard",
+                    "name": "Georges Blanchard",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_georges_bonnet",
+                    "name": "Georges Bonnet",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_georges_catroux",
+                    "name": "Georges Catroux",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "army_chief"
+                        },
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_georges_claude",
+                    "name": "Georges Claude",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_georges_loustaunau_lacau",
+                    "name": "Georges Loustaunau Lacau",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_georges_mandel",
+                    "name": "Georges Mandel",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_georges_monnet",
+                    "name": "Georges Monnet",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_georges_robert",
+                    "name": "Georges Robert",
+                    "roles": [
+                        {
+                            "kind": "navy_leader",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_georges_thierry_d_argenlieu",
+                    "name": "Georges Thierry d\u0027Argenlieu",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "navy_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_guy_la_chambre",
+                    "name": "Guy La Chambre",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_henri_barbe",
+                    "name": "Henri Barbé",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_henri_blehaut",
+                    "name": "Henri Bléhaut",
+                    "roles": [
+                        {
+                            "kind": "navy_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_henri_edmond_fouche",
+                    "name": "Henri-Edmond Fouché",
+                    "roles": [
+                        {
+                            "kind": "scientist",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_henri_giraud",
+                    "name": "Henri Giraud",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "theorist"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_henri_marie_auguste_bineau",
+                    "name": "Henri Marie Auguste Bineau",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "army_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_henri_martin",
+                    "name": "Henri Martin",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_henry_de_rancourt_de_mimerand",
+                    "name": "Henry de Rancourt de Mimerand",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "air_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_henry_freydenberg",
+                    "name": "Henry Freydenberg",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_irene_joliot_curie",
+                    "name": "Irène Joliot-Curie",
+                    "roles": [
+                        {
+                            "kind": "scientist",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_jacques_doriot",
+                    "name": "Jacques Doriot",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_jacques_duclos",
+                    "name": "Jacques Duclos",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_jacques_henri_bourbon",
+                    "name": "Henri VI",
+                    "roles": []
+                },
+                {
+                    "id": "FRA_jean_de_laborde",
+                    "name": "Jean de Laborde",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "navy_chief"
+                        },
+                        {
+                            "kind": "navy_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_jean_de_lattre_de_tassigny",
+                    "name": "Jean de Lattre de Tassigny",
+                    "roles": []
+                },
+                {
+                    "id": "FRA_jean_decoux",
+                    "name": "Jean Decoux",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "theorist"
+                        },
+                        {
+                            "kind": "navy_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_jean_filiol",
+                    "name": "Jean Filiol",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_jean_francois_jannekeyn",
+                    "name": "Jean-Francois Jannekeyn",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_jean_iii",
+                    "name": "Jean III",
+                    "roles": []
+                },
+                {
+                    "id": "FRA_jean_marie_bergeret",
+                    "name": "Jean-Marie Bergeret",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "theorist"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_jean_romatet",
+                    "name": "Jean C. Romatet",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "air_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_jean_zay",
+                    "name": "Jean Zay",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_jeanmarie_charles_abrial",
+                    "name": "Jean-Marie Charles Abrial",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "navy_chief"
+                        },
+                        {
+                            "kind": "navy_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_jeanpierre_esteva",
+                    "name": "Jean-Pierre Esteva",
+                    "roles": [
+                        {
+                            "kind": "navy_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_jerome_napoleon_bonaparte",
+                    "name": "Jerome Napoleon Bonaparte",
+                    "roles": []
+                },
+                {
+                    "id": "FRA_joseph_bethenod",
+                    "name": "Joseph Bethenod",
+                    "roles": [
+                        {
+                            "kind": "scientist",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_joseph_darnaud",
+                    "name": "Joseph Darnaud",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_joseph_doumenc",
+                    "name": "Joseph Doumenc",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_joseph_vuillemin",
+                    "name": "Joseph Vuillemin",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "air_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_léon_blum",
+                    "name": "Léon Blum",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        },
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_leon_daudet",
+                    "name": "Leon Daudet",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_louis_bourguignon",
+                    "name": "Louis Bourguignon",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_louis_kahn",
+                    "name": "Louis Kahn",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "theorist"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_louis_renault",
+                    "name": "Louis Renault",
+                    "roles": [
+                        {
+                            "kind": "scientist",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_lucien_midol",
+                    "name": "Lucien Midol",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_marceau_pivert",
+                    "name": "Marceau Pivert",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_marcel_bucard",
+                    "name": "Marcel Bucard",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        },
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_marcel_deat",
+                    "name": "Marcel Déat",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_marcel_déat",
+                    "name": "Marcel Déat",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_marcel_gensoul",
+                    "name": "Marcel Gensoul",
+                    "roles": [
+                        {
+                            "kind": "navy_leader",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_marie_pierre_koenig",
+                    "name": "Marie-Pierre Koenig",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_martial_valin",
+                    "name": "Martial Valin",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_marx_dormoy",
+                    "name": "Marx Dormoy",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_maurice_gamelin",
+                    "name": "Maurice Gamelin",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "army_chief"
+                        },
+                        {
+                            "kind": "field_marshal",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_maurice_gauche",
+                    "name": "Maurice Gauche",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_maurice_pujo",
+                    "name": "Maurice Pujo",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_maurice_thorez",
+                    "name": "Maurice Thorez",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        },
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_maxime_weygand",
+                    "name": "Maxime Weygand",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "army_chief"
+                        },
+                        {
+                            "kind": "field_marshal",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_paul_baudouin",
+                    "name": "Paul Baudouin",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_paul_faure",
+                    "name": "Paul Faure",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_paul_granier_de_cassagnac",
+                    "name": "Paul Granier De Cassagnac",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_paul_marion",
+                    "name": "Paul Marion",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_paul_ramadier",
+                    "name": "Paul Ramadier",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_paul_reynaud",
+                    "name": "Paul Reynaud",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_philippe_fequant",
+                    "name": "Phillipe Féquant",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "air_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_philippe_henriot",
+                    "name": "Philippe Henriot",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_philippe_kieffer",
+                    "name": "Philippe Kieffer",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_philippe_leclerc",
+                    "name": "Philippe Leclerc",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_philippe_petain",
+                    "name": "Philippe Pétain",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_pierre_alombert_goget",
+                    "name": "Pierre Alombert Goget",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "army_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_pierre_brossolette",
+                    "name": "Pierre Brossolette",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_pierre_goybet",
+                    "name": "Pierre Goybet",
+                    "roles": [
+                        {
+                            "kind": "navy_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_pierre_laval",
+                    "name": "Pierre Laval",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_pierre_mendes_france",
+                    "name": "Pierre Mendes",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_pierre_pucheu",
+                    "name": "Pierre Pucheu",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_rene_lefeuvre",
+                    "name": "Rene Lefeuvre",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_rene_massigli",
+                    "name": "René Massigli",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_rene_nicod",
+                    "name": "René Nicod",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_rené_olry",
+                    "name": "René Olry",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_rene_prioux",
+                    "name": "René Prioux",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_renéÉmile_godfroy",
+                    "name": "René-Émile Godfroy",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        },
+                        {
+                            "kind": "navy_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_robert_altmayer",
+                    "name": "Robert Altmayer",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_robert_brasillach",
+                    "name": "Robert Brasillach",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_robert_odic",
+                    "name": "Robert Odic",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "air_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_robert_touchon",
+                    "name": "Robert Touchon",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_roger_salengro",
+                    "name": "Roger Salengro",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_roger_vitrac",
+                    "name": "Roger Vitrac",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_victor_bourret",
+                    "name": "Victor Bourret",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_victor_denain",
+                    "name": "Victor Denain",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "theorist"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_victorhenri_schweisguth",
+                    "name": "Victor-Henri Schweisguth",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_vincent_auriol",
+                    "name": "Vincent Auriol",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_xavier_vallat",
+                    "name": "Xavier Vallat",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "FRA_zivony_peshkov",
+                    "name": "Zinovy Peshkov",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

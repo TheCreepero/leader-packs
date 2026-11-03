@@ -1,0 +1,74 @@
+characters = {
+	lp_fra_joseph_de_goislard_de_monsabert = {
+		name = lp_fra_joseph_de_goislard_de_monsabert
+		portraits = {
+			army = {
+				large = GFX_portrait_lp_fra_joseph_de_goislard_de_monsabert
+				small = GFX_portrait_lp_fra_joseph_de_goislard_de_monsabert_small
+			}
+		}
+		corps_commander = {
+			traits = { infantry_officer trait_mountaineer }
+			skill = 3
+			attack_skill = 4
+			defense_skill = 3
+			planning_skill = 2
+			logistics_skill = 1
+		}
+	}
+	lp_fra_marcel_carpentier = {
+		name = lp_fra_marcel_carpentier
+		portraits = {
+			army = {
+				large = GFX_portrait_lp_fra_marcel_carpentier
+				small = GFX_portrait_lp_fra_marcel_carpentier_small
+			}
+		}
+		corps_commander = {
+			traits = { skilled_staffer infantry_officer }
+			skill = 2
+			attack_skill = 2
+			defense_skill = 1
+			planning_skill = 3
+			logistics_skill = 2
+		}
+	}
+	lp_fra_charles_mast = {
+		name = lp_fra_charles_mast
+		portraits = {
+			army = {
+				large = GFX_portrait_lp_fra_charles_mast
+				small = GFX_portrait_lp_fra_charles_mast_small
+			}
+		}
+		corps_commander = {
+			traits = { skilled_staffer politically_connected }
+			skill = 2
+			attack_skill = 1
+			defense_skill = 1
+			planning_skill = 3
+			logistics_skill = 1
+		}
+	}
+	lp_fra_robert_jaujard = {
+		name = lp_fra_robert_jaujard
+		portraits = {
+			army = {
+				large = GFX_portrait_lp_fra_robert_jaujard
+				small = GFX_portrait_lp_fra_robert_jaujard_small
+			}
+			navy = {
+				large = GFX_portrait_lp_fra_robert_jaujard
+				small = GFX_portrait_lp_fra_robert_jaujard_small
+			}
+		}
+		navy_leader = {
+			traits = { cruiser_captain ground_pounder }
+			skill = 2
+			attack_skill = 3
+			defense_skill = 1
+			maneuvering_skill = 2
+			coordination_skill = 2
+		}
+	}
+}

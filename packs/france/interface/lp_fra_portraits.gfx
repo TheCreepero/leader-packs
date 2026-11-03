@@ -1,0 +1,34 @@
+spriteTypes = {
+	spriteType = {
+		name = "GFX_portrait_lp_fra_joseph_de_goislard_de_monsabert"
+		texturefile = "gfx/leaders/FRA/lp_fra_joseph_de_goislard_de_monsabert.dds"
+	}
+	spriteType = {
+		name = "GFX_portrait_lp_fra_joseph_de_goislard_de_monsabert_small"
+		texturefile = "gfx/interface/ideas/lp_fra_joseph_de_goislard_de_monsabert_small.dds"
+	}
+	spriteType = {
+		name = "GFX_portrait_lp_fra_marcel_carpentier"
+		texturefile = "gfx/leaders/FRA/lp_fra_marcel_carpentier.dds"
+	}
+	spriteType = {
+		name = "GFX_portrait_lp_fra_marcel_carpentier_small"
+		texturefile = "gfx/interface/ideas/lp_fra_marcel_carpentier_small.dds"
+	}
+	spriteType = {
+		name = "GFX_portrait_lp_fra_charles_mast"
+		texturefile = "gfx/leaders/FRA/lp_fra_charles_mast.dds"
+	}
+	spriteType = {
+		name = "GFX_portrait_lp_fra_charles_mast_small"
+		texturefile = "gfx/interface/ideas/lp_fra_charles_mast_small.dds"
+	}
+	spriteType = {
+		name = "GFX_portrait_lp_fra_robert_jaujard"
+		texturefile = "gfx/leaders/FRA/lp_fra_robert_jaujard.dds"
+	}
+	spriteType = {
+		name = "GFX_portrait_lp_fra_robert_jaujard_small"
+		texturefile = "gfx/interface/ideas/lp_fra_robert_jaujard_small.dds"
+	}
+}

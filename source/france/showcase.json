@@ -1,0 +1,39 @@
+{
+    "leaders": {
+        "joseph_de_goislard_de_monsabert": {
+            "card": [
+                "Commanded the 3rd Algerian Infantry Division from March 1943.",
+                "Took the Belvedere ridge and crossed the Aurunci mountains in Italy, 1944.",
+                "His division took part in the capture of Toulon and took Marseille, August 1944.",
+                "Led the French II Corps across the Rhine to Stuttgart."
+            ],
+            "years": [1887, 1981]
+        },
+        "marcel_carpentier": {
+            "card": [
+                "Commanded the 7th Moroccan Tirailleur Regiment in Tunisia, 1942-43.",
+                "Chief of staff to Juin in the Italian campaign, 1943.",
+                "Led the 2nd Moroccan Infantry Division into Germany, 1944-45."
+            ],
+            "years": [1895, 1977]
+        },
+        "charles_mast": {
+            "card": [
+                "Chief of staff of the 10th Army Corps; captured by the Germans in 1940.",
+                "Imprisoned in 1941 on suspicion of opposing Vichy.",
+                "Met General Mark Clark at Cherchell to prepare the Allied landings, October 1942.",
+                "Resident General in Tunisia from May 1943."
+            ],
+            "years": [1889, 1977]
+        },
+        "robert_jaujard": {
+            "card": [
+                "Commanded the cruiser Georges Leygues from January 1943.",
+                "Intercepted the German blockade runner Portland, April 1943.",
+                "His IV Cruiser Division bombarded Port-en-Bessin on D-Day.",
+                "Led the Flank Force along the Italian coast after the Provence landings."
+            ],
+            "years": [1896, 1977]
+        }
+    }
+}

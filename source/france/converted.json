@@ -1,0 +1,60 @@
+{
+    "portraits": {
+        "gfx/interface/ideas/lp_fra_charles_mast_small.dds": {
+            "leader": "charles_mast",
+            "kind": "small",
+            "chosenSha256": "fc1027ec60a655392b621bed160fdd7f21a4fe1a7a123f8986ada311651a062d",
+            "cardSha256": "51cded3677ea06067ae0467bfd974daa5f3c59c1797c4546dd70cd47a594a956",
+            "ddsSha256": "03b1829010678860b77e21ac644198931d6195bfc2b0bdaee48b62003dc6f16b"
+        },
+        "gfx/interface/ideas/lp_fra_joseph_de_goislard_de_monsabert_small.dds": {
+            "leader": "joseph_de_goislard_de_monsabert",
+            "kind": "small",
+            "chosenSha256": "0fa20dd087af251fd97748dbf3ffc1d38f52b1c0c43577f0a151b437ef548993",
+            "cardSha256": "51cded3677ea06067ae0467bfd974daa5f3c59c1797c4546dd70cd47a594a956",
+            "ddsSha256": "f3c48e58c1146ad74e9574300c4934b4575427951d036ae16e6c99a95aadc77e"
+        },
+        "gfx/interface/ideas/lp_fra_marcel_carpentier_small.dds": {
+            "leader": "marcel_carpentier",
+            "kind": "small",
+            "chosenSha256": "da79afde82c6b476c0e159c625869901887e602d32411df1668336664a9b0136",
+            "cardSha256": "51cded3677ea06067ae0467bfd974daa5f3c59c1797c4546dd70cd47a594a956",
+            "ddsSha256": "d0fe894d17971f4352abe435f636300f437be4a03d46c961f8dd42f9594073af"
+        },
+        "gfx/interface/ideas/lp_fra_robert_jaujard_small.dds": {
+            "leader": "robert_jaujard",
+            "kind": "small",
+            "chosenSha256": "353c427f906a7c9663e9a8a8358ef4bf9757af8a7c4d7928eebc38ee0bbacb43",
+            "cardSha256": "51cded3677ea06067ae0467bfd974daa5f3c59c1797c4546dd70cd47a594a956",
+            "ddsSha256": "8d3689038b85bd4d4424a9067d182ed637cd21b8666096b436fab6c7bd555111"
+        },
+        "gfx/leaders/FRA/lp_fra_charles_mast.dds": {
+            "leader": "charles_mast",
+            "kind": "large",
+            "chosenSha256": "fc1027ec60a655392b621bed160fdd7f21a4fe1a7a123f8986ada311651a062d",
+            "cardSha256": "",
+            "ddsSha256": "f5cb1dc7602a36abb7d6de5b5284d6cca019fcb3ca2b227e0f3153295a958cdb"
+        },
+        "gfx/leaders/FRA/lp_fra_joseph_de_goislard_de_monsabert.dds": {
+            "leader": "joseph_de_goislard_de_monsabert",
+            "kind": "large",
+            "chosenSha256": "0fa20dd087af251fd97748dbf3ffc1d38f52b1c0c43577f0a151b437ef548993",
+            "cardSha256": "",
+            "ddsSha256": "10cb94d866fca89ff0197f9ed1c50fec1d97c63c98a0a4faa4fbe3b3f844bcd1"
+        },
+        "gfx/leaders/FRA/lp_fra_marcel_carpentier.dds": {
+            "leader": "marcel_carpentier",
+            "kind": "large",
+            "chosenSha256": "da79afde82c6b476c0e159c625869901887e602d32411df1668336664a9b0136",
+            "cardSha256": "",
+            "ddsSha256": "adc2c63871572c37896cebb85675569e171e41db9a6a94f06aca068303f39c7f"
+        },
+        "gfx/leaders/FRA/lp_fra_robert_jaujard.dds": {
+            "leader": "robert_jaujard",
+            "kind": "large",
+            "chosenSha256": "353c427f906a7c9663e9a8a8358ef4bf9757af8a7c4d7928eebc38ee0bbacb43",
+            "cardSha256": "",
+            "ddsSha256": "3bdd68832de64049f2292091d2e0a462e9467d0e4e5974e5606380de3395f26d"
+        }
+    }
+}

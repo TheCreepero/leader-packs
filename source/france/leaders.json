@@ -1,0 +1,104 @@
+{
+    "pack": "france",
+    "tag": "FRA",
+    "prefix": "lp_fra",
+    "displayName": "France",
+    "leaders": [
+        {
+            "key": "joseph_de_goislard_de_monsabert",
+            "name": "Joseph de Monsabert",
+            "mode": "new",
+            "sameAs": [],
+            "role": "corps_commander",
+            "skill": 3,
+            "attack": 4,
+            "defense": 3,
+            "planning": 2,
+            "logistics": 1,
+            "traits": ["infantry_officer", "trait_mountaineer"],
+            "factSheet": "joseph_de_goislard_de_monsabert",
+            "portrait": {
+                "photo": "joseph_de_goislard_de_monsabert_2",
+                "role": "French general",
+                "headwear": "wearing a dark French general's kepi with a stiff crown embroidered with two rows of gold oak leaves",
+                "uniform": "light khaki French general's tunic with a leather cross strap, a black tie and rows of medal ribbons",
+                "avoidHeadwear": "peaked cap, visor cap, side cap, beret, helmet",
+                "notes": "short grey moustache, lined face",
+                "born": 1887,
+                "photoYear": 1944
+            }
+        },
+        {
+            "key": "marcel_carpentier",
+            "name": "Marcel Carpentier",
+            "mode": "new",
+            "sameAs": [],
+            "role": "corps_commander",
+            "skill": 2,
+            "attack": 2,
+            "defense": 1,
+            "planning": 3,
+            "logistics": 2,
+            "traits": ["skilled_staffer", "infantry_officer"],
+            "factSheet": "marcel_carpentier",
+            "portrait": {
+                "photo": "marcel_carpentier",
+                "role": "French general",
+                "headwear": "wearing a light khaki-covered French general's kepi with a narrow gold band and small stars on the front",
+                "uniform": "dark khaki French officer's tunic with a shirt and tie, a cloth badge on the chest",
+                "avoidHeadwear": "peaked cap, visor cap, side cap, beret, helmet",
+                "notes": "thin dark moustache, broad smile",
+                "born": 1895,
+                "photoYear": 1944
+            }
+        },
+        {
+            "key": "charles_mast",
+            "name": "Charles Mast",
+            "mode": "new",
+            "sameAs": [],
+            "role": "corps_commander",
+            "skill": 2,
+            "attack": 1,
+            "defense": 1,
+            "planning": 3,
+            "logistics": 1,
+            "traits": ["skilled_staffer", "politically_connected"],
+            "factSheet": "charles_mast",
+            "portrait": {
+                "photo": "charles_mast",
+                "role": "French general",
+                "headwear": "wearing a dark French general's kepi with a stiff crown embroidered with rows of silver oak leaves",
+                "uniform": "light khaki French general's summer tunic with shoulder boards, a dark tie, a row of medal ribbons and a dark leather belt",
+                "avoidHeadwear": "peaked cap, visor cap, side cap, beret, helmet",
+                "notes": "clean-shaven, short grey hair, calm steady gaze",
+                "born": 1889,
+                "photoYear": 1943
+            }
+        },
+        {
+            "key": "robert_jaujard",
+            "name": "Robert Jaujard",
+            "mode": "new",
+            "sameAs": [],
+            "role": "navy_leader",
+            "skill": 2,
+            "attack": 3,
+            "defense": 1,
+            "maneuvering": 2,
+            "coordination": 2,
+            "traits": ["cruiser_captain", "ground_pounder"],
+            "factSheet": "robert_jaujard",
+            "portrait": {
+                "photo": "robert_jaujard",
+                "role": "French admiral",
+                "headwear": "wearing a dark French Navy admiral's peaked cap with a gold-embroidered anchor badge, a band of gold oak leaves and three small silver stars",
+                "uniform": "dark navy blue French Navy officer's jacket with a white shirt and a black tie",
+                "avoidHeadwear": "kepi, side cap, beret, helmet",
+                "notes": "bushy grey moustache, deeply lined weathered face",
+                "born": 1896,
+                "photoYear": 1948
+            }
+        }
+    ]
+}

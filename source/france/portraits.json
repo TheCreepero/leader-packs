@@ -1,0 +1,663 @@
+{
+    "leaders": {
+        "charles_delestraint": {
+            "rounds": [
+                {
+                    "round": 1,
+                    "date": "2026-11-02",
+                    "seeds": [
+                        1,
+                        2,
+                        3,
+                        4
+                    ],
+                    "settings": {
+                        "role": "French general",
+                        "headwear": "bareheaded",
+                        "uniform": "khaki French general\u0027s tunic with a white shirt and a dark tie",
+                        "avoidHeadwear": "kepi, peaked cap, visor cap, side cap, beret, helmet",
+                        "notes": "balding with short dark hair at the sides, neat dark moustache",
+                        "colourSeed": 1,
+                        "facePass": true,
+                        "born": 1879,
+                        "photoYear": 1943,
+                        "age": 64,
+                        "ageSent": true
+                    },
+                    "run": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_charles_delestraint\\round-1\\portrait-run.json",
+                    "recipe": {
+                        "steps": [
+                            {
+                                "template": "K1",
+                                "sha256": "9e7199bcc305eb0bbc2d717691d7d1cbb119911c753ff744deb9e12c171f0887"
+                            },
+                            {
+                                "template": "M1",
+                                "sha256": "2557e8c223cc395302454fbd490cce469d8c9d427280e61911f1bf626b2bb7c3"
+                            },
+                            {
+                                "template": "A4",
+                                "sha256": "863208f1184ba33cf302d8f731a1a771f26c05b6d7d509e10010b1d7fa7a98ec"
+                            },
+                            {
+                                "template": "F2",
+                                "sha256": "224a4184e6b5684d5c05f98cbaad67a33db2a2af6a10a61cab4f45d70289d5cf"
+                            }
+                        ],
+                        "gradeStrength": 0.6,
+                        "facePass": true
+                    },
+                    "candidates": [
+                        {
+                            "seed": 1,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_charles_delestraint\\round-1\\final\\A4_s1.png",
+                            "sha256": "1157cc65c5af8e40745b7a560027ac2d71f33d5580cf0eebfc139a140093cc3d",
+                            "likeness": 0.549
+                        },
+                        {
+                            "seed": 2,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_charles_delestraint\\round-1\\final\\A4_s2.png",
+                            "sha256": "605355ebd2120df551a3df2766ad8d9c178650e7e7a90d624538a381663fbb6f",
+                            "likeness": 0.5407
+                        },
+                        {
+                            "seed": 3,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_charles_delestraint\\round-1\\final\\A4_s3.png",
+                            "sha256": "965e4171c05c78f11d3131858c544973d4dfc0f97b2011ab3e89fd85ebe725f1",
+                            "likeness": 0.5459
+                        },
+                        {
+                            "seed": 4,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_charles_delestraint\\round-1\\final\\A4_s4.png",
+                            "sha256": "7c2a3197d2e2fe712bd5a33c1f1300a24f689b11755cc9f6414760a2cc0e5a36",
+                            "likeness": 0.5795
+                        }
+                    ],
+                    "decision": {
+                        "reject": "Some stains on the bottom left and top right of the original image ruin all these generated options."
+                    }
+                }
+            ],
+            "chosen": null
+        },
+        "charles_mast": {
+            "rounds": [
+                {
+                    "round": 1,
+                    "date": "2026-11-02",
+                    "seeds": [
+                        1,
+                        2,
+                        3,
+                        4
+                    ],
+                    "settings": {
+                        "role": "French general",
+                        "headwear": "wearing a dark French general\u0027s kepi with a stiff crown embroidered with rows of silver oak leaves",
+                        "uniform": "light khaki French general\u0027s summer tunic with shoulder boards, a dark tie, a row of medal ribbons and a dark leather belt",
+                        "avoidHeadwear": "peaked cap, visor cap, side cap, beret, helmet",
+                        "notes": "clean-shaven, short grey hair, calm steady gaze",
+                        "colourSeed": 1,
+                        "facePass": true,
+                        "born": 1889,
+                        "photoYear": 1943,
+                        "age": 54,
+                        "ageSent": true
+                    },
+                    "run": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_charles_mast\\round-1\\portrait-run.json",
+                    "recipe": {
+                        "steps": [
+                            {
+                                "template": "K1",
+                                "sha256": "9e7199bcc305eb0bbc2d717691d7d1cbb119911c753ff744deb9e12c171f0887"
+                            },
+                            {
+                                "template": "M1",
+                                "sha256": "2557e8c223cc395302454fbd490cce469d8c9d427280e61911f1bf626b2bb7c3"
+                            },
+                            {
+                                "template": "A4",
+                                "sha256": "863208f1184ba33cf302d8f731a1a771f26c05b6d7d509e10010b1d7fa7a98ec"
+                            },
+                            {
+                                "template": "F2",
+                                "sha256": "224a4184e6b5684d5c05f98cbaad67a33db2a2af6a10a61cab4f45d70289d5cf"
+                            }
+                        ],
+                        "gradeStrength": 0.6,
+                        "facePass": true
+                    },
+                    "candidates": [
+                        {
+                            "seed": 1,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_charles_mast\\round-1\\final\\A4_s1.png",
+                            "sha256": "fc1027ec60a655392b621bed160fdd7f21a4fe1a7a123f8986ada311651a062d",
+                            "likeness": 0.5755
+                        },
+                        {
+                            "seed": 2,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_charles_mast\\round-1\\final\\A4_s2.png",
+                            "sha256": "949c8d09b6f78de90cd675b4e62358a9af062ba1d00e7f63518021e1235755a4",
+                            "likeness": 0.5457
+                        },
+                        {
+                            "seed": 3,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_charles_mast\\round-1\\final\\A4_s3.png",
+                            "sha256": "ca36605660e35f5c214bbd59e5294fce94fa919a9473bf9bc0f83d6dd7544681",
+                            "likeness": 0.5546
+                        },
+                        {
+                            "seed": 4,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_charles_mast\\round-1\\final\\A4_s4.png",
+                            "sha256": "c61592ee94611424fce912c4e16b75b50abaf8a10aa747acca7b94a4874f8dc3",
+                            "likeness": 0.5512
+                        }
+                    ],
+                    "decision": {
+                        "pick": 1
+                    }
+                }
+            ],
+            "chosen": {
+                "round": 1,
+                "seed": 1,
+                "file": "source/france/portraits/charles_mast.png",
+                "sha256": "fc1027ec60a655392b621bed160fdd7f21a4fe1a7a123f8986ada311651a062d"
+            }
+        },
+        "jean_touzet_du_vigier": {
+            "rounds": [
+                {
+                    "round": 1,
+                    "date": "2026-11-02",
+                    "seeds": [
+                        1,
+                        2,
+                        3,
+                        4
+                    ],
+                    "settings": {
+                        "role": "French general",
+                        "headwear": "wearing a dark French side cap (calot) with three small silver general\u0027s stars on the front",
+                        "uniform": "dark khaki French officer\u0027s tunic with an open collar, a light shirt and tie",
+                        "avoidHeadwear": "kepi, peaked cap, visor cap, helmet",
+                        "notes": "clipped grey moustache, deeply lined lean face, prominent ears",
+                        "colourSeed": 1,
+                        "facePass": true,
+                        "born": 1888,
+                        "photoYear": null,
+                        "age": null,
+                        "ageSent": false
+                    },
+                    "run": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_jean_touzet_du_vigier\\round-1\\portrait-run.json",
+                    "recipe": {
+                        "steps": [
+                            {
+                                "template": "K1",
+                                "sha256": "9e7199bcc305eb0bbc2d717691d7d1cbb119911c753ff744deb9e12c171f0887"
+                            },
+                            {
+                                "template": "M1",
+                                "sha256": "2557e8c223cc395302454fbd490cce469d8c9d427280e61911f1bf626b2bb7c3"
+                            },
+                            {
+                                "template": "A4",
+                                "sha256": "863208f1184ba33cf302d8f731a1a771f26c05b6d7d509e10010b1d7fa7a98ec"
+                            },
+                            {
+                                "template": "F2",
+                                "sha256": "224a4184e6b5684d5c05f98cbaad67a33db2a2af6a10a61cab4f45d70289d5cf"
+                            }
+                        ],
+                        "gradeStrength": 0.6,
+                        "facePass": true
+                    },
+                    "candidates": [
+                        {
+                            "seed": 1,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_jean_touzet_du_vigier\\round-1\\final\\A4_s1.png",
+                            "sha256": "de9f42cebb379f921bcc1f384661989a5712e9009f0adb5abcacbfe2be1c1d4e",
+                            "likeness": 0.4662
+                        },
+                        {
+                            "seed": 2,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_jean_touzet_du_vigier\\round-1\\final\\A4_s2.png",
+                            "sha256": "8404df98b6acb5e3016bb7e2cfd88ba3d9c2cd02858290f40dd7b04372171f85",
+                            "likeness": 0.5035
+                        },
+                        {
+                            "seed": 3,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_jean_touzet_du_vigier\\round-1\\final\\A4_s3.png",
+                            "sha256": "d0730531620e5232e2ac090cc54d9adcac3f408d1be88e6425f6b9661922ecef",
+                            "likeness": 0.496
+                        },
+                        {
+                            "seed": 4,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_jean_touzet_du_vigier\\round-1\\final\\A4_s4.png",
+                            "sha256": "ec40ee7005ee9295220473b729d6015cdfe20a72c7c2b0eb68c02b386d955204",
+                            "likeness": 0.4889
+                        }
+                    ],
+                    "decision": {
+                        "pick": 1
+                    },
+                    "withdrawn": {
+                        "date": "2026-11-03",
+                        "reason": "photo licence refused: File:Jeantouzetduvigier.jpg is a 2008 own-work re-shot of a period print under PD-self (plan review round 1, C2)"
+                    }
+                }
+            ],
+            "chosen": null
+        },
+        "joseph_de_goislard_de_monsabert": {
+            "rounds": [
+                {
+                    "round": 1,
+                    "date": "2026-11-02",
+                    "seeds": [
+                        1,
+                        2,
+                        3,
+                        4
+                    ],
+                    "settings": {
+                        "role": "French general",
+                        "headwear": "wearing a dark French general\u0027s kepi with a stiff crown embroidered with two rows of gold oak leaves",
+                        "uniform": "light khaki French general\u0027s tunic with a leather cross strap, a black tie and rows of medal ribbons",
+                        "avoidHeadwear": "peaked cap, visor cap, side cap, beret, helmet",
+                        "notes": "short grey moustache, lined face",
+                        "colourSeed": 1,
+                        "facePass": true,
+                        "born": 1887,
+                        "photoYear": 1944,
+                        "age": 57,
+                        "ageSent": true
+                    },
+                    "run": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_joseph_de_goislard_de_monsabert\\round-1\\portrait-run.json",
+                    "recipe": {
+                        "steps": [
+                            {
+                                "template": "K1",
+                                "sha256": "9e7199bcc305eb0bbc2d717691d7d1cbb119911c753ff744deb9e12c171f0887"
+                            },
+                            {
+                                "template": "M1",
+                                "sha256": "2557e8c223cc395302454fbd490cce469d8c9d427280e61911f1bf626b2bb7c3"
+                            },
+                            {
+                                "template": "A4",
+                                "sha256": "863208f1184ba33cf302d8f731a1a771f26c05b6d7d509e10010b1d7fa7a98ec"
+                            },
+                            {
+                                "template": "F2",
+                                "sha256": "224a4184e6b5684d5c05f98cbaad67a33db2a2af6a10a61cab4f45d70289d5cf"
+                            }
+                        ],
+                        "gradeStrength": 0.6,
+                        "facePass": true
+                    },
+                    "candidates": [
+                        {
+                            "seed": 1,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_joseph_de_goislard_de_monsabert\\round-1\\final\\A4_s1.png",
+                            "sha256": "49881ec1643be7987d469245f8b54d4a5528fa81231d1140636e8119d56538f7",
+                            "likeness": 0.4627
+                        },
+                        {
+                            "seed": 2,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_joseph_de_goislard_de_monsabert\\round-1\\final\\A4_s2.png",
+                            "sha256": "f2ca194ddb9c050e9e5380d27c81bb76b650822e8254385ac328c734b0b616c6",
+                            "likeness": 0.4637
+                        },
+                        {
+                            "seed": 3,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_joseph_de_goislard_de_monsabert\\round-1\\final\\A4_s3.png",
+                            "sha256": "57d11fe10ee7c2ca45f3e97bf585d6fa032a99d44b57c8f87af82021f45d37f4",
+                            "likeness": 0.5477
+                        },
+                        {
+                            "seed": 4,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_joseph_de_goislard_de_monsabert\\round-1\\final\\A4_s4.png",
+                            "sha256": "095b8f2eee7b6f599e344c141e6293f79061fbff9f170958efe653c53158624a",
+                            "likeness": 0.5032
+                        }
+                    ],
+                    "decision": {
+                        "pick": 3
+                    }
+                },
+                {
+                    "round": 2,
+                    "date": "2026-11-02",
+                    "seeds": [
+                        5,
+                        6,
+                        7,
+                        8
+                    ],
+                    "settings": {
+                        "role": "French general",
+                        "headwear": "wearing a dark French general\u0027s kepi with a stiff crown embroidered with two rows of gold oak leaves",
+                        "uniform": "light khaki French general\u0027s tunic with a leather cross strap, a black tie and rows of medal ribbons",
+                        "avoidHeadwear": "peaked cap, visor cap, side cap, beret, helmet",
+                        "notes": "short grey moustache, lined face",
+                        "colourSeed": 1,
+                        "facePass": true,
+                        "born": 1887,
+                        "photoYear": 1944,
+                        "age": 57,
+                        "ageSent": true
+                    },
+                    "run": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_joseph_de_goislard_de_monsabert\\round-2\\portrait-run.json",
+                    "recipe": {
+                        "steps": [
+                            {
+                                "template": "K1",
+                                "sha256": "9e7199bcc305eb0bbc2d717691d7d1cbb119911c753ff744deb9e12c171f0887"
+                            },
+                            {
+                                "template": "M1",
+                                "sha256": "2557e8c223cc395302454fbd490cce469d8c9d427280e61911f1bf626b2bb7c3"
+                            },
+                            {
+                                "template": "A4",
+                                "sha256": "863208f1184ba33cf302d8f731a1a771f26c05b6d7d509e10010b1d7fa7a98ec"
+                            },
+                            {
+                                "template": "F2",
+                                "sha256": "224a4184e6b5684d5c05f98cbaad67a33db2a2af6a10a61cab4f45d70289d5cf"
+                            }
+                        ],
+                        "gradeStrength": 0.6,
+                        "facePass": true
+                    },
+                    "candidates": [
+                        {
+                            "seed": 5,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_joseph_de_goislard_de_monsabert\\round-2\\final\\A4_s5.png",
+                            "sha256": "0fa20dd087af251fd97748dbf3ffc1d38f52b1c0c43577f0a151b437ef548993",
+                            "likeness": 0.5621
+                        },
+                        {
+                            "seed": 6,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_joseph_de_goislard_de_monsabert\\round-2\\final\\A4_s6.png",
+                            "sha256": "0ffc799f92243f12e640f8f4889d50701067631d3d7439fd0be41ba265b927ee",
+                            "likeness": 0.5517
+                        },
+                        {
+                            "seed": 7,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_joseph_de_goislard_de_monsabert\\round-2\\final\\A4_s7.png",
+                            "sha256": "917ecce956e069fcc7e902ef95e6dd5dea56bcc842451ffd05d946cd6eaaf546",
+                            "likeness": 0.5021
+                        },
+                        {
+                            "seed": 8,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_joseph_de_goislard_de_monsabert\\round-2\\final\\A4_s8.png",
+                            "sha256": "17f94b9cb50b910f30bb3bf9bd7c653bbfd335842cab665c566455745dc52b1c",
+                            "likeness": 0.5534
+                        }
+                    ],
+                    "decision": {
+                        "pick": 5
+                    }
+                }
+            ],
+            "chosen": {
+                "round": 2,
+                "seed": 5,
+                "file": "source/france/portraits/joseph_de_goislard_de_monsabert.png",
+                "sha256": "0fa20dd087af251fd97748dbf3ffc1d38f52b1c0c43577f0a151b437ef548993"
+            }
+        },
+        "marcel_carpentier": {
+            "rounds": [
+                {
+                    "round": 1,
+                    "date": "2026-11-02",
+                    "seeds": [
+                        1,
+                        2,
+                        3,
+                        4
+                    ],
+                    "settings": {
+                        "role": "French general",
+                        "headwear": "wearing a light khaki-covered French general\u0027s kepi with a narrow gold band and small stars on the front",
+                        "uniform": "dark khaki French officer\u0027s tunic with a shirt and tie, a cloth badge on the chest",
+                        "avoidHeadwear": "peaked cap, visor cap, side cap, beret, helmet",
+                        "notes": "thin dark moustache, broad smile",
+                        "colourSeed": 1,
+                        "facePass": true,
+                        "born": 1895,
+                        "photoYear": 1944,
+                        "age": 49,
+                        "ageSent": true
+                    },
+                    "run": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_marcel_carpentier\\round-1\\portrait-run.json",
+                    "recipe": {
+                        "steps": [
+                            {
+                                "template": "K1",
+                                "sha256": "9e7199bcc305eb0bbc2d717691d7d1cbb119911c753ff744deb9e12c171f0887"
+                            },
+                            {
+                                "template": "M1",
+                                "sha256": "2557e8c223cc395302454fbd490cce469d8c9d427280e61911f1bf626b2bb7c3"
+                            },
+                            {
+                                "template": "A4",
+                                "sha256": "863208f1184ba33cf302d8f731a1a771f26c05b6d7d509e10010b1d7fa7a98ec"
+                            },
+                            {
+                                "template": "F2",
+                                "sha256": "224a4184e6b5684d5c05f98cbaad67a33db2a2af6a10a61cab4f45d70289d5cf"
+                            }
+                        ],
+                        "gradeStrength": 0.6,
+                        "facePass": true
+                    },
+                    "candidates": [
+                        {
+                            "seed": 1,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_marcel_carpentier\\round-1\\final\\A4_s1.png",
+                            "sha256": "c5173d3b4326eb717acd6c3cde081f3d4918495a1f911af206392adb35e58020",
+                            "likeness": 0.5779
+                        },
+                        {
+                            "seed": 2,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_marcel_carpentier\\round-1\\final\\A4_s2.png",
+                            "sha256": "da79afde82c6b476c0e159c625869901887e602d32411df1668336664a9b0136",
+                            "likeness": 0.6098
+                        },
+                        {
+                            "seed": 3,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_marcel_carpentier\\round-1\\final\\A4_s3.png",
+                            "sha256": "141e788a1c20ba8b81ffb64bf9e9ffa63e1fff332adefdb11ad0a47776905766",
+                            "likeness": 0.5836
+                        },
+                        {
+                            "seed": 4,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_marcel_carpentier\\round-1\\final\\A4_s4.png",
+                            "sha256": "73f90998bc539c98549e607d81f4f53e7e59bc0dc1892a778e50747331adb975",
+                            "likeness": 0.6272
+                        }
+                    ],
+                    "decision": {
+                        "pick": 2
+                    }
+                }
+            ],
+            "chosen": {
+                "round": 1,
+                "seed": 2,
+                "file": "source/france/portraits/marcel_carpentier.png",
+                "sha256": "da79afde82c6b476c0e159c625869901887e602d32411df1668336664a9b0136"
+            }
+        },
+        "philippe_auboyneau": {
+            "rounds": [
+                {
+                    "round": 1,
+                    "date": "2026-11-02",
+                    "seeds": [
+                        1,
+                        2,
+                        3,
+                        4
+                    ],
+                    "settings": {
+                        "role": "French admiral",
+                        "headwear": "wearing a dark French Navy admiral\u0027s peaked cap with a gold-embroidered anchor badge, a band of gold oak leaves and three small silver stars",
+                        "uniform": "dark navy blue French Navy officer\u0027s jacket with a white shirt, a dark tie and rows of medal ribbons",
+                        "avoidHeadwear": "kepi, side cap, beret, helmet",
+                        "notes": "clean-shaven, faint smile",
+                        "colourSeed": 1,
+                        "facePass": true,
+                        "born": 1899,
+                        "photoYear": null,
+                        "age": null,
+                        "ageSent": false
+                    },
+                    "run": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_philippe_auboyneau\\round-1\\portrait-run.json",
+                    "recipe": {
+                        "steps": [
+                            {
+                                "template": "K1",
+                                "sha256": "9e7199bcc305eb0bbc2d717691d7d1cbb119911c753ff744deb9e12c171f0887"
+                            },
+                            {
+                                "template": "M1",
+                                "sha256": "2557e8c223cc395302454fbd490cce469d8c9d427280e61911f1bf626b2bb7c3"
+                            },
+                            {
+                                "template": "A4",
+                                "sha256": "863208f1184ba33cf302d8f731a1a771f26c05b6d7d509e10010b1d7fa7a98ec"
+                            },
+                            {
+                                "template": "F2",
+                                "sha256": "224a4184e6b5684d5c05f98cbaad67a33db2a2af6a10a61cab4f45d70289d5cf"
+                            }
+                        ],
+                        "gradeStrength": 0.6,
+                        "facePass": true
+                    },
+                    "candidates": [
+                        {
+                            "seed": 1,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_philippe_auboyneau\\round-1\\final\\A4_s1.png",
+                            "sha256": "8ac37df5e26609862c3ccf70d70823828a720c084d1cd827b9bffc09de827b3c",
+                            "likeness": 0.5565
+                        },
+                        {
+                            "seed": 2,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_philippe_auboyneau\\round-1\\final\\A4_s2.png",
+                            "sha256": "1cd275dd6ffc3277ae3fb3b3f27d61a5e2b3291eb533bdc9370cfef7d26a3b85",
+                            "likeness": 0.5755
+                        },
+                        {
+                            "seed": 3,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_philippe_auboyneau\\round-1\\final\\A4_s3.png",
+                            "sha256": "5f2cb16b66802f3905b6e73eb8f2eb02b81a236847f1b91bee79e6b1b07e2fe1",
+                            "likeness": 0.5902
+                        },
+                        {
+                            "seed": 4,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_philippe_auboyneau\\round-1\\final\\A4_s4.png",
+                            "sha256": "5ab5ade5b184260550743b115e9223d3827bee9d8033d4ea8d173c3e0eff1a56",
+                            "likeness": 0.6113
+                        }
+                    ],
+                    "decision": {
+                        "reject": "The signature on the bottom left of the image ruins the generation."
+                    }
+                }
+            ],
+            "chosen": null
+        },
+        "robert_jaujard": {
+            "rounds": [
+                {
+                    "round": 1,
+                    "date": "2026-11-02",
+                    "seeds": [
+                        1,
+                        2,
+                        3,
+                        4
+                    ],
+                    "settings": {
+                        "role": "French admiral",
+                        "headwear": "wearing a dark French Navy admiral\u0027s peaked cap with a gold-embroidered anchor badge, a band of gold oak leaves and three small silver stars",
+                        "uniform": "dark navy blue French Navy officer\u0027s jacket with a white shirt and a black tie",
+                        "avoidHeadwear": "kepi, side cap, beret, helmet",
+                        "notes": "bushy grey moustache, deeply lined weathered face",
+                        "colourSeed": 1,
+                        "facePass": true,
+                        "born": 1896,
+                        "photoYear": 1948,
+                        "age": 52,
+                        "ageSent": true
+                    },
+                    "run": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_robert_jaujard\\round-1\\portrait-run.json",
+                    "recipe": {
+                        "steps": [
+                            {
+                                "template": "K1",
+                                "sha256": "9e7199bcc305eb0bbc2d717691d7d1cbb119911c753ff744deb9e12c171f0887"
+                            },
+                            {
+                                "template": "M1",
+                                "sha256": "2557e8c223cc395302454fbd490cce469d8c9d427280e61911f1bf626b2bb7c3"
+                            },
+                            {
+                                "template": "A4",
+                                "sha256": "863208f1184ba33cf302d8f731a1a771f26c05b6d7d509e10010b1d7fa7a98ec"
+                            },
+                            {
+                                "template": "F2",
+                                "sha256": "224a4184e6b5684d5c05f98cbaad67a33db2a2af6a10a61cab4f45d70289d5cf"
+                            }
+                        ],
+                        "gradeStrength": 0.6,
+                        "facePass": true
+                    },
+                    "candidates": [
+                        {
+                            "seed": 1,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_robert_jaujard\\round-1\\final\\A4_s1.png",
+                            "sha256": "99a1f9aa447983347d697aa59b13d7e5dec1833745bf927a565b139872380343",
+                            "likeness": 0.6202
+                        },
+                        {
+                            "seed": 2,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_robert_jaujard\\round-1\\final\\A4_s2.png",
+                            "sha256": "353c427f906a7c9663e9a8a8358ef4bf9757af8a7c4d7928eebc38ee0bbacb43",
+                            "likeness": 0.6377
+                        },
+                        {
+                            "seed": 3,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_robert_jaujard\\round-1\\final\\A4_s3.png",
+                            "sha256": "bf1215b3451a921ad7db7e4b71255ccec6c452681184f32c0cb4d6252ee39ad5",
+                            "likeness": 0.6416
+                        },
+                        {
+                            "seed": 4,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_robert_jaujard\\round-1\\final\\A4_s4.png",
+                            "sha256": "2bfd326b4f544ca870001a02cb6061cd74cc01b94b8ec25ba68b3deb2dfdd295",
+                            "likeness": 0.6532
+                        }
+                    ],
+                    "decision": {
+                        "pick": 2
+                    }
+                }
+            ],
+            "chosen": {
+                "round": 1,
+                "seed": 2,
+                "file": "source/france/portraits/robert_jaujard.png",
+                "sha256": "353c427f906a7c9663e9a8a8358ef4bf9757af8a7c4d7928eebc38ee0bbacb43"
+            }
+        }
+    }
+}

@@ -1,0 +1,12 @@
+on_actions = {
+	on_startup = {
+		effect = {
+			FRA = {
+				recruit_character = lp_fra_joseph_de_goislard_de_monsabert
+				recruit_character = lp_fra_marcel_carpentier
+				recruit_character = lp_fra_charles_mast
+				recruit_character = lp_fra_robert_jaujard
+			}
+		}
+	}
+}
