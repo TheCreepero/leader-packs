@@ -13,6 +13,13 @@
                 "source/finland/portraits/oiva_koivisto.png",
                 "source/finland/portraits/armas_eino_martola.png"
             ]
+        },
+        "france": {
+            "portraits": [
+                "source/france/portraits/charles_mast.png",
+                "source/france/portraits/joseph_de_goislard_de_monsabert.png",
+                "source/france/portraits/robert_jaujard.png"
+            ]
         }
     }
 }
