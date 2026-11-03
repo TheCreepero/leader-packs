@@ -1,3 +1,5 @@
+. (Join-Path $PSScriptRoot 'HoiImageSources.ps1')
+
 function Get-LpUtf8 {
     param([switch]$Bom)
 
@@ -276,6 +278,7 @@ function Get-LpPack {
         SourceDir       = $sourceDir
         PackRoot        = Join-Path $RepoRoot ('packs\' + $Pack)
         CacheDir        = Join-Path $RepoRoot ('sources-cache\' + $Pack)
+        EvidenceDir     = Join-Path $sourceDir 'evidence'
         PortraitDir     = Join-Path $sourceDir 'portraits'
         DataDir         = $dataDir
         SourcePack      = [string](Get-LpProperty -Object $leaderSource -Name 'pack' -Default '')
@@ -535,6 +538,16 @@ function Get-LpLeaderPhotoKey {
     return [string](Get-LpProperty -Object (Get-LpProperty -Object $Leader -Name 'portrait') -Name 'photo' -Default '')
 }
 
+function Get-LpPhotoShownYear {
+    param($Pack, [Parameter(Mandatory = $true)][string]$PhotoKey)
+
+    $shownYears = @($Pack.Leaders | Where-Object { (Get-LpLeaderPhotoKey -Leader $_) -eq $PhotoKey } | ForEach-Object { Get-LpProperty -Object (Get-LpProperty -Object $_ -Name 'portrait') -Name 'photoYear' } | Where-Object { Test-LpYearValue -Value $_ } | ForEach-Object { [int]$_ } | Sort-Object)
+    if ($shownYears.Count -eq 0) {
+        return ''
+    }
+    return [string]$shownYears[0]
+}
+
 function Get-LpLicenceLabel {
     param($Photo)
 
@@ -547,6 +560,34 @@ function Get-LpLicenceLabel {
         return 'Public domain'
     }
     return [string](Get-LpProperty -Object $Photo -Name 'licenseShortName' -Default $category)
+}
+
+function Get-LpPhotoCreditName {
+    param($Photo)
+
+    if (@('CC BY', 'CC BY-SA') -contains [string](Get-LpProperty -Object $Photo -Name 'licenseCategory' -Default '')) {
+        $attribution = Get-HoiImageAttribution -Record $Photo -Policy (Get-LpImagePolicy)
+        if ($attribution) {
+            return $attribution
+        }
+    }
+    return [string](Get-LpProperty -Object $Photo -Name 'author' -Default '')
+}
+
+function Test-LpShareAlikePhoto {
+    param($Photo)
+
+    return ($null -ne $Photo -and [string](Get-LpProperty -Object $Photo -Name 'licenseCategory' -Default '') -eq 'CC BY-SA')
+}
+
+function Get-LpPhotoTitle {
+    param($Photo)
+
+    $title = [string](Get-LpProperty -Object $Photo -Name 'title' -Default '')
+    if (-not $title) {
+        $title = ([string](Get-LpProperty -Object $Photo -Name 'commonsTitle' -Default '')) -replace '^File:', ''
+    }
+    return $title
 }
 
 function Get-LpUsedPhotos {
@@ -591,7 +632,15 @@ function New-LpWorkshopText {
         $bbcodeLines.Add('')
     }
     $wikiPageUrl = ([string]$Pack.Workshop.wikiUrl).TrimEnd('/') + '/' + (Get-LpWikiPageName -Pack $Pack)
-    $licenceNames = @(Get-LpUsedPhotos -Pack $Pack | ForEach-Object { ([string]$_.licenseShortName) -replace '^Public domain$', 'public domain' } | Where-Object { $_ } | Sort-Object -Unique -Descending)
+    $usedPhotos = @(Get-LpUsedPhotos -Pack $Pack)
+    $shareAlikeLeaderNames = @($generatedLeaders | Where-Object { Test-LpShareAlikePhoto -Photo (Get-LpPhotoByKey -Pack $Pack -PhotoKey (Get-LpLeaderPhotoKey -Leader $_)) } | ForEach-Object { ([string]$_.name).Trim() })
+    $shareAlikeText = ''
+    if ($shareAlikeLeaderNames.Count -gt 0) {
+        $shareAlikeNameText = if ($shareAlikeLeaderNames.Count -eq 1) { $shareAlikeLeaderNames[0] } else { (($shareAlikeLeaderNames[0..($shareAlikeLeaderNames.Count - 2)]) -join ', ') + ' and ' + $shareAlikeLeaderNames[-1] }
+        $portraitLicence = Get-HoiShareAlikePortraitLicence
+        $shareAlikeText = ' The portraits of ' + $shareAlikeNameText + ' adapt photographs licensed CC BY-SA and are themselves licensed [url=' + $portraitLicence.Url + ']' + $portraitLicence.ShortName + '[/url].'
+    }
+    $licenceNames = @($usedPhotos | ForEach-Object { ([string]$_.licenseShortName) -replace '^Public domain$', 'public domain' } | Where-Object { $_ } | Sort-Object -Unique -Descending)
     $licenceText = ''
     if ($licenceNames.Count -gt 1) {
         $licenceText = ' (' + ((($licenceNames[0..($licenceNames.Count - 2)]) -join ', ') + ' and ' + $licenceNames[-1]) + ')'
@@ -599,7 +648,7 @@ function New-LpWorkshopText {
         $licenceText = ' (' + $licenceNames[0] + ')'
     }
     $bbcodeLines.Add('[h1]Portraits[/h1]')
-    $bbcodeLines.Add('The portraits are AI-assisted repaints of period photographs from Wikimedia Commons, used under licences that allow it' + $licenceText + '. Each photograph was coloured and repainted in the style of the game with a local image model, then cropped and resized for the game. The source, author and licence of each photograph are on the [url=' + $wikiPageUrl + ']wiki page of this pack[/url].')
+    $bbcodeLines.Add('The portraits are AI-assisted repaints of period photographs from ' + (Get-HoiImageSourceText -Records $usedPhotos) + ', used under licences that allow it' + $licenceText + '. Each photograph was coloured and repainted in the style of the game with a local image model, then cropped and resized for the game. The source, author and licence of each photograph are on the [url=' + $wikiPageUrl + ']wiki page of this pack[/url].' + $shareAlikeText)
     $otherMods = @(ConvertTo-LpArray (Get-LpProperty -Object $Pack.Workshop -Name 'otherMods'))
     if ($otherMods.Count -gt 0) {
         $bbcodeLines.Add('')
@@ -632,25 +681,48 @@ function New-LpWikiText {
     $lines.Add('')
     $lines.Add('Generated by `build.ps1 -Generate` from `source/' + $Pack.Name + '/`. Do not edit: change the sources and generate again.')
     $lines.Add('')
-    $lines.Add('Every portrait is an AI-assisted repaint of a period photograph from Wikimedia Commons: the photograph was coloured and repainted with a local image model, then cropped and resized for the game. The Photo column links the Commons page of each photograph; the Licence column names its licence and author.')
+    $usedPhotos = @(Get-LpUsedPhotos -Pack $Pack)
+    $photoSourceText = Get-HoiImageSourceText -Records $usedPhotos
+    if ($photoSourceText -eq 'Wikimedia Commons') {
+        $lines.Add('Every portrait is an AI-assisted repaint of a period photograph from Wikimedia Commons: the photograph was coloured and repainted with a local image model, then cropped and resized for the game. The Photo column links the Commons page of each photograph; the Licence column names its licence and author.')
+    } else {
+        $lines.Add('Every portrait is an AI-assisted repaint of a period photograph from ' + $photoSourceText + ': the photograph was coloured and repainted with a local image model, then cropped and resized for the game. The Photo column links the record page of each photograph and names the archive that holds it; the Licence column names its licence and author.')
+    }
+    if (@($usedPhotos | Where-Object { Test-LpShareAlikePhoto -Photo $_ }).Count -gt 0) {
+        $portraitLicence = Get-HoiShareAlikePortraitLicence
+        $lines.Add('')
+        $lines.Add('A portrait painted from a photograph licensed CC BY-SA is an adaptation of it, and is itself licensed [' + $portraitLicence.ShortName + '](' + $portraitLicence.Url + '), as its row says.')
+    }
     $lines.Add('')
     $lines.Add('| Leader | Character | Role | Photo | Licence | Portrait |')
     $lines.Add('|---|---|---|---|---|---|')
     foreach ($leader in (Get-LpGeneratedLeaders -Pack $Pack)) {
         $photoCell = 'not fetched yet'
         $licenceCell = '-'
+        $portraitCell = 'AI-assisted repaint'
         $photo = Get-LpPhotoByKey -Pack $Pack -PhotoKey (Get-LpLeaderPhotoKey -Leader $leader)
         if ($null -ne $photo) {
-            $photoCell = '[' + (([string]$photo.commonsTitle) -replace '^File:', '') + '](' + [string]$photo.pageUrl + ')'
+            $photoCell = '[' + (Get-LpPhotoTitle -Photo $photo) + '](' + [string]$photo.pageUrl + ')'
+            $photoSource = [string](Get-LpProperty -Object $photo -Name 'source' -Default 'commons')
+            if ($photoSource -ne 'commons') {
+                $photoInstitution = [string](Get-LpProperty -Object $photo -Name 'institution' -Default '')
+                $photoArchiveText = @(@($photoInstitution, (Get-HoiImageSourceRules -Source $photoSource).Label) | Where-Object { $_ -and $_ -ne 'the archive page' } | Select-Object -Unique) -join ', '
+                $photoCell += ' (' + $photoArchiveText + ')'
+            }
             $licenceCell = Get-LpLicenceLabel -Photo $photo
-            if ([string]$photo.licenseCategory -eq 'CC BY' -and [string]$photo.licenseUrl) {
+            if (@('CC BY', 'CC BY-SA') -contains [string]$photo.licenseCategory -and [string]$photo.licenseUrl) {
                 $licenceCell = '[' + $licenceCell + '](' + [string]$photo.licenseUrl + ')'
             }
-            if ([string]$photo.author) {
-                $licenceCell += ', ' + [string]$photo.author
+            $creditName = Get-LpPhotoCreditName -Photo $photo
+            if ($creditName) {
+                $licenceCell += ', ' + $creditName
+            }
+            if (Test-LpShareAlikePhoto -Photo $photo) {
+                $portraitLicence = Get-HoiShareAlikePortraitLicence
+                $portraitCell = 'AI-assisted repaint, licensed [' + $portraitLicence.ShortName + '](' + $portraitLicence.Url + ')'
             }
         }
-        $lines.Add('| ' + ([string]$leader.name).Trim() + ' | `' + (Get-LpCharacterId -Pack $Pack -Leader $leader) + '` | ' + (Get-LpRoleTitle -Role ([string]$leader.role)) + ' | ' + $photoCell + ' | ' + $licenceCell + ' | AI-assisted repaint |')
+        $lines.Add('| ' + ([string]$leader.name).Trim() + ' | `' + (Get-LpCharacterId -Pack $Pack -Leader $leader) + '` | ' + (Get-LpRoleTitle -Role ([string]$leader.role)) + ' | ' + $photoCell + ' | ' + $licenceCell + ' | ' + $portraitCell + ' |')
     }
     return (($lines -join "`r`n") + "`r`n")
 }
@@ -1062,55 +1134,18 @@ function Test-LpPhotos {
     $problems = [System.Collections.Generic.List[PSObject]]::new()
     $usedPhotoKeys = @(Get-LpGeneratedLeaders -Pack $Pack | ForEach-Object { Get-LpLeaderPhotoKey -Leader $_ })
     $seenPhotoKeys = @{}
+    $imagePolicy = Get-LpImagePolicy
     foreach ($photo in $Pack.Photos) {
         $photoWhere = 'photo ' + [string]$photo.key
         if ([string]$photo.key -cnotmatch '^[a-z0-9_]+$' -or $seenPhotoKeys.ContainsKey([string]$photo.key)) {
             $problems.Add((New-LpProblem -Level 'ERROR' -Where $photoWhere -Message 'key missing, used twice or not lower-case letters, digits and underscores'))
         }
         $seenPhotoKeys[[string]$photo.key] = $true
-        $recordedCategory = [string](Get-LpProperty -Object $photo -Name 'licenseCategory' -Default '')
-        $derivedCategory = Get-LpLicenceCategory -LicenseCode ([string](Get-LpProperty -Object $photo -Name 'license' -Default ''))
-        if (@('PD', 'CC0', 'CC BY') -notcontains $recordedCategory -or $derivedCategory -ne $recordedCategory) {
-            $problems.Add((New-LpProblem -Level 'ERROR' -Where $photoWhere -Message "licence '$($photo.licenseShortName)' (code '$($photo.license)', category '$recordedCategory') is outside the policy (public domain, CC0, CC BY) or does not match its Commons code: fetch it again"))
+        $photoIsUsed = $usedPhotoKeys -contains [string]$photo.key
+        foreach ($imageProblem in @(Test-HoiImageRecord -Record $photo -Policy $imagePolicy -Used $photoIsUsed -CacheDir $Pack.CacheDir -KnownYear (Get-LpPhotoShownYear -Pack $Pack -PhotoKey ([string]$photo.key)) -EvidenceDir $Pack.EvidenceDir)) {
+            $problems.Add((New-LpProblem -Level $imageProblem.Level -Where $photoWhere -Message $imageProblem.Message))
         }
-        if ($recordedCategory -eq 'PD' -and [string](Get-LpProperty -Object $photo -Name 'publicDomainReason' -Default '') -notmatch '^PD-[^,]+(, PD-[^,]+)*$') {
-            $problems.Add((New-LpProblem -Level 'ERROR' -Where $photoWhere -Message 'public domain without the reason Commons gives (a PD- licence template): fetch it again'))
-        }
-        if ($recordedCategory -eq 'CC BY' -and (-not (Test-LpNamedAuthor -Author ([string]$photo.author)) -or [string]$photo.licenseUrl -notmatch '^https?://creativecommons\.org/licenses/by/')) {
-            $problems.Add((New-LpProblem -Level 'ERROR' -Where $photoWhere -Message 'CC BY needs a named author and the Creative Commons BY licence URL for the credit'))
-        }
-        if ([string]$photo.commonsTitle -notmatch '^File:' -or [string]$photo.pageUrl -notmatch '^https://commons\.wikimedia\.org/wiki/File:') {
-            $problems.Add((New-LpProblem -Level 'ERROR' -Where $photoWhere -Message 'not a Wikimedia Commons file page: photos come only through build.ps1 -FetchPhoto'))
-        }
-        if (-not (Test-LpCommonsDownloadUrl -Url ([string]$photo.downloadUrl))) {
-            $problems.Add((New-LpProblem -Level 'ERROR' -Where $photoWhere -Message "download URL '$($photo.downloadUrl)' is not on Wikimedia's upload servers"))
-        }
-        foreach ($requiredField in @('licenseShortName', 'downloadSha256', 'fetched')) {
-            if (-not [string](Get-LpProperty -Object $photo -Name $requiredField -Default '')) {
-                $problems.Add((New-LpProblem -Level 'ERROR' -Where $photoWhere -Message "no ${requiredField}: photos come only through build.ps1 -FetchPhoto"))
-            }
-        }
-        if ([string]$photo.downloadSha256 -and [string]$photo.downloadSha256 -notmatch '^[0-9a-f]{64}$') {
-            $problems.Add((New-LpProblem -Level 'ERROR' -Where $photoWhere -Message 'downloadSha256 is not a SHA-256: photos come only through build.ps1 -FetchPhoto'))
-        }
-        $shorterSide = [Math]::Min([int](Get-LpProperty -Object $photo -Name 'width' -Default 0), [int](Get-LpProperty -Object $photo -Name 'height' -Default 0))
-        if ($shorterSide -lt 300) {
-            $problems.Add((New-LpProblem -Level 'ERROR' -Where $photoWhere -Message "the original is $($photo.width)x$($photo.height); a portrait source needs at least 300 px on its shorter side"))
-        }
-        $publicDomainReasons = @(([string](Get-LpProperty -Object $photo -Name 'publicDomainReason' -Default '')) -split ',\s*' | Where-Object { $_ })
-        if ($recordedCategory -eq 'PD' -and $publicDomainReasons.Count -gt 0 -and @($publicDomainReasons | Where-Object { $_ -notmatch '^PD-US' }).Count -eq 0) {
-            $problems.Add((New-LpProblem -Level 'WARN' -Where $photoWhere -Message "public domain in the United States only ($($publicDomainReasons -join ', ')); the owner decides before a release"))
-        }
-        if ($photo.downloadSha256 -and (Test-LpCommonsDownloadUrl -Url ([string]$photo.downloadUrl))) {
-            $cachePath = Get-LpCacheFilePath -Pack $Pack -Photo $photo
-            if ((Test-Path -LiteralPath $cachePath) -and (Get-LpSha256 -Path $cachePath) -ne [string]$photo.downloadSha256) {
-                $problems.Add((New-LpProblem -Level 'ERROR' -Where $photoWhere -Message 'the downloaded file in sources-cache does not match the SHA-256 recorded at fetch time'))
-            }
-        }
-        if ([string](Get-LpProperty -Object $photo -Name 'restrictions' -Default '')) {
-            $problems.Add((New-LpProblem -Level 'WARN' -Where $photoWhere -Message "Commons lists restrictions: $($photo.restrictions); the owner reviews it before a release"))
-        }
-        if ($usedPhotoKeys -notcontains [string]$photo.key) {
+        if (-not $photoIsUsed) {
             $problems.Add((New-LpProblem -Level 'WARN' -Where $photoWhere -Message 'no leader uses this photo'))
         }
     }
@@ -1481,28 +1516,48 @@ function Invoke-LpAudit {
     }
     Write-Host ''
     $refreshCutoff = (Get-Date).AddDays(-180).ToString('yyyy-MM-dd', [System.Globalization.CultureInfo]::InvariantCulture)
+    $usedPhotoKeys = @(Get-LpGeneratedLeaders -Pack $packData | ForEach-Object { Get-LpLeaderPhotoKey -Leader $_ })
+    $imagePolicy = Get-LpImagePolicy
     foreach ($photo in $packData.Photos) {
         $photoWhere = 'photo ' + [string]$photo.key
+        $photoSource = [string](Get-LpProperty -Object $photo -Name 'source' -Default 'commons')
+        $sourceLabel = (Get-HoiImageSourceRules -Source $photoSource).ShortLabel
+        $refusalLevel = if ($usedPhotoKeys -contains [string]$photo.key) { 'ERROR' } else { 'WARN' }
         if ([string]$photo.fetched -and [string]$photo.fetched -lt $refreshCutoff) {
-            $problems.Add((New-LpProblem -Level 'WARN' -Where $photoWhere -Message "licence recorded from Commons on $($photo.fetched), over 180 days ago: fetch it again with build.ps1 -FetchPhoto"))
+            $problems.Add((New-LpProblem -Level 'WARN' -Where $photoWhere -Message "licence recorded from $sourceLabel on $($photo.fetched), over 180 days ago: fetch it again with build.ps1 -FetchPhoto"))
+        }
+        if ($photoSource -eq 'manual') {
+            try {
+                $quoteIsOnline = Test-HoiManualQuoteOnline -Record $photo -Policy $imagePolicy
+            } catch {
+                $problems.Add((New-LpProblem -Level 'WARN' -Where $photoWhere -Message "the archive page could not be read: $(Get-HoiWebErrorText -ErrorRecord $_)"))
+                continue
+            }
+            if ($quoteIsOnline) {
+                Write-Host "  $photoWhere : the archive page still holds the quoted rights sentence" -ForegroundColor Gray
+            } else {
+                $problems.Add((New-LpProblem -Level $refusalLevel -Where $photoWhere -Message "the quoted rights sentence is gone from $($photo.evidence.rightsUrl): check the archive's terms again with the owner"))
+            }
+            continue
         }
         try {
-            $response = Invoke-LpCommonsRequest -Uri (Get-LpCommonsQueryUrl -FileTitle ([string]$photo.commonsTitle))
+            $candidate = Get-LpPhotoCandidate -Photo $photo -Policy $imagePolicy
         } catch {
-            $problems.Add((New-LpProblem -Level 'WARN' -Where $photoWhere -Message "Commons could not be read: $(Get-LpWebErrorText -ErrorRecord $_)"))
+            $problems.Add((New-LpProblem -Level 'WARN' -Where $photoWhere -Message "$sourceLabel could not be read: $(Get-HoiWebErrorText -ErrorRecord $_)"))
             continue
         }
-        $verdict = Get-LpCommonsVerdict -Response $response
+        $candidate.YearTexts = @($candidate.YearTexts) + @(Get-LpPhotoShownYear -Pack $packData -PhotoKey ([string]$photo.key) | Where-Object { $_ })
+        $verdict = Get-HoiImageVerdict -Candidate $candidate -Policy $imagePolicy
         if (-not $verdict.Accepted) {
-            $problems.Add((New-LpProblem -Level 'ERROR' -Where $photoWhere -Message "Commons now refuses it: $($verdict.Reason)"))
+            $problems.Add((New-LpProblem -Level $refusalLevel -Where $photoWhere -Message "$sourceLabel now refuses it: $($verdict.Reason)"))
             continue
         }
-        if ([string]$verdict.Photo.license -ne [string]$photo.license -or [string]$verdict.Photo.licenseCategory -ne [string]$photo.licenseCategory) {
-            $problems.Add((New-LpProblem -Level 'ERROR' -Where $photoWhere -Message "the licence on Commons is now '$($verdict.Photo.licenseShortName)' ($($verdict.Photo.license)), recorded '$($photo.licenseShortName)' ($($photo.license)): fetch it again"))
-        } elseif ([string]$verdict.Photo.author -ne [string]$photo.author) {
-            $problems.Add((New-LpProblem -Level 'WARN' -Where $photoWhere -Message "the author on Commons is now '$($verdict.Photo.author)', recorded '$($photo.author)': fetch it again"))
+        if ([string]$verdict.Record.license -ne [string]$photo.license -or [string]$verdict.Record.licenseCategory -ne [string]$photo.licenseCategory) {
+            $problems.Add((New-LpProblem -Level 'ERROR' -Where $photoWhere -Message "the licence on $sourceLabel is now '$($verdict.Record.licenseShortName)' ($($verdict.Record.license)), recorded '$($photo.licenseShortName)' ($($photo.license)): fetch it again"))
+        } elseif ([string]$verdict.Record.author -ne [string]$photo.author) {
+            $problems.Add((New-LpProblem -Level 'WARN' -Where $photoWhere -Message "the author on $sourceLabel is now '$($verdict.Record.author)', recorded '$($photo.author)': fetch it again"))
         } else {
-            Write-Host "  $photoWhere : Commons still gives $($verdict.Reason)" -ForegroundColor Gray
+            Write-Host "  $photoWhere : $sourceLabel still gives $($verdict.Reason)" -ForegroundColor Gray
         }
     }
     Write-Host ''
@@ -1512,146 +1567,21 @@ function Invoke-LpAudit {
     return $(if ($errorCount -gt 0) { 1 } else { 0 })
 }
 
-function Get-LpCommonsDeletionTemplates {
-    return @('Template:Delete', 'Template:Speedydelete', 'Template:Copyvio', 'Template:No license since', 'Template:No permission since', 'Template:No source since', 'Template:Dw no source since', 'Template:Npd', 'Template:Disputed', 'Template:Disputed copyright')
-}
-
-function Get-LpLicenceCategory {
-    param([AllowEmptyString()][string]$LicenseCode)
-
-    $normalizedCode = ([string]$LicenseCode).ToLowerInvariant()
-    if ($normalizedCode -match '^(pd|public domain)') {
-        return 'PD'
-    }
-    if ($normalizedCode -match '^(cc0|cc-zero)') {
-        return 'CC0'
-    }
-    if ($normalizedCode -match '^cc-by-\d') {
-        return 'CC BY'
-    }
-    return ''
-}
-
-function Test-LpNamedAuthor {
-    param([AllowEmptyString()][string]$Author)
-
-    return ([bool]([string]$Author).Trim() -and $Author -notmatch '^(unknown|anonymous|unknown author|author unknown)$')
-}
-
-function Test-LpCommonsDownloadUrl {
-    param([AllowEmptyString()][string]$Url)
-
-    return ([string]$Url -match '^https://(upload|thumb)\.wikimedia\.org/wikipedia/commons/')
+function Get-LpImagePolicy {
+    return New-HoiImagePolicy -AcceptedCategories @('PD', 'CC0', 'CC BY', 'CC BY-SA') -AcceptedSources @('commons', 'finna', 'europeana', 'manual') -MinShorterSide 300 -MinSizeText 'a portrait source' -InstitutionCredit -BotName 'LeaderPacksBot' -ContactUrl 'https://github.com/TheCreepero/leader-packs' -FetchCommand 'build.ps1 -FetchPhoto' -ItemNounPlural 'photos'
 }
 
 function Get-LpCommonsQueryUrl {
     param([Parameter(Mandatory = $true)][string]$FileTitle)
 
-    $queryParts = @(
-        'action=query', 'format=json', 'formatversion=2',
-        ('titles=' + [uri]::EscapeDataString($FileTitle)),
-        'prop=imageinfo%7Ctemplates',
-        'iiprop=url%7Csize%7Cmime%7Cextmetadata',
-        'iiurlwidth=1600',
-        'tlnamespace=10',
-        'tllimit=max'
-    )
-    return 'https://commons.wikimedia.org/w/api.php?' + ($queryParts -join '&')
-}
-
-function ConvertFrom-LpHtml {
-    param([AllowEmptyString()][string]$Html)
-
-    $visibleHtml = [regex]::Replace([string]$Html, '(?is)<(\w+)[^>]*display:\s*none[^>]*>.*?</\1>', '')
-    $plainText = [regex]::Replace($visibleHtml, '<[^>]+>', '')
-    return ([System.Net.WebUtility]::HtmlDecode($plainText) -replace '\s+', ' ').Trim()
+    return Get-HoiCommonsQueryUrl -FileTitle $FileTitle
 }
 
 function Get-LpCommonsVerdict {
     param([Parameter(Mandatory = $true)]$Response)
 
-    $page = @(ConvertTo-LpArray (Get-LpProperty -Object (Get-LpProperty -Object $Response -Name 'query') -Name 'pages')) | Select-Object -First 1
-    if ($null -eq $page -or (Get-LpProperty -Object $page -Name 'missing' -Default $false) -or $null -eq (Get-LpProperty -Object $page -Name 'imageinfo')) {
-        return [PSCustomObject]@{ Accepted = $false; Reason = 'no such file on Wikimedia Commons'; Photo = $null }
-    }
-    $imageInfo = @($page.imageinfo)[0]
-    $metadata = $imageInfo.extmetadata
-    $licenseCode = ([string](Get-LpProperty -Object (Get-LpProperty -Object $metadata -Name 'License') -Name 'value' -Default '')).ToLowerInvariant()
-    $licenseShortName = ConvertFrom-LpHtml ([string](Get-LpProperty -Object (Get-LpProperty -Object $metadata -Name 'LicenseShortName') -Name 'value' -Default ''))
-    $licenseCategory = Get-LpLicenceCategory -LicenseCode $licenseCode
-    $photo = [PSCustomObject][ordered]@{
-        key                = ''
-        commonsTitle       = [string]$page.title
-        pageUrl            = [string]$imageInfo.descriptionurl
-        downloadUrl        = [string](Get-LpProperty -Object $imageInfo -Name 'thumburl' -Default $imageInfo.url)
-        downloadSha256     = ''
-        author             = ConvertFrom-LpHtml ([string](Get-LpProperty -Object (Get-LpProperty -Object $metadata -Name 'Artist') -Name 'value' -Default ''))
-        credit             = ConvertFrom-LpHtml ([string](Get-LpProperty -Object (Get-LpProperty -Object $metadata -Name 'Credit') -Name 'value' -Default ''))
-        licenseShortName   = $licenseShortName
-        license            = $licenseCode
-        licenseCategory    = $(if ($licenseCategory) { $licenseCategory } else { '' })
-        licenseUrl         = [string](Get-LpProperty -Object (Get-LpProperty -Object $metadata -Name 'LicenseUrl') -Name 'value' -Default '')
-        usageTerms         = ConvertFrom-LpHtml ([string](Get-LpProperty -Object (Get-LpProperty -Object $metadata -Name 'UsageTerms') -Name 'value' -Default ''))
-        restrictions       = [string](Get-LpProperty -Object (Get-LpProperty -Object $metadata -Name 'Restrictions') -Name 'value' -Default '')
-        dateOriginal       = ConvertFrom-LpHtml ([string](Get-LpProperty -Object (Get-LpProperty -Object $metadata -Name 'DateTimeOriginal') -Name 'value' -Default ''))
-        width              = [int]$imageInfo.width
-        height             = [int]$imageInfo.height
-        fetched            = ''
-        publicDomainReason = ''
-    }
-    $pageTemplates = @(ConvertTo-LpArray (Get-LpProperty -Object $page -Name 'templates') | ForEach-Object { [string]$_.title })
-    $deletionTemplates = @($pageTemplates | Where-Object { (Get-LpCommonsDeletionTemplates) -contains $_ })
-    $photo.publicDomainReason = (@($pageTemplates | Where-Object { $_ -match '^Template:PD-[^/]+$' -and $_ -ne 'Template:PD-Layout' } | ForEach-Object { $_.Substring(9) }) -join ', ')
-    if ($deletionTemplates.Count -gt 0) {
-        return [PSCustomObject]@{ Accepted = $false; Reason = ('tagged on Commons: ' + ($deletionTemplates -join ', ')); Photo = $photo }
-    }
-    if ($licenseCategory -eq 'PD' -and -not $photo.publicDomainReason) {
-        return [PSCustomObject]@{ Accepted = $false; Reason = 'public domain without a PD- licence template on Commons that states why'; Photo = $photo }
-    }
-    if (-not $licenseCategory) {
-        return [PSCustomObject]@{ Accepted = $false; Reason = "licence '$licenseShortName' ($licenseCode) is outside the policy: public domain, CC0 or CC BY only"; Photo = $photo }
-    }
-    if ($licenseCategory -eq 'CC BY' -and -not (Test-LpNamedAuthor -Author $photo.author)) {
-        return [PSCustomObject]@{ Accepted = $false; Reason = 'CC BY without a named author on Commons: the credit cannot be written'; Photo = $photo }
-    }
-    if ([string](Get-LpProperty -Object $imageInfo -Name 'mime' -Default '') -notmatch '^image/(jpeg|png|tiff|gif|webp)$') {
-        return [PSCustomObject]@{ Accepted = $false; Reason = "file type '$($imageInfo.mime)' is not a picture"; Photo = $photo }
-    }
-    if (-not (Test-LpCommonsDownloadUrl -Url $photo.downloadUrl)) {
-        return [PSCustomObject]@{ Accepted = $false; Reason = "download URL '$($photo.downloadUrl)' is not on Wikimedia's upload servers"; Photo = $photo }
-    }
-    if ([Math]::Min($photo.width, $photo.height) -lt 300) {
-        return [PSCustomObject]@{ Accepted = $false; Reason = "$($photo.width)x$($photo.height) is under 300 px on its shorter side, too small for a portrait source"; Photo = $photo }
-    }
-    return [PSCustomObject]@{ Accepted = $true; Reason = "$licenseCategory ($licenseShortName)"; Photo = $photo }
-}
-
-function Get-LpWebHeaders {
-    $powerShellVersion = '{0}.{1}' -f $PSVersionTable.PSVersion.Major, $PSVersionTable.PSVersion.Minor
-    return @{ 'User-Agent' = "LeaderPacksBot/1.0 (https://github.com/TheCreepero/leader-packs; Hearts of Iron IV mod build tool, one request at a time) PowerShell/$powerShellVersion" }
-}
-
-function Get-LpWebErrorText {
-    param([Parameter(Mandatory = $true)][System.Management.Automation.ErrorRecord]$ErrorRecord)
-
-    $text = if ($null -ne $ErrorRecord.ErrorDetails -and $ErrorRecord.ErrorDetails.Message) { $ErrorRecord.ErrorDetails.Message } else { $ErrorRecord.Exception.Message }
-    $text = ([regex]::Replace([string]$text, '<[^>]+>', ' ') -replace '\s+', ' ').Trim()
-    if ($text.Length -gt 300) {
-        $text = $text.Substring(0, 300) + '...'
-    }
-    return $text
-}
-
-function Get-LpRetryDelaySeconds {
-    param($Response, [Parameter(Mandatory = $true)][int]$Attempt)
-
-    $backoffSeconds = 5 * [Math]::Pow(2, $Attempt - 1)
-    $retryAfterSeconds = 0
-    $headers = Get-LpProperty -Object $Response -Name 'Headers'
-    if ($null -ne $headers -and -not [int]::TryParse([string]$headers['Retry-After'], [ref]$retryAfterSeconds)) {
-        $retryAfterSeconds = 0
-    }
-    return [int][Math]::Min(120, [Math]::Max($retryAfterSeconds, $backoffSeconds))
+    $verdict = Get-HoiImageVerdict -Candidate (ConvertFrom-HoiCommonsResponse -Response $Response) -Policy (Get-LpImagePolicy)
+    return [PSCustomObject]@{ Accepted = $verdict.Accepted; Reason = $verdict.Reason; Photo = $verdict.Record }
 }
 
 function Invoke-LpCommonsRequest {
@@ -1661,39 +1591,13 @@ function Invoke-LpCommonsRequest {
         [int]$MaxAttempts = 5
     )
 
-    for ($attempt = 1; ; $attempt++) {
-        try {
-            if ($OutFile) {
-                Invoke-WebRequest -Uri $Uri -Headers (Get-LpWebHeaders) -OutFile $OutFile -UseBasicParsing
-                return
-            }
-            return (Invoke-RestMethod -Uri $Uri -Headers (Get-LpWebHeaders) -UseBasicParsing)
-        } catch {
-            $response = Get-LpProperty -Object $_.Exception -Name 'Response'
-            $statusCode = if ($null -ne $response) { [int]$response.StatusCode } else { 0 }
-            if ($statusCode -notin @(429, 503)) {
-                throw
-            }
-            Write-Host "  Wikimedia answered $statusCode`: $(Get-LpWebErrorText -ErrorRecord $_)" -ForegroundColor Yellow
-            if ($attempt -ge $MaxAttempts) {
-                Write-Host "  giving up after $MaxAttempts attempts" -ForegroundColor Yellow
-                throw
-            }
-            $delaySeconds = Get-LpRetryDelaySeconds -Response $response -Attempt $attempt
-            Write-Host "  trying again in $delaySeconds s (attempt $($attempt + 1) of $MaxAttempts)" -ForegroundColor Yellow
-            Start-Sleep -Seconds $delaySeconds
-        }
-    }
+    return (Invoke-HoiImageRequest -Uri $Uri -Policy (Get-LpImagePolicy) -OutFile $OutFile -MaxAttempts $MaxAttempts)
 }
 
 function Get-LpCacheFilePath {
     param($Pack, $Photo)
 
-    $extension = [System.IO.Path]::GetExtension(([uri][string]$Photo.downloadUrl).AbsolutePath)
-    if (-not $extension) {
-        $extension = '.jpg'
-    }
-    return (Join-Path $Pack.CacheDir ([string]$Photo.key + $extension.ToLowerInvariant()))
+    return Get-HoiImageCachePath -CacheDir $Pack.CacheDir -Record $Photo
 }
 
 function Save-LpPhotos {
@@ -1706,11 +1610,36 @@ function Save-LpPhotos {
     Write-LpJson -Path (Join-Path $Pack.SourceDir 'photos.json') -Value ([PSCustomObject]@{ photos = @($sortedPhotos) }) -Depth 5
 }
 
+function Get-LpManagerRootText {
+    try {
+        return [string](Get-LpManagerRoot)
+    } catch {
+        return ''
+    }
+}
+
+function Get-LpPhotoCandidate {
+    param(
+        [Parameter(Mandatory = $true)]$Photo,
+        [Parameter(Mandatory = $true)]$Policy
+    )
+
+    $source = [string](Get-LpProperty -Object $Photo -Name 'source' -Default 'commons')
+    $sourceId = [string](Get-LpProperty -Object $Photo -Name 'sourceId' -Default '')
+    if (-not $sourceId) {
+        $sourceId = [string](Get-LpProperty -Object $Photo -Name 'commonsTitle' -Default '')
+    }
+    return Get-HoiImageCandidate -Source $source -Id $sourceId -Policy $Policy -ManagerRoot (Get-LpManagerRootText)
+}
+
 function Invoke-LpFetchPhoto {
     param(
         [Parameter(Mandatory = $true)][string]$RepoRoot,
         [Parameter(Mandatory = $true)][string]$Pack,
-        [Parameter(Mandatory = $true)][string]$File,
+        [string]$File,
+        [string]$Source,
+        [string]$Id,
+        [string]$Evidence,
         [Parameter(Mandatory = $true)][string]$Key,
         [switch]$DryRun
     )
@@ -1720,30 +1649,52 @@ function Invoke-LpFetchPhoto {
         return 1
     }
     $packData = Get-LpPack -RepoRoot $RepoRoot -Pack $Pack
-    $fileTitle = if ($File -like 'File:*') { $File } else { 'File:' + $File }
-    $response = Invoke-LpCommonsRequest -Uri (Get-LpCommonsQueryUrl -FileTitle $fileTitle)
-    $verdict = Get-LpCommonsVerdict -Response $response
-    if (-not $verdict.Accepted) {
-        Write-Host "REJECTED $fileTitle : $($verdict.Reason)" -ForegroundColor Red
+    $imagePolicy = Get-LpImagePolicy
+    if ($Evidence) {
+        if (-not (Test-Path -LiteralPath $Evidence)) {
+            Write-Host "-Evidence '$Evidence' not found: write the evidence JSON under scratch\ first (docs/source-format.md)" -ForegroundColor Red
+            return 1
+        }
+        $Source = 'manual'
+        $evidenceSpec = Read-LpJson -Path $Evidence
+        $Id = [string](Get-LpProperty -Object $evidenceSpec -Name 'recordUrl' -Default $Evidence)
+        $candidate = Get-HoiManualCandidate -Spec $evidenceSpec -Policy $imagePolicy
+    } else {
+        if ($File) {
+            $Source = 'commons'
+            $Id = if ($File -like 'File:*') { $File } else { 'File:' + $File }
+        }
+        if (-not $Source -or -not $Id) {
+            Write-Host '-FetchPhoto takes -File "File:<title>", -Source <commons|finna|europeana> -Id <id>, or -Evidence <evidence JSON>' -ForegroundColor Red
+            return 1
+        }
+        $candidate = Get-HoiImageCandidate -Source $Source -Id $Id -Policy $imagePolicy -ManagerRoot (Get-LpManagerRootText)
+    }
+    $photoLabel = if ($Source -eq 'commons') { $Id } else { "$Source $Id" }
+    $fetchResult = Invoke-HoiImageFetch -Candidate $candidate -Policy $imagePolicy -CacheDir $packData.CacheDir -Key $Key -KnownYears @(Get-LpPhotoShownYear -Pack $packData -PhotoKey $Key) -DryRun:$DryRun
+    if (-not $fetchResult.Accepted) {
+        Write-Host "REJECTED $photoLabel : $($fetchResult.Reason)" -ForegroundColor Red
         return 1
     }
-    $photo = $verdict.Photo
-    $photo.key = $Key
-    $photo.fetched = Get-LpToday
-    Write-Host "ACCEPTED $fileTitle : $($verdict.Reason), $($photo.width)x$($photo.height), author: $(if ($photo.author) { $photo.author } else { 'not given' })" -ForegroundColor Green
+    $photo = $fetchResult.Record
+    Write-Host "ACCEPTED $photoLabel : $($fetchResult.Reason), $($photo.width)x$($photo.height), author: $(if ($photo.author) { $photo.author } else { 'not given' })$(if ($photo.attribution -and $photo.attribution -ne $photo.author) { ', credit: ' + $photo.attribution })" -ForegroundColor Green
     if ($photo.restrictions) {
-        Write-Host "  Commons lists restrictions: $($photo.restrictions)" -ForegroundColor Yellow
+        Write-Host "  $((Get-HoiImageSourceRules -Source $Source).Label) lists restrictions: $($photo.restrictions)" -ForegroundColor Yellow
+    }
+    if ($Source -eq 'manual') {
+        Write-Host "  NEEDS OWNER CONFIRMATION: the quote was found on the $($photo.evidence.quoteFoundIn) page." -ForegroundColor Yellow
+        Write-Host "    quote : $($photo.evidence.rightsQuote)" -ForegroundColor Yellow
+        Write-Host "    record: $($photo.evidence.recordUrl)" -ForegroundColor Yellow
+        Write-Host "    rights: $($photo.evidence.rightsUrl)" -ForegroundColor Yellow
+        Write-Host "    licence: $($photo.licenseShortName)$(if ($photo.publicDomainReason) { ' (' + $photo.publicDomainReason + ')' })" -ForegroundColor Yellow
     }
     if ($DryRun) {
-        Write-Host '  Dry run: nothing downloaded or recorded.' -ForegroundColor Gray
+        Write-Host '  Dry run: nothing recorded or kept.' -ForegroundColor Gray
         return 0
     }
-    $cachePath = Get-LpCacheFilePath -Pack $packData -Photo $photo
-    if (-not (Test-Path -LiteralPath $packData.CacheDir)) {
-        New-Item -ItemType Directory -Path $packData.CacheDir -Force | Out-Null
+    if ($Source -eq 'manual') {
+        Save-HoiManualEvidence -Candidate $candidate -EvidenceDir $packData.EvidenceDir -Key $Key
     }
-    Invoke-LpCommonsRequest -Uri $photo.downloadUrl -OutFile $cachePath
-    $photo.downloadSha256 = Get-LpSha256 -Path $cachePath
     $keptPhotos = [System.Collections.Generic.List[PSObject]]::new()
     foreach ($existingPhoto in $packData.Photos) {
         if ([string]$existingPhoto.key -ne $Key) {
@@ -1752,15 +1703,92 @@ function Invoke-LpFetchPhoto {
     }
     $keptPhotos.Add($photo)
     Save-LpPhotos -Pack $packData -Photos $keptPhotos
-    Write-Host "  recorded '$Key' in source\$Pack\photos.json; downloaded to $cachePath" -ForegroundColor Gray
+    Write-Host "  recorded '$Key' in source\$Pack\photos.json; downloaded to $($fetchResult.CachePath)" -ForegroundColor Gray
+    if ($Source -eq 'manual') {
+        Write-Host "  The licence waits for the owner: build.ps1 -ConfirmLicence -Pack $Pack -Key $Key, run only on the owner's word." -ForegroundColor Yellow
+    }
+    return 0
+}
+
+function Invoke-LpConfirmLicence {
+    param(
+        [Parameter(Mandatory = $true)][string]$RepoRoot,
+        [Parameter(Mandatory = $true)][string]$Pack,
+        [Parameter(Mandatory = $true)][string]$Key
+    )
+
+    $packData = Get-LpPack -RepoRoot $RepoRoot -Pack $Pack
+    $photo = Get-LpPhotoByKey -Pack $packData -PhotoKey $Key
+    if ($null -eq $photo) {
+        Write-Host "photo '$Key' is not in source\$Pack\photos.json" -ForegroundColor Red
+        return 1
+    }
+    try {
+        $confirmedPhoto = Confirm-HoiManualRecord -Record $photo -EvidenceDir $packData.EvidenceDir
+    } catch {
+        Write-Host $_.Exception.Message -ForegroundColor Red
+        return 1
+    }
+    $keptPhotos = [System.Collections.Generic.List[PSObject]]::new()
+    foreach ($existingPhoto in $packData.Photos) {
+        if ([string]$existingPhoto.key -ne $Key) {
+            $keptPhotos.Add($existingPhoto)
+        }
+    }
+    $keptPhotos.Add($confirmedPhoto)
+    Save-LpPhotos -Pack $packData -Photos $keptPhotos
+    Write-Host "CONFIRMED '$Key': $($confirmedPhoto.licenseShortName), quote `"$($confirmedPhoto.evidence.rightsQuote)`" on $($confirmedPhoto.evidence.rightsUrl)" -ForegroundColor Green
+    return 0
+}
+
+function Invoke-LpFindPhoto {
+    param(
+        [Parameter(Mandatory = $true)][string]$Query,
+        [string[]]$Source = @('commons', 'finna', 'europeana'),
+        [int]$Limit = 10
+    )
+
+    $imagePolicy = Get-LpImagePolicy
+    $managerRoot = Get-LpManagerRootText
+    $searchSources = @($Source | Where-Object { $_ })
+    if ($searchSources -contains 'europeana') {
+        try {
+            Get-HoiImageSourceKey -Source 'europeana' -ManagerRoot $managerRoot | Out-Null
+        } catch {
+            Write-Host "Skipping Europeana: $($_.Exception.Message)" -ForegroundColor Yellow
+            $searchSources = @($searchSources | Where-Object { $_ -ne 'europeana' })
+        }
+    }
+    $foundRows = [System.Collections.Generic.List[PSObject]]::new()
+    foreach ($searchSource in $searchSources) {
+        try {
+            foreach ($foundRow in @(Find-HoiImageCandidates -Query $Query -Sources @($searchSource) -Policy $imagePolicy -Limit $Limit -ManagerRoot $managerRoot)) {
+                $foundRows.Add($foundRow)
+            }
+        } catch {
+            Write-Host "Searching $searchSource failed: $(Get-HoiWebErrorText -ErrorRecord $_)" -ForegroundColor Yellow
+        }
+    }
+    Write-Host "Search '$Query' in $($searchSources -join ', '): $(@($foundRows | Where-Object { $_.Accepted }).Count) acceptable of $($foundRows.Count)" -ForegroundColor Cyan
+    Write-Host '| Source | Id | Title | Institution | Year | Size | Licence | Verdict | Page |'
+    Write-Host '|---|---|---|---|---|---|---|---|---|'
+    foreach ($foundRow in @($foundRows | Sort-Object { -not $_.Accepted })) {
+        $cells = @($foundRow.Source, $foundRow.Id, $foundRow.Title, $foundRow.Institution, $foundRow.Year, $foundRow.Size, $foundRow.Licence, $foundRow.Verdict, $foundRow.Page) | ForEach-Object { ([string]$_).Replace('|', '/') }
+        Write-Host ('| ' + ($cells -join ' | ') + ' |')
+    }
     return 0
 }
 
 function Get-LpCachedPhoto {
     param($Pack, $Photo)
 
-    if (-not (Test-LpCommonsDownloadUrl -Url ([string]$Photo.downloadUrl))) {
-        throw "photo '$($Photo.key)' has a download URL outside Wikimedia's upload servers: fetch it again with build.ps1 -FetchPhoto"
+    $photoSource = [string](Get-LpProperty -Object $Photo -Name 'source' -Default 'commons')
+    if ($photoSource -eq 'manual' -and -not (Test-HoiOwnerConfirmation -Record $Photo)) {
+        throw "photo '$($Photo.key)' comes from the manual path and the owner has not confirmed its licence: show the owner the quote and the pages, and on the owner's word run build.ps1 -ConfirmLicence -Key $($Photo.key)"
+    }
+    $sourceRules = Get-HoiImageSourceRules -Source $photoSource
+    if ([string]$Photo.downloadUrl -notmatch $sourceRules.DownloadPattern) {
+        throw "photo '$($Photo.key)' has a download URL outside $($sourceRules.DownloadText): fetch it again with build.ps1 -FetchPhoto"
     }
     $cachePath = Get-LpCacheFilePath -Pack $Pack -Photo $Photo
     if (-not (Test-Path -LiteralPath $cachePath)) {
@@ -2244,9 +2272,13 @@ function Get-LpReviewLeaders {
         $creditUrl = ''
         $photo = Get-LpPhotoByKey -Pack $Pack -PhotoKey (Get-LpLeaderPhotoKey -Leader $leader)
         if ($null -ne $photo) {
-            $creditText = 'Photo: ' + (([string]$photo.commonsTitle) -replace '^File:', '') + ', ' + (Get-LpLicenceLabel -Photo $photo)
-            if ([string]$photo.author) {
-                $creditText += ', ' + [string]$photo.author
+            $creditText = 'Photo: ' + (Get-LpPhotoTitle -Photo $photo) + ', ' + (Get-LpLicenceLabel -Photo $photo)
+            $creditName = Get-LpPhotoCreditName -Photo $photo
+            if ($creditName) {
+                $creditText += ', ' + $creditName
+            }
+            if (Test-LpShareAlikePhoto -Photo $photo) {
+                $creditText += '; portrait ' + (Get-HoiShareAlikePortraitLicence).ShortName
             }
             $creditUrl = [string]$photo.pageUrl
         }

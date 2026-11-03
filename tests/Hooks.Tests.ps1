@@ -61,6 +61,10 @@ Describe 'Protect-ProjectFiles hook' {
         @{ Path = 'wiki\Commanders-Pack-Finland.md' },
         @{ Path = 'tools\HoiModBuild.ps1' },
         @{ Path = 'tests\Run-Tests.ps1' },
+        @{ Path = 'tools\HoiImageSources.ps1' },
+        @{ Path = 'source\finland\evidence\svensson.rights.txt' },
+        @{ Path = 'tests\ImageSources.Tests.ps1' },
+        @{ Path = 'tests\fixtures\image-sources\commons\pd.json' },
         @{ Path = '.agents\skills\leader-pack-create\SKILL.md' }
     ) {
         param($Path)
@@ -103,6 +107,9 @@ Describe 'Protect-ProjectFiles hook' {
         @{ Command = 'Copy-Item x.md wiki\Commanders-Pack-Finland.md' },
         @{ Command = 'Set-Content tools\HoiModBuild.ps1 x' },
         @{ Command = 'Remove-Item tests\Run-Tests.ps1' },
+        @{ Command = 'Set-Content tools\HoiImageSources.ps1 x' },
+        @{ Command = 'Set-Content source\finland\evidence\svensson.rights.txt x' },
+        @{ Command = 'Remove-Item tests\fixtures\image-sources\commons\pd.json' },
         @{ Command = 'Set-Content .agents\skills\leader-pack-create\SKILL.md x' },
         @{ Command = 'Copy-Item scratch\thumbnail\finland\thumbnail.png packs\finland\descriptor.mod' },
         @{ Command = 'Copy-Item scratch\thumbnail\finland\thumbnail.png packs\finland\thumbnail.png' },
@@ -153,6 +160,9 @@ Describe 'Project settings' {
         $settings = Get-Content -LiteralPath (Join-Path $script:RepoRoot '.claude\settings.json') -Raw | ConvertFrom-Json
         @($settings.permissions.ask) | Should -Contain 'Read(tools/LeaderPacks.ps1)'
         @($settings.permissions.ask) | Should -Contain 'Read(tools/HoiModBuild.ps1)'
+        @($settings.permissions.ask) | Should -Contain 'Read(tools/HoiImageSources.ps1)'
+        @($settings.permissions.ask) | Should -Contain 'PowerShell(*build.ps1*-ConfirmLicence*)'
+        @($settings.permissions.ask) | Should -Contain 'Bash(*build.ps1*-ConfirmLicence*)'
         foreach ($switchName in @('Generate', 'FetchPhoto', 'MakePortraits', 'ReviewPage', 'ApplyPortraitReview', 'ConvertPortraits', 'PreviewPortraits', 'RefreshGameData', 'Check', 'Audit', 'SyncMirrors', 'RenderShowcase')) {
             @($settings.permissions.allow) | Should -Contain "PowerShell(powershell -File .\build.ps1 -$switchName*)"
         }

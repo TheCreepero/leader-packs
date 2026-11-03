@@ -34,13 +34,42 @@ param(
     [switch]$Generate,
 
     [Parameter(ParameterSetName = 'FetchPhoto', Mandatory = $true)]
+    [Parameter(ParameterSetName = 'FetchPhotoSource', Mandatory = $true)]
+    [Parameter(ParameterSetName = 'FetchPhotoEvidence', Mandatory = $true)]
     [switch]$FetchPhoto,
 
     [Parameter(ParameterSetName = 'FetchPhoto', Mandatory = $true)]
     [string]$File,
 
+    [Parameter(ParameterSetName = 'FetchPhotoSource', Mandatory = $true)]
+    [Parameter(ParameterSetName = 'FindPhoto')]
+    [ValidateSet('commons', 'finna', 'europeana')]
+    [string[]]$Source,
+
+    [Parameter(ParameterSetName = 'FetchPhotoSource', Mandatory = $true)]
+    [string]$Id,
+
+    [Parameter(ParameterSetName = 'FetchPhotoEvidence', Mandatory = $true)]
+    [string]$Evidence,
+
     [Parameter(ParameterSetName = 'FetchPhoto', Mandatory = $true)]
+    [Parameter(ParameterSetName = 'FetchPhotoSource', Mandatory = $true)]
+    [Parameter(ParameterSetName = 'FetchPhotoEvidence', Mandatory = $true)]
+    [Parameter(ParameterSetName = 'ConfirmLicence', Mandatory = $true)]
     [string]$Key,
+
+    [Parameter(ParameterSetName = 'ConfirmLicence', Mandatory = $true)]
+    [switch]$ConfirmLicence,
+
+    [Parameter(ParameterSetName = 'FindPhoto', Mandatory = $true)]
+    [switch]$FindPhoto,
+
+    [Parameter(ParameterSetName = 'FindPhoto', Mandatory = $true)]
+    [string]$Query,
+
+    [Parameter(ParameterSetName = 'FindPhoto')]
+    [ValidateRange(1, 50)]
+    [int]$Limit = 10,
 
     [Parameter(ParameterSetName = 'MakePortraits', Mandatory = $true)]
     [switch]$MakePortraits,
@@ -171,6 +200,26 @@ switch ($PSCmdlet.ParameterSetName) {
     'FetchPhoto' {
         Assert-PackGiven -SwitchName '-FetchPhoto'
         exit ([int](@(Invoke-LpFetchPhoto -RepoRoot $PSScriptRoot -Pack $Pack -File $File -Key $Key -DryRun:$DryRun)[-1]))
+    }
+    'FetchPhotoSource' {
+        Assert-PackGiven -SwitchName '-FetchPhoto'
+        if (@($Source).Count -ne 1) {
+            Write-Host '-FetchPhoto takes one -Source' -ForegroundColor Red
+            exit 1
+        }
+        exit ([int](@(Invoke-LpFetchPhoto -RepoRoot $PSScriptRoot -Pack $Pack -Source $Source[0] -Id $Id -Key $Key -DryRun:$DryRun)[-1]))
+    }
+    'FetchPhotoEvidence' {
+        Assert-PackGiven -SwitchName '-FetchPhoto'
+        exit ([int](@(Invoke-LpFetchPhoto -RepoRoot $PSScriptRoot -Pack $Pack -Evidence $Evidence -Key $Key -DryRun:$DryRun)[-1]))
+    }
+    'ConfirmLicence' {
+        Assert-PackGiven -SwitchName '-ConfirmLicence'
+        exit ([int](@(Invoke-LpConfirmLicence -RepoRoot $PSScriptRoot -Pack $Pack -Key $Key)[-1]))
+    }
+    'FindPhoto' {
+        $searchSources = if ($Source) { @($Source) } else { @('commons', 'finna', 'europeana') }
+        exit ([int](@(Invoke-LpFindPhoto -Query $Query -Source $searchSources -Limit $Limit)[-1]))
     }
     'MakePortraits' {
         Assert-PackGiven -SwitchName '-MakePortraits'

@@ -35,9 +35,9 @@ Status per leader: `roster`, `photo`, `portrait open`, `portrait picked`, `stats
 
 ## Photos
 
-Every row printed `ACCEPTED` from `build.ps1 -FetchPhoto` while planning; the licence column is what it printed.
+Every row printed `ACCEPTED` from `build.ps1 -FetchPhoto` while planning; the licence column is what it printed. A `manual` row also names the date the owner confirmed it with `-ConfirmLicence`.
 
-| Photo key | Commons file | Licence (author) | Size | Leader |
+| Photo key | Source and id | Licence (author or credit) | Size | Leader |
 |---|---|---|---|---|
 
 ## Review rounds

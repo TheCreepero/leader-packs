@@ -59,11 +59,16 @@
       "PowerShell(*New-HoiThumbnail.ps1*)",
       "Bash(*New-HoiThumbnail.ps1*)",
       "PowerShell(*Find-HoiKnowledge.ps1*)",
-      "Bash(*Find-HoiKnowledge.ps1*)"
+      "Bash(*Find-HoiKnowledge.ps1*)",
+      "PowerShell(powershell -File .\\build.ps1 -FindPhoto*)",
+      "Bash(powershell*build.ps1 -FindPhoto*)"
     ],
     "ask": [
       "Read(tools/LeaderPacks.ps1)",
       "Read(tools/HoiModBuild.ps1)",
+      "Read(tools/HoiImageSources.ps1)",
+      "PowerShell(*build.ps1*-ConfirmLicence*)",
+      "Bash(*build.ps1*-ConfirmLicence*)",
       "PowerShell(*build.ps1*-NewPack*)",
       "PowerShell(*build.ps1*-PublishSteam*)",
       "PowerShell(*build.ps1*-InstallSteamCmd*)",

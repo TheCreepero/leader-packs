@@ -5,13 +5,14 @@
             "modFolderName": "commanders_pack_finland"
         }
     },
+    "sharedTools": ["image-sources"],
     "testSuites": {
         "Knowledge": ["*.md", "docs/**", "wiki/**"],
         "Hooks": [".claude/hooks/Protect-ProjectFiles.ps1", ".claude/hooks/Show-PlanState.ps1", ".claude/settings.json", "docs/plans/**"],
-        "LeaderPacks": ["tools/LeaderPacks.ps1", "tools/LeaderPacks.Showcase.ps1", "tools/HoiModBuild.ps1", "tools/HoiModBuild.json", "tools/convert_portraits.py", "tools/review_page.py", "tools/review-page-template.html", "tests/LeaderPacks.Fixture.ps1", "tests/fixtures/**", "data/**", "source/**", "packs/**", "wiki/Commanders-Pack-*.md", "assets/thumbnail_master.png", "build.ps1", ".claude/hooks/Protect-ProjectFiles.ps1"],
-        "CheckSource": ["tools/LeaderPacks.ps1", "tools/HoiModBuild.json", "tests/LeaderPacks.Fixture.ps1", "tests/fixtures/**", "data/**", "source/**", "packs/**", "build.ps1"],
-        "CheckFiles": ["tools/LeaderPacks.ps1", "tools/HoiModBuild.json", "tests/LeaderPacks.Fixture.ps1", "tests/fixtures/**", "data/**", "source/**", "packs/**", "build.ps1"],
-        "Portraits": ["tools/LeaderPacks.ps1", "tools/HoiModBuild.json", "tools/convert_portraits.py", "tools/review_page.py", "tools/review-page-template.html", "tests/LeaderPacks.Fixture.ps1", "tests/fixtures/**", "data/**", "source/**", "build.ps1"],
-        "ComfyStandIn": ["tools/LeaderPacks.ps1", "tools/HoiModBuild.json", "tests/LeaderPacks.Fixture.ps1", "tests/fixtures/**", "build.ps1"]
+        "LeaderPacks": ["tools/LeaderPacks.ps1", "tools/HoiImageSources.ps1", "tools/LeaderPacks.Showcase.ps1", "tools/HoiModBuild.ps1", "tools/HoiModBuild.json", "tools/convert_portraits.py", "tools/review_page.py", "tools/review-page-template.html", "tests/LeaderPacks.Fixture.ps1", "tests/fixtures/**", "data/**", "source/**", "packs/**", "wiki/Commanders-Pack-*.md", "assets/thumbnail_master.png", "build.ps1", ".claude/hooks/Protect-ProjectFiles.ps1"],
+        "CheckSource": ["tools/LeaderPacks.ps1", "tools/HoiImageSources.ps1", "tools/HoiModBuild.json", "tests/LeaderPacks.Fixture.ps1", "tests/fixtures/**", "data/**", "source/**", "packs/**", "build.ps1"],
+        "CheckFiles": ["tools/LeaderPacks.ps1", "tools/HoiImageSources.ps1", "tools/HoiModBuild.json", "tests/LeaderPacks.Fixture.ps1", "tests/fixtures/**", "data/**", "source/**", "packs/**", "build.ps1"],
+        "Portraits": ["tools/LeaderPacks.ps1", "tools/HoiImageSources.ps1", "tools/HoiModBuild.json", "tools/convert_portraits.py", "tools/review_page.py", "tools/review-page-template.html", "tests/LeaderPacks.Fixture.ps1", "tests/fixtures/**", "data/**", "source/**", "build.ps1"],
+        "ComfyStandIn": ["tools/LeaderPacks.ps1", "tools/HoiImageSources.ps1", "tools/HoiModBuild.json", "tests/LeaderPacks.Fixture.ps1", "tests/fixtures/**", "build.ps1"]
     }
 }

@@ -109,10 +109,15 @@ Describe 'Commons licence verdict' {
         $attribution.Photo.author | Should -Match '^Hugo Sundstr'
     }
 
-    It 'rejects CC BY-SA, a missing file, a file tagged for deletion, a public domain without its reason and a picture under 300 px' {
-        $shareAlike = Get-LpCommonsVerdict -Response (Get-LpCommonsFixture -Name 'cc-by-sa')
-        $shareAlike.Accepted | Should -BeFalse
-        $shareAlike.Reason | Should -Match 'outside the policy'
+    It 'accepts CC BY-SA with the licensor''s attribution, and refuses an own-work upload of an old photo in any licence' {
+        $shareAlike = Get-LpCommonsVerdict -Response (Get-LpCommonsFixture -Name 'cc-by-sa-3.0-de')
+        $shareAlike.Accepted | Should -BeTrue -Because $shareAlike.Reason
+        $shareAlike.Photo.attribution | Should -Be 'Bundesarchiv, Bild 183-S37772 / CC-BY-SA 3.0'
+        (Get-LpCommonsVerdict -Response (Get-LpCommonsFixture -Name 'cc-by-sa')).Reason | Should -Match 'own work on a picture dated 1939'
+        (Get-LpCommonsVerdict -Response (Get-LpCommonsFixture -Name 'own-cc0-old')).Reason | Should -Match 'own work on a picture dated 1944'
+    }
+
+    It 'rejects a missing file, a file tagged for deletion, a public domain without its reason and a picture under 300 px' {
         (Get-LpCommonsVerdict -Response (Get-LpCommonsFixture -Name 'missing')).Accepted | Should -BeFalse
         $tagged = Get-LpCommonsFixture -Name 'pd'
         $tagged.query.pages[0] | Add-Member -NotePropertyName 'templates' -NotePropertyValue @([PSCustomObject]@{ ns = 10; title = 'Template:Delete' }) -Force
@@ -231,6 +236,96 @@ Describe 'FetchPhoto and Audit' {
         ($auditOutput -join "`n") | Should -Match 'Commons now refuses it'
     }
 
+    It 'dates an own-work photo by the photoYear of the leader who uses it, in -FetchPhoto and in -Audit' {
+        $fixtureRoot = New-LpGeneratedFixture
+        $script:ReshotPrint = Get-LpCommonsFixture -Name 'pd-self-old'
+        $script:ReshotPrint.query.pages[0].imageinfo[0].extmetadata.ImageDescription.value = 'A general, photographed from a print in 2008.'
+        $script:ReshotPrint.query.pages[0].title = 'File:General portrait.jpg'
+        Mock Invoke-RestMethod { $script:ReshotPrint }
+        Mock Invoke-WebRequest { throw 'a refused photo is not downloaded' }
+        $fetchOutput = @(Invoke-LpFetchPhoto -RepoRoot $fixtureRoot -Pack 'testland' -File 'General portrait.jpg' -Key 'alpha' -DryRun 6>&1 | ForEach-Object { [string]$_ })
+        $fetchOutput[-1] | Should -Be '1'
+        ($fetchOutput -join "`n") | Should -Match 'own work on a picture dated 1943'
+        Invoke-LpFetchPhoto -RepoRoot $fixtureRoot -Pack 'testland' -File 'General portrait.jpg' -Key 'zulu' -DryRun 6>$null | Select-Object -Last 1 | Should -Be 0
+        $auditText = (@(Invoke-LpAudit -RepoRoot $fixtureRoot -Pack 'testland' 6>&1 | ForEach-Object { [string]$_ }) -join "`n")
+        $auditText | Should -Match 'photo alpha: Commons now refuses it: own work on a picture dated 1943'
+    }
+
+    It 'searches the sources, skips Europeana without a key, and prints the verdicts' {
+        $savedKey = [Environment]::GetEnvironmentVariable('HOI_EUROPEANA_WSKEY')
+        [Environment]::SetEnvironmentVariable('HOI_EUROPEANA_WSKEY', $null)
+        try {
+            Mock Get-LpManagerRootText { '' }
+            Mock Invoke-RestMethod {
+                if ($Uri.AbsoluteUri -like 'https://commons.wikimedia.org/*') {
+                    return [PSCustomObject]@{ query = [PSCustomObject]@{ pages = @((Get-LpCommonsFixture -Name 'cc-by-sa-3.0-de').query.pages[0]) } }
+                }
+                return [PSCustomObject]@{ resultCount = 1; records = @((Get-LpSourceFixture -Source 'finna' -Name 'sa-kuva-cc-by').records[0]) }
+            }
+            $searchOutput = @(Invoke-LpFindPhoto -Query 'Rundstedt' -Source @('commons', 'finna', 'europeana') -Limit 3 6>&1 | ForEach-Object { [string]$_ })
+            $searchOutput[-1] | Should -Be '0'
+            ($searchOutput -join "`n") | Should -Match 'Skipping Europeana: no API key for europeana'
+            ($searchOutput -join "`n") | Should -Match "Search 'Rundstedt' in commons, finna: 2 acceptable of 2"
+            ($searchOutput -join "`n") | Should -Match '\| commons \| File:Bundesarchiv Bild 183-S37772, Gerd v\. Rundstedt\.jpg \|.*\| ACCEPTABLE \|'
+            ($searchOutput -join "`n") | Should -Match '\| finna \| sa-kuva\.sa-kuva/111307 \|.*\| ACCEPTABLE, size checked at download \|'
+        } finally {
+            [Environment]::SetEnvironmentVariable('HOI_EUROPEANA_WSKEY', $savedKey)
+        }
+    }
+
+    It 'records a Finna photo measured at download, credited to the archive' {
+        $fixtureRoot = New-LpGeneratedFixture
+        Mock Invoke-RestMethod { Get-LpSourceFixture -Source 'finna' -Name 'sa-kuva-cc-by' }
+        Mock Invoke-WebRequest { Write-LpFixtureJpeg -Path $OutFile -Width 400 -Height 520 }
+        Invoke-LpFetchPhoto -RepoRoot $fixtureRoot -Pack 'testland' -Source 'finna' -Id 'sa-kuva.sa-kuva/111307' -Key 'zulu' 6>$null | Select-Object -Last 1 | Should -Be 0
+        $packData = Get-LpPack -RepoRoot $fixtureRoot -Pack 'testland'
+        $photo = Get-LpPhotoByKey -Pack $packData -PhotoKey 'zulu'
+        $photo.source | Should -Be 'finna'
+        "$($photo.width)x$($photo.height)" | Should -Be '400x520'
+        $photo.attribution | Should -Be 'SA-kuva-arkisto'
+        $photo.downloadSha256 | Should -Be (Get-LpSha256 -Path (Get-LpCacheFilePath -Pack $packData -Photo $photo))
+        @(Test-LpPack -RepoRoot $fixtureRoot -Pack 'testland' | Where-Object { $_.Where -eq 'photo zulu' -and $_.Level -eq 'ERROR' }) | Should -BeNullOrEmpty
+        Should -Invoke Invoke-RestMethod -Times 1 -Exactly -ParameterFilter { $Uri.AbsoluteUri -match '^https://api\.finna\.fi/api/v1/record\?id=sa-kuva\.sa-kuva%2F111307' }
+    }
+
+    It 'records a manual photo with its page captures, and blocks portraits and the check until the owner confirms its licence' {
+        $fixtureRoot = New-LpGeneratedFixture
+        $script:RightsPageHtml = '<html><body><p>Photographs taken by the army before 1945 are in the public domain and free to reuse.</p></body></html>'
+        Mock Invoke-RestMethod {
+            if ($Uri.AbsoluteUri -like 'https://commons.wikimedia.org/*') {
+                $fixtureName = if ($Uri.AbsoluteUri -match 'Calling') { 'cc-by' } elseif ($Uri.AbsoluteUri -match 'Abatis') { 'pd' } else { 'cc0' }
+                return Get-LpCommonsFixture -Name $fixtureName
+            }
+            if ($Uri.AbsoluteUri -like '*terms*') {
+                return $script:RightsPageHtml
+            }
+            return '<html><body><h1>General X at the front</h1></body></html>'
+        }
+        Mock Invoke-WebRequest { Write-LpFixtureJpeg -Path $OutFile }
+        $evidencePath = Join-Path $fixtureRoot 'scratch\evidence-zulu.json'
+        New-Item -ItemType Directory -Path (Split-Path -Parent $evidencePath) -Force | Out-Null
+        Write-LpJson -Path $evidencePath -Value ([ordered]@{ recordUrl = 'https://archive.example.org/record/42'; imageUrl = 'https://archive.example.org/image/42.jpg'; rightsUrl = 'https://archive.example.org/terms'; rightsQuote = 'Photographs taken by the army before 1945 are in the public domain and free to reuse.'; license = 'pd'; publicDomainReason = 'Army photograph before 1945, archive terms'; author = ''; institution = 'Example Army Archive'; credit = ''; dateOriginal = '1943'; title = 'General X at the front' }) -Depth 3
+        $fetchOutput = @(Invoke-LpFetchPhoto -RepoRoot $fixtureRoot -Pack 'testland' -Evidence $evidencePath -Key 'zulu' 6>&1 | ForEach-Object { [string]$_ })
+        $fetchOutput[-1] | Should -Be '0'
+        ($fetchOutput -join "`n") | Should -Match 'NEEDS OWNER CONFIRMATION'
+        Test-Path -LiteralPath (Join-Path $fixtureRoot 'source\testland\evidence\zulu.rights.txt') | Should -BeTrue
+        Test-Path -LiteralPath (Join-Path $fixtureRoot 'source\testland\evidence\zulu.record.txt') | Should -BeTrue
+        Set-LpFixtureLeaders -Root $fixtureRoot -Change { param($s) $s.leaders[0].portrait.photo = 'zulu' }
+        $packData = Get-LpPack -RepoRoot $fixtureRoot -Pack 'testland'
+        @(Test-LpPack -RepoRoot $fixtureRoot -Pack 'testland' | Where-Object { $_.Where -eq 'photo zulu' -and $_.Level -eq 'ERROR' -and $_.Message -match 'has not confirmed' }).Count | Should -Be 1
+        { Get-LpCachedPhoto -Pack $packData -Photo (Get-LpPhotoByKey -Pack $packData -PhotoKey 'zulu') } | Should -Throw '*has not confirmed its licence*'
+        Invoke-LpConfirmLicence -RepoRoot $fixtureRoot -Pack 'testland' -Key 'bravo' 6>$null | Select-Object -Last 1 | Should -Be 1
+        Invoke-LpConfirmLicence -RepoRoot $fixtureRoot -Pack 'testland' -Key 'zulu' 6>$null | Select-Object -Last 1 | Should -Be 0
+        $packData = Get-LpPack -RepoRoot $fixtureRoot -Pack 'testland'
+        @(Test-LpPack -RepoRoot $fixtureRoot -Pack 'testland' | Where-Object { $_.Where -eq 'photo zulu' -and $_.Level -eq 'ERROR' }) | Should -BeNullOrEmpty
+        Get-LpCachedPhoto -Pack $packData -Photo (Get-LpPhotoByKey -Pack $packData -PhotoKey 'zulu') | Should -Be (Join-Path $fixtureRoot 'sources-cache\testland\zulu.jpg')
+        $auditText = (@(Invoke-LpAudit -RepoRoot $fixtureRoot -Pack 'testland' 6>&1 | ForEach-Object { [string]$_ }) -join "`n")
+        $auditText | Should -Match 'photo zulu : the archive page still holds the quoted rights sentence'
+        $script:RightsPageHtml = '<html><body>All rights reserved.</body></html>'
+        $auditOutput = @(Invoke-LpAudit -RepoRoot $fixtureRoot -Pack 'testland' 6>&1 | ForEach-Object { [string]$_ })
+        ($auditOutput -join "`n") | Should -Match 'photo zulu: the quoted rights sentence is gone from https://archive\.example\.org/terms'
+    }
+
     It 'the audit warns about a licence read more than 180 days ago' {
         $fixtureRoot = New-LpGeneratedFixture
         Set-LpFixturePhotos -Root $fixtureRoot -Change { param($s) $s.photos[0].fetched = '2020-01-01' }
@@ -241,6 +336,26 @@ Describe 'FetchPhoto and Audit' {
         $auditOutput = @(Invoke-LpAudit -RepoRoot $fixtureRoot -Pack 'testland' 6>&1 | ForEach-Object { [string]$_ })
         $auditOutput[-1] | Should -Be '0'
         ($auditOutput -join "`n") | Should -Match 'photo alpha: licence recorded from Commons on 2020-01-01, over 180 days ago'
+    }
+}
+
+Describe 'CC BY-SA photos' {
+    It 'credits the licensor''s attribution and licenses the portrait CC BY-SA 4.0 on the wiki, the Workshop page and the showcase' {
+        . (Join-Path $script:LpRepoRoot 'tools\LeaderPacks.Showcase.ps1')
+        $fixtureRoot = New-LpGeneratedFixture
+        $shareAlikePhoto = New-LpFixturePhoto -Key 'alpha' -Fixture 'cc-by-sa-3.0-de'
+        Set-LpFixturePhotos -Root $fixtureRoot -Change { param($s) $shareAlikePhoto.downloadSha256 = $s.photos[0].downloadSha256; $s.photos[0] = $shareAlikePhoto }
+        Invoke-LpGenerate -RepoRoot $fixtureRoot -Pack 'testland' 6>$null | Select-Object -Last 1 | Should -Be 0
+        $wikiText = [System.IO.File]::ReadAllText((Join-Path $fixtureRoot 'wiki\Commanders-Pack-Testland.md'))
+        $wikiText | Should -Match ([regex]::Escape('| [Bundesarchiv Bild 183-S37772, Gerd v. Rundstedt.jpg](https://commons.wikimedia.org/wiki/File:Bundesarchiv_Bild_183-S37772,_Gerd_v._Rundstedt.jpg) | [CC BY-SA 3.0 de](https://creativecommons.org/licenses/by-sa/3.0/de/deed.en), Bundesarchiv, Bild 183-S37772 / CC-BY-SA 3.0 | AI-assisted repaint, licensed [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) |'))
+        $wikiText | Should -Match ([regex]::Escape('is itself licensed [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/), as its row says.'))
+        $wikiText | Should -Match ([regex]::Escape('| [Abatis at Taipale.jpg]'))
+        $workshopText = [System.IO.File]::ReadAllText((Join-Path $fixtureRoot 'packs\testland\WORKSHOP_DESCRIPTION_GUIDELINES.md'))
+        $workshopText | Should -Match ([regex]::Escape('from Wikimedia Commons, used under licences that allow it'))
+        $workshopText | Should -Match ([regex]::Escape('The portraits of Alpha Leader adapt photographs licensed CC BY-SA and are themselves licensed [url=https://creativecommons.org/licenses/by-sa/4.0/]CC BY-SA 4.0[/url].'))
+        Get-LpFixtureErrors -Root $fixtureRoot | Should -BeNullOrEmpty
+        $alphaCard = @((New-LpShowcaseSpec -RepoRoot $fixtureRoot -Pack 'testland').Spec.pages)[1]
+        $alphaCard.note | Should -Be 'Portrait (CC BY-SA 4.0): AI-assisted repaint of a photograph by Bundesarchiv, Bild 183-S37772 / CC-BY-SA 3.0 (CC BY-SA 3.0 de)'
     }
 }
 

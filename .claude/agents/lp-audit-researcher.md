@@ -1,6 +1,6 @@
 ---
 name: lp-audit-researcher
-description: Budgeted fact and photo checker for the Leader Packs Hearts of Iron IV mod. Use during an audit of a released pack to recheck the facts behind each leader's role, stats and traits, and the Commons pages of the photos his portrait was painted from. Provide the pack, and the fact-sheet sections and photo rows to check (pasted). Returns keep, fix or drop per fact and per photo.
+description: Budgeted fact and photo checker for the Leader Packs Hearts of Iron IV mod. Use during an audit of a released pack to recheck the facts behind each leader's role, stats and traits, and the record pages (Commons, Finna, Europeana or an archive) of the photos his portrait was painted from. Provide the pack, and the fact-sheet sections and photo rows to check (pasted). Returns keep, fix or drop per fact and per photo.
 tools: WebSearch, WebFetch
 model: sonnet
 effort: medium
@@ -27,9 +27,9 @@ You recheck a released pack of "Leader Packs", a Hearts of Iron IV mod of histor
 - Never invent a correction. A fact you cannot settle in the budget is `UNVERIFIED`, not `KEEP`.
 
 **Photos**
-- Fetch each photo's Commons page. Verdict `KEEP` when the file exists with the same licence and author; `RECHECK` when the licence, author or credit changed, or a deletion request, dispute or `No permission` notice appears (quote it); `GONE` when the file was deleted or renamed (give the new name if Commons redirects).
+- Fetch each photo's record page (its page URL). Verdict `KEEP` when the record exists with the same licence and author; `RECHECK` when the licence, author or credit changed, or a deletion request, dispute or `No permission` notice appears (quote it); `GONE` when the record was deleted or moved (give the new address if the site redirects).
 - Also flag a photo whose page now says it shows someone else, or gives another date or rank for the person: that is `RECHECK` with the quoted words.
-- The caller confirms every `RECHECK` with `build.ps1 -FetchPhoto -DryRun`, which reads the licence from the API; your verdict only flags it.
+- The caller confirms every `RECHECK` with `build.ps1 -FetchPhoto -DryRun`, which reads the licence from the source's own data; your verdict only flags it.
 
 **Report**
 
@@ -38,7 +38,7 @@ Your final message is two tables and one line, nothing else:
 | Leader key | Fact (short) | Verdict | Correction or reason | Source |
 |---|---|---|---|---|
 
-| Photo key | Commons title | Verdict | What changed |
+| Photo key | Title | Verdict | What changed |
 |---|---|---|---|
 
 Then: web calls used, and how many entries are `UNVERIFIED`.

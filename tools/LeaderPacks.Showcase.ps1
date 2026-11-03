@@ -113,8 +113,11 @@ function Test-LpShowcaseSource {
 function Get-LpShowcaseCredit {
     param($Photo)
 
-    if ($Photo -and ([string]$Photo.licenseCategory -match 'BY') -and ([string]$Photo.licenseCategory -notmatch 'CC0')) {
-        return ('Portrait: AI-assisted repaint of a photograph by {0} ({1})' -f [string]$Photo.author, [string]$Photo.licenseShortName)
+    if ($Photo -and [string]$Photo.licenseCategory -eq 'CC BY-SA') {
+        return ('Portrait ({0}): AI-assisted repaint of a photograph by {1} ({2})' -f (Get-HoiShareAlikePortraitLicence).ShortName, (Get-LpPhotoCreditName -Photo $Photo), [string]$Photo.licenseShortName)
+    }
+    if ($Photo -and [string]$Photo.licenseCategory -eq 'CC BY') {
+        return ('Portrait: AI-assisted repaint of a photograph by {0} ({1})' -f (Get-LpPhotoCreditName -Photo $Photo), [string]$Photo.licenseShortName)
     }
     return 'Portrait: AI-assisted repaint of a period photograph'
 }

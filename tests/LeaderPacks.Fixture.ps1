@@ -1,6 +1,6 @@
 $script:LpRepoRoot = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '..')).Path
 $script:LpFixtureDir = Join-Path $PSScriptRoot 'fixtures\leader-pack'
-$script:LpCommonsFixtureDir = Join-Path $PSScriptRoot 'fixtures\commons'
+$script:LpCommonsFixtureDir = Join-Path $PSScriptRoot 'fixtures\image-sources\commons'
 . (Join-Path $script:LpRepoRoot 'tools\LeaderPacks.ps1')
 Add-Type -AssemblyName Microsoft.VisualBasic
 $script:LpFixtureTemplates = @{}
@@ -29,6 +29,24 @@ function Get-LpCommonsFixture {
     param([Parameter(Mandatory = $true)][string]$Name)
 
     return ([System.IO.File]::ReadAllText((Join-Path $script:LpCommonsFixtureDir "$Name.json"), [System.Text.Encoding]::UTF8) | ConvertFrom-Json)
+}
+
+function Get-LpSourceFixture {
+    param([Parameter(Mandatory = $true)][string]$Source, [Parameter(Mandatory = $true)][string]$Name)
+
+    return ([System.IO.File]::ReadAllText((Join-Path (Split-Path -Parent $script:LpCommonsFixtureDir) "$Source\$Name.json"), [System.Text.Encoding]::UTF8) | ConvertFrom-Json)
+}
+
+function Write-LpFixtureJpeg {
+    param([Parameter(Mandatory = $true)][string]$Path, [int]$Width = 400, [int]$Height = 520)
+
+    Add-Type -AssemblyName System.Drawing
+    $bitmap = [System.Drawing.Bitmap]::new($Width, $Height)
+    try {
+        $bitmap.Save($Path, [System.Drawing.Imaging.ImageFormat]::Jpeg)
+    } finally {
+        $bitmap.Dispose()
+    }
 }
 
 function Write-LpFixtureDds {
