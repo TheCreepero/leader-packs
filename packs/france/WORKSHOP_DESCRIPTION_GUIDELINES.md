@@ -25,7 +25,7 @@ Historical flavor events for France, from the same author.
 The portraits are AI-assisted repaints of period photographs from Wikimedia Commons, used under licences that allow it (public domain and CC0). Each photograph was coloured and repainted in the style of the game with a local image model, then cropped and resized for the game. The source, author and licence of each photograph are on the [url=https://github.com/TheCreepero/leader-packs/wiki/Commanders-Pack-France]wiki page of this pack[/url].
 
 <!-- cross-links:begin -->
-[url=https://steamcommunity.com/sharedfiles/filedetails/?id=3833590274][img]https://i.imgur.com/5y3d06x.png[/img][/url]
+[url=https://steamcommunity.com/sharedfiles/filedetails/?id=3833590274][img]https://i.imgur.com/qJpjDyO.png[/img][/url]
 [b]More from the author[/b], all in the collection [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3833590274]The Immersive Series[/url]
 [list]
 [*][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2967389401]Immersive Namelists Expanded[/url]
