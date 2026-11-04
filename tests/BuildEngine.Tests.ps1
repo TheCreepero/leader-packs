@@ -159,6 +159,22 @@ Describe 'Descriptor helpers' -Tag 'Engine' {
         $description | Should -Be ((@('Intro line.', '[b]More from the author[/b]', '[list]', '[*]One', '[/list]', '[h1]Info[/h1]', 'Last line <!-- cross-links:end --> stays.')) -join "`r`n")
     }
 
+    It 'leaves the region marker lines out of the description and keeps the text between them' {
+        $fixtureRoot = New-TestDirectory
+        $guidelinesPath = Join-Path $fixtureRoot 'WORKSHOP_DESCRIPTION_GUIDELINES.md'
+        $descriptionLines = @('<!-- region:image:hero -->', '[img]https://i.imgur.com/a.png[/img]', '<!-- /region -->', 'Intro line.', '<!-- region:info:rt56,ironman -->', '- Works with Road to 56.', '<!-- /region -->', 'Text <!-- region:inline --> stays.')
+        Write-TestFile -Root $fixtureRoot -RelativePath 'WORKSHOP_DESCRIPTION_GUIDELINES.md' -Text ("# Guidelines`r`n`r`n``````bbcode`r`n" + ($descriptionLines -join "`r`n") + "`r`n```````r`n")
+        $description = Get-ModWorkshopDescription -Config ([PSCustomObject]@{ GuidelinesPath = $guidelinesPath })
+        $description | Should -Be ((@('[img]https://i.imgur.com/a.png[/img]', 'Intro line.', '- Works with Road to 56.', 'Text <!-- region:inline --> stays.')) -join "`r`n")
+    }
+
+    It 'leaves an empty region and a region at the very end out' {
+        $fixtureRoot = New-TestDirectory
+        $guidelinesPath = Join-Path $fixtureRoot 'WORKSHOP_DESCRIPTION_GUIDELINES.md'
+        Write-TestFile -Root $fixtureRoot -RelativePath 'WORKSHOP_DESCRIPTION_GUIDELINES.md' -Text "``````bbcode`r`nText`r`n<!-- region:image:strip-info -->`r`n<!-- /region -->`r`n<!-- region:image:button-wiki -->`r`n[img]x[/img]`r`n<!-- /region -->`r`n```````r`n"
+        (Get-ModWorkshopDescription -Config ([PSCustomObject]@{ GuidelinesPath = $guidelinesPath })) | Should -Be "Text`r`n[img]x[/img]"
+    }
+
     It 'leaves a marker line at the very end of the description out as well' {
         $fixtureRoot = New-TestDirectory
         $guidelinesPath = Join-Path $fixtureRoot 'WORKSHOP_DESCRIPTION_GUIDELINES.md'
