@@ -63,6 +63,17 @@ Describe 'Generation' {
         Get-LpFixtureErrors -Root $fixtureRoot | Should -BeNullOrEmpty
     }
 
+    It 'finds the cross-link markers with spaces or a tab around them and writes them again without' {
+        $fixtureRoot = New-LpGeneratedFixture
+        $descriptionPath = Join-Path $fixtureRoot 'packs\testland\WORKSHOP_DESCRIPTION_GUIDELINES.md'
+        $emptyText = [System.IO.File]::ReadAllText($descriptionPath)
+        $paddedText = $emptyText.Replace("<!-- cross-links:begin -->`r`n<!-- cross-links:end -->", "  <!-- cross-links:begin -->  `r`n[b]More[/b] padded block line`r`n`t<!-- cross-links:end -->`t")
+        $paddedText | Should -Not -Be $emptyText
+        [System.IO.File]::WriteAllText($descriptionPath, $paddedText, [System.Text.UTF8Encoding]::new($false))
+        Invoke-LpGenerate -RepoRoot $fixtureRoot -Pack 'testland' 6>$null | Out-Null
+        [System.IO.File]::ReadAllText($descriptionPath) | Should -Match '(?m)^<!-- cross-links:begin -->\r\n\[b\]More\[/b\] padded block line\r\n<!-- cross-links:end -->\r\n```'
+    }
+
     It 'writes nothing the second time and then finds no error' {
         $fixtureRoot = New-LpGeneratedFixture
         $delta = Get-LpGenerationDelta -Pack (Get-LpPack -RepoRoot $fixtureRoot -Pack 'testland')
