@@ -732,8 +732,9 @@ function Get-ModWorkshopDescriptionFromText {
 
     $bbcodeMatch = [regex]::Match($GuidelinesText, '(?ms)```bbcode\s*\r?\n(.*?)\r?\n```')
     if ($bbcodeMatch.Success) {
-        $descriptionText = [regex]::Replace($bbcodeMatch.Groups[1].Value, '\r?\n[ \t]*<!-- (?:cross-links:(?:begin|end)|/region) -->[ \t]*\z', '')
-        return [regex]::Replace($descriptionText, '(?m)^[ \t]*<!-- (?:cross-links:(?:begin|end)|/?region(?::[^>]*?)?) -->[ \t]*(?:\r?\n|\z)', '')
+        $descriptionText = [regex]::Replace($bbcodeMatch.Groups[1].Value, '\r?\n[ \t]*<!-- cross-links:(?:begin|end) -->[ \t]*\z', '')
+        $withoutMarkers = [regex]::Replace($descriptionText, '(?m)^[ \t]*<!-- (?:cross-links:(?:begin|end)|/?region(?::[^>]*?)?) -->[ \t]*(?:\r?\n|\z)', '')
+        return $withoutMarkers.TrimEnd([char]13, [char]10)
     }
     return $null
 }

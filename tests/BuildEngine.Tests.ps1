@@ -175,6 +175,22 @@ Describe 'Descriptor helpers' -Tag 'Engine' {
         (Get-ModWorkshopDescription -Config ([PSCustomObject]@{ GuidelinesPath = $guidelinesPath })) | Should -Be "Text`r`n[img]x[/img]"
     }
 
+    It 'keeps a marker that ends a line of text, and only drops a marker that stands alone on its line' {
+        $fixtureRoot = New-TestDirectory
+        $guidelinesPath = Join-Path $fixtureRoot 'WORKSHOP_DESCRIPTION_GUIDELINES.md'
+        Write-TestFile -Root $fixtureRoot -RelativePath 'WORKSHOP_DESCRIPTION_GUIDELINES.md' -Text "``````bbcode`r`nLine one <!-- /region -->`r`nLine two <!-- region:x -->`r`n<!-- region:y -->`r`nLine three <!-- /region -->`r`n```````r`n"
+        (Get-ModWorkshopDescription -Config ([PSCustomObject]@{ GuidelinesPath = $guidelinesPath })) | Should -Be "Line one <!-- /region -->`r`nLine two <!-- region:x -->`r`nLine three <!-- /region -->"
+    }
+
+    It 'leaves an empty or an unclosed region at the very end out without a stray line break' {
+        $fixtureRoot = New-TestDirectory
+        $guidelinesPath = Join-Path $fixtureRoot 'WORKSHOP_DESCRIPTION_GUIDELINES.md'
+        Write-TestFile -Root $fixtureRoot -RelativePath 'WORKSHOP_DESCRIPTION_GUIDELINES.md' -Text "``````bbcode`r`nA`r`n<!-- region:image:x -->`r`n<!-- /region -->`r`n```````r`n"
+        (Get-ModWorkshopDescription -Config ([PSCustomObject]@{ GuidelinesPath = $guidelinesPath })) | Should -Be 'A'
+        Write-TestFile -Root $fixtureRoot -RelativePath 'WORKSHOP_DESCRIPTION_GUIDELINES.md' -Text "``````bbcode`r`nA`r`n<!-- region:image:x -->`r`n```````r`n"
+        (Get-ModWorkshopDescription -Config ([PSCustomObject]@{ GuidelinesPath = $guidelinesPath })) | Should -Be 'A'
+    }
+
     It 'leaves a marker line at the very end of the description out as well' {
         $fixtureRoot = New-TestDirectory
         $guidelinesPath = Join-Path $fixtureRoot 'WORKSHOP_DESCRIPTION_GUIDELINES.md'
