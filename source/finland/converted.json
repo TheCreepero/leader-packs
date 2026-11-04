@@ -3,72 +3,72 @@
         "gfx/interface/ideas/lp_fin_aaro_pajari_small.dds": {
             "leader": "aaro_pajari",
             "kind": "small",
-            "chosenSha256": "0ba8f5269ac60d668f84f74ebe0a2d4e1fd17e9a8df0489e9373f2c29fa693d3",
+            "chosenSha256": "34c2d51b1cd979f850eca8f2f3e6a89663909303e5d8f907233624cb4e9f1978",
             "cardSha256": "51cded3677ea06067ae0467bfd974daa5f3c59c1797c4546dd70cd47a594a956",
-            "ddsSha256": "5e6064790ca80ad04bce6b87ab98d73418648f4738bd0dcc517dfa6b1559b213"
+            "ddsSha256": "b72551826388c38f52d0a0825bcfe2e8c5cf20188cca661581755333ab1e454b"
         },
         "gfx/interface/ideas/lp_fin_armas_eino_martola_small.dds": {
             "leader": "armas_eino_martola",
             "kind": "small",
-            "chosenSha256": "014d570b4cfddc789c5383c0c73cfc6f55e7e7b3d64009ab861a9a358470089b",
+            "chosenSha256": "05863cef514816c96b497b6c59b183852e72ec4e2638ce5e3f5b701037fc5c62",
             "cardSha256": "51cded3677ea06067ae0467bfd974daa5f3c59c1797c4546dd70cd47a594a956",
-            "ddsSha256": "9b81266079159ef11e3c79a91aa81861dfe3616fb347e9dbfe98e63e84dbb8a1"
+            "ddsSha256": "5c20955f64b5558c3c5b61ccd31ffcd33cf2758e7756a0f2e75f783f0db229eb"
         },
         "gfx/interface/ideas/lp_fin_einar_vihma_small.dds": {
             "leader": "einar_vihma",
             "kind": "small",
-            "chosenSha256": "de24eef74ae806fb06f209b738da316a9b2e8498d22c242d6fe43330c04726bd",
+            "chosenSha256": "964b3fec7dd88fdd7062b49f4f3d870de4ca0183bfab468659c8cfbebc8e16d0",
             "cardSha256": "51cded3677ea06067ae0467bfd974daa5f3c59c1797c4546dd70cd47a594a956",
-            "ddsSha256": "2201f8aa893d4d4d5eb47e6a1ac366e537153f5562145f836da671623abc865c"
+            "ddsSha256": "68e32d38d247d2428bb8b7886697dda6da28dcc4aa9c1990cdc1d3a1f585ce9c"
         },
         "gfx/interface/ideas/lp_fin_kaarlo_heiskanen_small.dds": {
             "leader": "kaarlo_heiskanen",
             "kind": "small",
-            "chosenSha256": "f03d22b0d7d0d64fe424783fe2dee2eebf6413f895fd31587dcd583378746203",
+            "chosenSha256": "2ae3bba91c46fac5b74e06c8b3fefb3da41f26f93e971e6b67935107b49b55a2",
             "cardSha256": "51cded3677ea06067ae0467bfd974daa5f3c59c1797c4546dd70cd47a594a956",
-            "ddsSha256": "bb9197ec56f1e328b44292a95f7932b8eaddd7458072e58d49a4ac5ed48aaa14"
+            "ddsSha256": "c8fa7a80625c6ba4591870c8a42451dc5b5949dd76dca176f6d225221b423228"
         },
         "gfx/interface/ideas/lp_fin_oiva_koivisto_small.dds": {
             "leader": "oiva_koivisto",
             "kind": "small",
-            "chosenSha256": "e7229751fb0861a768e076b73406ea83085f3b703c181ec41887ae552ae2a89f",
+            "chosenSha256": "9581fcdc5700396afb70fb0f025d785d87831ad2f2119684ce22b5f4bbef4cbb",
             "cardSha256": "51cded3677ea06067ae0467bfd974daa5f3c59c1797c4546dd70cd47a594a956",
-            "ddsSha256": "a7504d340d60c20709da9789e5b5357b66e922b3a93ece02b5e68ec627ef0dfa"
+            "ddsSha256": "3e8dac61392869c307c78cdc8d15a060565848c84fbc893ecb6166bdd99c78aa"
         },
         "gfx/leaders/FIN/lp_fin_aaro_pajari.dds": {
             "leader": "aaro_pajari",
             "kind": "large",
-            "chosenSha256": "0ba8f5269ac60d668f84f74ebe0a2d4e1fd17e9a8df0489e9373f2c29fa693d3",
+            "chosenSha256": "34c2d51b1cd979f850eca8f2f3e6a89663909303e5d8f907233624cb4e9f1978",
             "cardSha256": "",
-            "ddsSha256": "71a05ba73adff8ace7d2ac28dc67a3b8031d19ac0cd9685b8825a1f77e921f0f"
+            "ddsSha256": "1f7213ec745359967d703a6bb26729ceea5dc1d82dabf753493c58ce8a8da3f6"
         },
         "gfx/leaders/FIN/lp_fin_armas_eino_martola.dds": {
             "leader": "armas_eino_martola",
             "kind": "large",
-            "chosenSha256": "014d570b4cfddc789c5383c0c73cfc6f55e7e7b3d64009ab861a9a358470089b",
+            "chosenSha256": "05863cef514816c96b497b6c59b183852e72ec4e2638ce5e3f5b701037fc5c62",
             "cardSha256": "",
-            "ddsSha256": "a4096aef0b808a6b7850976c44e4d523d8f66a7e4fb3adafae74202f27f0ed2d"
+            "ddsSha256": "483696b32bb8d14f2c6790dfed1d859f83543aea51ca585ec53aec7d755cef52"
         },
         "gfx/leaders/FIN/lp_fin_einar_vihma.dds": {
             "leader": "einar_vihma",
             "kind": "large",
-            "chosenSha256": "de24eef74ae806fb06f209b738da316a9b2e8498d22c242d6fe43330c04726bd",
+            "chosenSha256": "964b3fec7dd88fdd7062b49f4f3d870de4ca0183bfab468659c8cfbebc8e16d0",
             "cardSha256": "",
-            "ddsSha256": "cda915181d4d024a5377e2765a2c414b75e344d029356f0cbcf00de15319e4a1"
+            "ddsSha256": "8fcd3387c5492d262a3668edea7314011cb12222841ec1d3139793643f5609d4"
         },
         "gfx/leaders/FIN/lp_fin_kaarlo_heiskanen.dds": {
             "leader": "kaarlo_heiskanen",
             "kind": "large",
-            "chosenSha256": "f03d22b0d7d0d64fe424783fe2dee2eebf6413f895fd31587dcd583378746203",
+            "chosenSha256": "2ae3bba91c46fac5b74e06c8b3fefb3da41f26f93e971e6b67935107b49b55a2",
             "cardSha256": "",
-            "ddsSha256": "57215699a00df5fdeeae5685b94a938c8a57d7efab75943b62e283cd7237dd6d"
+            "ddsSha256": "61ff6f4c2f2f3c4fee0447e3e57e3c52dbeda61f6e98a43101ea9bf9977a6121"
         },
         "gfx/leaders/FIN/lp_fin_oiva_koivisto.dds": {
             "leader": "oiva_koivisto",
             "kind": "large",
-            "chosenSha256": "e7229751fb0861a768e076b73406ea83085f3b703c181ec41887ae552ae2a89f",
+            "chosenSha256": "9581fcdc5700396afb70fb0f025d785d87831ad2f2119684ce22b5f4bbef4cbb",
             "cardSha256": "",
-            "ddsSha256": "63a24eb45bf690f644e913ec3b6e64ce00e5f5c28a6c1ae80ffe07b0459aa189"
+            "ddsSha256": "37c61c8abcadda8839bcd08c24b0280ed0abd675d57bb4aa8ea11f6fb98cc43a"
         }
     }
 }

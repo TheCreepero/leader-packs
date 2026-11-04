@@ -330,6 +330,38 @@ function Add-LpUndecidedRound {
     Save-LpPortraitRecords -Pack $packData -Records $records
 }
 
+function Add-LpFinishedRound {
+    param([string]$Root, [string]$Leader, [int]$Seed = 2, [switch]$NoFacePass)
+
+    $roundFolder = Join-Path $Root "review\$Leader\round-1"
+    $candidateFolder = if ($NoFacePass) { 'paint' } else { 'face-pasted' }
+    New-Item -ItemType Directory -Path (Join-Path $roundFolder $candidateFolder), (Join-Path $roundFolder 'mask'), (Join-Path $roundFolder 'final') -Force | Out-Null
+    $candidates = [System.Collections.Generic.List[object]]::new()
+    foreach ($roundSeed in (Get-LpRoundSeeds -Round 1)) {
+        [System.IO.File]::WriteAllText((Join-Path $roundFolder "$candidateFolder\A4_s$roundSeed.png"), "pasted $Leader $roundSeed")
+        $finalPath = Join-Path $roundFolder "final\A4_s$roundSeed.png"
+        [System.IO.File]::WriteAllText($finalPath, "final $Leader $roundSeed")
+        $candidates.Add([ordered]@{ seed = $roundSeed; file = $finalPath; sha256 = (Get-LpSha256 -Path $finalPath); likeness = 0.5 })
+    }
+    [System.IO.File]::WriteAllText((Join-Path $roundFolder 'photo.png'), "photo $Leader")
+    [System.IO.File]::WriteAllText((Join-Path $roundFolder 'mask\M1_s1.png'), "mask $Leader")
+    $runPath = Join-Path $roundFolder 'portrait-run.json'
+    [System.IO.File]::WriteAllText($runPath, '{}')
+    $packData = Get-LpPack -RepoRoot $Root -Pack 'testland'
+    $chosenPath = Join-Path $packData.PortraitDir "$Leader.png"
+    if (-not (Test-Path -LiteralPath $packData.PortraitDir)) {
+        New-Item -ItemType Directory -Path $packData.PortraitDir -Force | Out-Null
+    }
+    Copy-Item -LiteralPath (Join-Path $roundFolder "final\A4_s$Seed.png") -Destination $chosenPath -Force
+    $records = Read-LpPortraitRecords -Pack $packData
+    $records['leaders'][$Leader] = [ordered]@{
+        rounds = @([ordered]@{ round = 1; date = '2026-11-01'; seeds = [object[]]@(Get-LpRoundSeeds -Round 1); settings = [ordered]@{}; run = $runPath; recipe = [ordered]@{ steps = @(); facePass = (-not $NoFacePass) }; candidates = $candidates.ToArray(); decision = [ordered]@{ pick = $Seed } })
+        chosen = [ordered]@{ round = 1; seed = $Seed; file = (Get-LpChosenRelativePath -Pack $packData -LeaderKey $Leader); sha256 = (Get-LpSha256 -Path $chosenPath) }
+    }
+    Save-LpPortraitRecords -Pack $packData -Records $records
+    return $roundFolder
+}
+
 function New-LpStubManager {
     $managerRoot = Join-Path $TestDrive ('manager-' + [guid]::NewGuid().ToString('N').Substring(0, 6))
     $portraitFolder = Join-Path $managerRoot 'Scripts\Portraits'
@@ -348,14 +380,35 @@ param(
     [string]$Seeds,
     [int]$ColourSeed = 1,
     [switch]$NoFacePass,
+    [string]$UniformColour,
+    [switch]$Refinish,
+    [string]$Candidate,
+    [string]$Mask,
+    [string]$Before,
+    [switch]$StartComfyUI,
     [int]$Age = -1,
     [switch]$PassThru
 )
 $managerRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
-$call = [ordered]@{ Photo = $Photo; Name = $Name; Tag = $Tag; Role = $Role; Headwear = $Headwear; Uniform = $Uniform; AvoidHeadwear = $AvoidHeadwear; Notes = $Notes; Seeds = $Seeds; ColourSeed = $ColourSeed; NoFacePass = [bool]$NoFacePass; Age = $Age }
+$call = [ordered]@{ Photo = $Photo; Name = $Name; Tag = $Tag; Role = $Role; Headwear = $Headwear; Uniform = $Uniform; AvoidHeadwear = $AvoidHeadwear; Notes = $Notes; Seeds = $Seeds; ColourSeed = $ColourSeed; NoFacePass = [bool]$NoFacePass; UniformColour = $UniformColour; Refinish = [bool]$Refinish; Candidate = $Candidate; Age = $Age }
 Add-Content -LiteralPath (Join-Path $managerRoot 'calls.jsonl') -Value (ConvertTo-Json -InputObject $call -Compress)
-if ($env:LP_STUB_FAIL -and $Name -like ('*' + $env:LP_STUB_FAIL)) {
+if ($env:LP_STUB_FAIL -and (($Name -and $Name -like ('*' + $env:LP_STUB_FAIL)) -or ($Candidate -and $Candidate -like ('*' + $env:LP_STUB_FAIL + '*')))) {
     throw 'TOOL FAILURE: stand-in failure'
+}
+if ($Refinish) {
+    $roundFolder = Split-Path -Parent (Split-Path -Parent $Candidate)
+    $number = @(Get-ChildItem -LiteralPath $roundFolder -Directory -Filter 'refinish-*' -ErrorAction SilentlyContinue).Count + 1
+    $workFolder = Join-Path $roundFolder ('refinish-' + $number)
+    New-Item -ItemType Directory -Path (Join-Path $workFolder 'final') -Force | Out-Null
+    $finalPath = Join-Path $workFolder ('final\' + (Split-Path -Leaf $Candidate))
+    [System.IO.File]::WriteAllText($finalPath, ('refinished ' + [System.IO.File]::ReadAllText($Candidate)))
+    $refinishCandidates = @(
+        [PSCustomObject]@{ label = 'before'; file = $Before; likeness = 0.5; finish = [PSCustomObject]@{ skinAfter = @(70.0, 16.0, 19.0); median = 60.0 } },
+        [PSCustomObject]@{ label = 'refinished'; file = ('final/' + (Split-Path -Leaf $Candidate)); likeness = 0.55; finish = [PSCustomObject]@{ skinAfter = @(55.0, 12.0, 16.0); median = 45.0 } }
+    )
+    $refinishRunPath = Join-Path $workFolder 'refinish-run.json'
+    [System.IO.File]::WriteAllText($refinishRunPath, (ConvertTo-Json -InputObject ([ordered]@{ template = 'refinish'; candidates = $refinishCandidates }) -Depth 6))
+    return [PSCustomObject]@{ OutDir = $workFolder; Number = $number; Run = $refinishRunPath; Sheet = (Join-Path $workFolder 'sheet.png'); Final = $finalPath; MaskSource = $(if ($env:LP_STUB_RUNNING -or $env:LP_STUB_MASKED) { 'candidate' } else { 'photo' }); Candidates = $refinishCandidates; ServerMessages = @() }
 }
 $nameFolder = Join-Path $managerRoot ('work\' + $Name)
 $round = @(Get-ChildItem -LiteralPath $nameFolder -Directory -ErrorAction SilentlyContinue).Count + 1
@@ -369,7 +422,7 @@ foreach ($seed in @($Seeds -split ',')) {
     $candidates.Add([PSCustomObject]@{ seed = [int]$seed; file = $candidateFile; sha256 = (Get-FileHash -LiteralPath $candidatePath -Algorithm SHA256).Hash.ToLowerInvariant(); likeness = 0.5; seconds = 0 })
 }
 $runPath = Join-Path $outDir 'portrait-run.json'
-$run = [ordered]@{ round = $round; recipe = [ordered]@{ steps = @([ordered]@{ template = 'K1'; sha256 = 'k1' }, [ordered]@{ template = 'A4'; sha256 = 'a4' }); facePass = (-not $NoFacePass); gradeStrength = 0.6 } }
+$run = [ordered]@{ round = $round; recipe = [ordered]@{ steps = @([ordered]@{ template = 'K1'; sha256 = 'k1' }, [ordered]@{ template = 'A4'; sha256 = 'a4' }); facePass = (-not $NoFacePass); finish = [ordered]@{ style = 'style-TST.json'; detailStrength = 0.25 }; framing = [ordered]@{ centreBlend = 0.5; faceHeight = 0.5 }; uniformColour = $(if ($UniformColour) { [ordered]@{ key = $UniformColour; default = $false } } else { $null }) } }
 [System.IO.File]::WriteAllText($runPath, (ConvertTo-Json -InputObject $run -Depth 6))
 [PSCustomObject]@{ OutDir = $outDir; Round = $round; Run = $runPath; Sheet = (Join-Path $outDir 'sheet.png'); Candidates = $candidates.ToArray(); ServerMessages = @() }
 '@

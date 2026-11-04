@@ -75,6 +75,7 @@ param(
     [switch]$MakePortraits,
 
     [Parameter(ParameterSetName = 'MakePortraits')]
+    [Parameter(ParameterSetName = 'RefinishPortraits')]
     [switch]$StartComfyUI,
 
     [Parameter(ParameterSetName = 'ReviewPick', Mandatory = $true)]
@@ -82,7 +83,14 @@ param(
     [Parameter(ParameterSetName = 'ReviewWithdraw', Mandatory = $true)]
     [switch]$ApplyPortraitReview,
 
+    [Parameter(ParameterSetName = 'RefinishPortraits', Mandatory = $true)]
+    [switch]$RefinishPortraits,
+
+    [Parameter(ParameterSetName = 'RefinishPortraits')]
+    [switch]$Apply,
+
     [Parameter(ParameterSetName = 'MakePortraits')]
+    [Parameter(ParameterSetName = 'RefinishPortraits')]
     [Parameter(ParameterSetName = 'ReviewPick', Mandatory = $true)]
     [Parameter(ParameterSetName = 'ReviewReject', Mandatory = $true)]
     [Parameter(ParameterSetName = 'ReviewWithdraw', Mandatory = $true)]
@@ -236,6 +244,10 @@ switch ($PSCmdlet.ParameterSetName) {
     'ReviewWithdraw' {
         Assert-PackGiven -SwitchName '-ApplyPortraitReview'
         exit ([int](@(Invoke-LpApplyPortraitReview -RepoRoot $PSScriptRoot -Pack $Pack -Leader $Leader -Withdraw $Withdraw)[-1]))
+    }
+    'RefinishPortraits' {
+        Assert-PackGiven -SwitchName '-RefinishPortraits'
+        exit ([int](@(Invoke-LpRefinishPortraits -RepoRoot $PSScriptRoot -Pack $Pack -Leader $Leader -Apply:$Apply -StartComfyUI:$StartComfyUI)[-1]))
     }
     'ConvertPortraits' {
         exit (Invoke-ForEachSelectedPack -Action { param($packName) Invoke-LpConvertPortraits -RepoRoot $PSScriptRoot -Pack $packName -Force:$Force })

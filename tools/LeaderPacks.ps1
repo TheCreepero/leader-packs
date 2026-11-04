@@ -1258,8 +1258,20 @@ function Test-LpPortraitRecords {
                 $problems.Add((New-LpProblem -Level 'ERROR' -Where $entryWhere -Message "the chosen portrait (round $chosenRound, seed $chosenSeed) is not the pick recorded in that round"))
             } else {
                 $pickedCandidate = @(ConvertTo-LpArray (Get-LpProperty -Object $pickRound -Name 'candidates') | Where-Object { (Get-LpWholeNumber -Value $_.seed) -eq $chosenSeed }) | Select-Object -First 1
-                if ($null -eq $pickedCandidate -or [string]$pickedCandidate.sha256 -ne [string](Get-LpProperty -Object $chosen -Name 'sha256' -Default '')) {
+                $refinished = Get-LpProperty -Object $chosen -Name 'refinished'
+                $pickedSha = if ($null -ne $refinished) { [string](Get-LpProperty -Object $refinished -Name 'candidateSha256' -Default '') } else { [string](Get-LpProperty -Object $chosen -Name 'sha256' -Default '') }
+                if ($null -eq $pickedCandidate -or [string]$pickedCandidate.sha256 -ne $pickedSha) {
                     $problems.Add((New-LpProblem -Level 'ERROR' -Where $entryWhere -Message 'the chosen portrait is not the candidate recorded in its round (SHA-256)'))
+                }
+                if ($null -ne $refinished) {
+                    if (-not ([string](Get-LpProperty -Object $refinished -Name 'run' -Default '')).Trim()) {
+                        $problems.Add((New-LpProblem -Level 'ERROR' -Where $entryWhere -Message 'the refinish record names no run'))
+                    }
+                    $refinishDate = [string](Get-LpProperty -Object $refinished -Name 'date' -Default '')
+                    $parsedDate = [datetime]::MinValue
+                    if ($refinishDate -notmatch '^\d{4}-\d{2}-\d{2}$' -or -not [datetime]::TryParseExact($refinishDate, 'yyyy-MM-dd', [System.Globalization.CultureInfo]::InvariantCulture, [System.Globalization.DateTimeStyles]::None, [ref]$parsedDate)) {
+                        $problems.Add((New-LpProblem -Level 'ERROR' -Where $entryWhere -Message 'the refinish record has no yyyy-MM-dd date'))
+                    }
                 }
             }
         }
@@ -1892,6 +1904,10 @@ function Get-LpPortraitOptionProblems {
     if ($null -ne $photoYear -and -not (Test-LpYearValue -Value $photoYear)) {
         $messages.Add('portrait.photoYear must be a four-digit year')
     }
+    $uniformColour = Get-LpProperty -Object $Portrait -Name 'uniformColour'
+    if ($null -ne $uniformColour -and ($uniformColour -isnot [string] -or $uniformColour -notmatch '^[a-z0-9_]*$')) {
+        $messages.Add('portrait.uniformColour must be a palette key of the Manager''s palettes.json: lower-case letters, digits and underscores')
+    }
     if ((Test-LpYearValue -Value $born) -and (Test-LpYearValue -Value $photoYear)) {
         if ($photoYear -lt $born) {
             $messages.Add('portrait.photoYear must not be before portrait.born')
@@ -1914,7 +1930,7 @@ function Get-LpPortraitSettings {
 
     $portrait = Get-LpProperty -Object $Leader -Name 'portrait'
     $settings = [ordered]@{}
-    foreach ($fieldName in @('role', 'headwear', 'uniform', 'avoidHeadwear', 'notes')) {
+    foreach ($fieldName in @('role', 'headwear', 'uniform', 'avoidHeadwear', 'notes', 'uniformColour')) {
         $settings[$fieldName] = [string](Get-LpProperty -Object $portrait -Name $fieldName -Default '')
     }
     $colourSeed = Get-LpProperty -Object $portrait -Name 'colourSeed'
@@ -2009,13 +2025,14 @@ function Invoke-LpMakePortraits {
         return $exitCode
     }
     $newPortraitScript = Join-Path $ManagerRoot 'Scripts\Portraits\New-HoiPortrait.ps1'
-    # The age cue reached New-HoiPortrait.ps1 with its round 6 recipe (2026-11-01); an older Manager takes no -Age.
-    $newPortraitTakesAge = $false
+    $newPortraitParameters = @()
     try {
-        $newPortraitTakesAge = (Get-Command -Name $newPortraitScript -ErrorAction Stop).Parameters.ContainsKey('Age')
+        $newPortraitParameters = @((Get-Command -Name $newPortraitScript -ErrorAction Stop).Parameters.Keys)
     } catch {
-        $newPortraitTakesAge = $false
+        $newPortraitParameters = @()
     }
+    $newPortraitTakesAge = $newPortraitParameters -contains 'Age'
+    $newPortraitTakesUniformColour = $newPortraitParameters -contains 'UniformColour'
     if (-not $newPortraitTakesAge) {
         Write-Host '  [WARN] New-HoiPortrait.ps1 takes no -Age: the age cue from born and photoYear is left out of this round' -ForegroundColor Yellow
     }
@@ -2062,6 +2079,13 @@ function Invoke-LpMakePortraits {
                 $portraitArguments['Age'] = [int]$settings['age']
                 $settings['ageSent'] = $true
             }
+            if (([string]$settings['uniformColour']).Trim()) {
+                if ($newPortraitTakesUniformColour) {
+                    $portraitArguments['UniformColour'] = [string]$settings['uniformColour']
+                } else {
+                    Write-Host "  [WARN] ${leaderKey}: New-HoiPortrait.ps1 takes no -UniformColour: the uniform colour '$($settings['uniformColour'])' is left out of this round" -ForegroundColor Yellow
+                }
+            }
             Write-Host "Portraits of $leaderKey, round $roundNumber, seeds $($seeds -join ', ')" -ForegroundColor Cyan
             $global:LASTEXITCODE = 0
             try {
@@ -2107,8 +2131,10 @@ function Invoke-LpMakePortraits {
                 run        = [string]$portraitResult.Run
                 recipe     = [ordered]@{
                     steps         = $steps.ToArray()
-                    gradeStrength = Get-LpProperty -Object $recipe -Name 'gradeStrength'
                     facePass      = Get-LpProperty -Object $recipe -Name 'facePass'
+                    finish        = Get-LpProperty -Object $recipe -Name 'finish'
+                    framing       = Get-LpProperty -Object $recipe -Name 'framing'
+                    uniformColour = Get-LpProperty -Object $recipe -Name 'uniformColour'
                 }
                 candidates = $candidates.ToArray()
                 decision   = $null
@@ -2235,6 +2261,244 @@ function Invoke-LpApplyPortraitReview {
     Save-LpPortraitRecords -Pack $packData -Records $records
     Write-Host "Recorded the pick of seed $Pick in round $($latestRound['round']) of '$Leader'; copied to $chosenRelativePath. Next: build.ps1 -ConvertPortraits -Pack $Pack" -ForegroundColor Green
     return 0
+}
+
+function Invoke-LpRefinishApply {
+    param($Pack, $Records, [Parameter(Mandatory = $true)][string]$PlanPath, [string]$Leader)
+
+    if (-not (Test-Path -LiteralPath $PlanPath)) {
+        Write-Host "No refinish to apply for pack '$($Pack.Name)': run build.ps1 -RefinishPortraits -Pack $($Pack.Name) first and look at its sheet." -ForegroundColor Red
+        return 1
+    }
+    $plan = Read-LpJson -Path $PlanPath
+    $exitCode = 0
+    $applied = 0
+    foreach ($item in @(ConvertTo-LpArray (Get-LpProperty -Object $plan -Name 'portraits'))) {
+        $leaderKey = [string]$item.leader
+        if ($Leader -and $leaderKey -ne $Leader) {
+            continue
+        }
+        $entry = $Records['leaders'][$leaderKey]
+        $chosen = if ($null -ne $entry) { $entry['chosen'] } else { $null }
+        if ($null -eq $chosen) {
+            Write-Host "  [SKIP] ${leaderKey}: no chosen portrait any more" -ForegroundColor Yellow
+            continue
+        }
+        if ([string]$chosen['sha256'] -ne [string]$item.fromSha256) {
+            Write-Host "  [SKIP] ${leaderKey}: the chosen portrait changed since the refinish was made: run build.ps1 -RefinishPortraits -Pack $($Pack.Name) again" -ForegroundColor Yellow
+            $exitCode = 1
+            continue
+        }
+        $finalPath = [string]$item.final
+        if (-not (Test-Path -LiteralPath $finalPath) -or (Get-LpSha256 -Path $finalPath) -ne [string]$item.sha256) {
+            Write-Host "  [ERROR] ${leaderKey}: the refinished file $finalPath is gone or changed: run build.ps1 -RefinishPortraits -Pack $($Pack.Name) again" -ForegroundColor Red
+            $exitCode = 1
+            continue
+        }
+        if ([string](Get-LpProperty -Object $item -Name 'maskSource' -Default '') -eq 'photo') {
+            Write-Host "  [WARN] ${leaderKey}: this refinish composited behind the photo's mask, not the candidate's; a shoulder the repaint extended can be cut. build.ps1 -RefinishPortraits -Pack $($Pack.Name) -StartComfyUI makes it again with the candidate's mask" -ForegroundColor Yellow
+        }
+        $chosenPath = Join-Path $Pack.RepoRoot (Get-LpChosenRelativePath -Pack $Pack -LeaderKey $leaderKey).Replace('/', '\')
+        Copy-Item -LiteralPath $finalPath -Destination $chosenPath -Force
+        $candidateSha = if ($chosen.Contains('refinished') -and $null -ne $chosen['refinished']) { [string]$chosen['refinished']['candidateSha256'] } else { [string]$chosen['sha256'] }
+        $chosen['sha256'] = Get-LpSha256 -Path $chosenPath
+        $chosen['refinished'] = [ordered]@{ date = (Get-LpToday); run = [string]$item.run; candidateSha256 = $candidateSha }
+        $entry['chosen'] = $chosen
+        $applied++
+        Write-Host "  applied ${leaderKey}: $(Get-LpChosenRelativePath -Pack $Pack -LeaderKey $leaderKey)" -ForegroundColor Green
+    }
+    if ($applied -gt 0) {
+        Save-LpPortraitRecords -Pack $Pack -Records $Records
+    }
+    Write-Host ("Pack '{0}': {1} refinished portrait(s) applied. Next: build.ps1 -ConvertPortraits -Pack {0}" -f $Pack.Name, $applied) -ForegroundColor $(if ($exitCode -eq 0) { 'Green' } else { 'Red' })
+    return $exitCode
+}
+
+function Invoke-LpRefinishPortraits {
+    param(
+        [Parameter(Mandatory = $true)][string]$RepoRoot,
+        [Parameter(Mandatory = $true)][string]$Pack,
+        [string]$Leader,
+        [switch]$Apply,
+        [switch]$StartComfyUI,
+        [AllowEmptyString()][string]$ManagerRoot = (Get-LpManagerRoot)
+    )
+
+    $newPortraitScript = if ($ManagerRoot) { Join-Path $ManagerRoot 'Scripts\Portraits\New-HoiPortrait.ps1' } else { '' }
+    if (-not $newPortraitScript -or -not (Test-Path -LiteralPath $newPortraitScript)) {
+        Write-Host 'The Modding Manager with Scripts\Portraits\New-HoiPortrait.ps1 is not on this machine: portraits are finished only where the Manager and its ComfyUI venv are.' -ForegroundColor Red
+        return 1
+    }
+    $packData = Get-LpPack -RepoRoot $RepoRoot -Pack $Pack
+    $records = Read-LpPortraitRecords -Pack $packData
+    $refinishDir = Join-Path $packData.RepoRoot ('scratch\refinish\' + $Pack)
+    $planPath = Join-Path $refinishDir 'refinish.json'
+    if ($Apply) {
+        return (Invoke-LpRefinishApply -Pack $packData -Records $records -PlanPath $planPath -Leader $Leader)
+    }
+    $leaders = @(Get-LpGeneratedLeaders -Pack $packData)
+    if ($Leader) {
+        $leaders = @($leaders | Where-Object { [string]$_.key -eq $Leader })
+        if ($leaders.Count -eq 0) {
+            Write-Host "No new or addRole leader '$Leader' in source\$Pack\leaders.json." -ForegroundColor Red
+            return 1
+        }
+    }
+    if (-not (Test-Path -LiteralPath $refinishDir)) {
+        New-Item -ItemType Directory -Path $refinishDir -Force | Out-Null
+    }
+    $exitCode = 0
+    $results = [System.Collections.Generic.List[object]]::new()
+    $beforeCandidates = [System.Collections.Generic.List[object]]::new()
+    $afterCandidates = [System.Collections.Generic.List[object]]::new()
+    $firstPhoto = ''
+    $photoMaskLeaders = [System.Collections.Generic.List[string]]::new()
+    $startedHere = $false
+    try {
+        if ($StartComfyUI) {
+            $startResult = Invoke-LpComfyStatus -ManagerRoot $ManagerRoot -Action 'Start'
+            if ($startResult.ExitCode -ne 0) {
+                Write-Host 'ComfyUI did not start; no portrait was finished.' -ForegroundColor Red
+                return $(if ($startResult.ExitCode -eq 2) { 2 } else { 1 })
+            }
+            $startedHere = $startResult.Started
+        }
+        foreach ($packLeader in $leaders) {
+            $leaderKey = [string]$packLeader.key
+            $entry = $records['leaders'][$leaderKey]
+            $chosen = if ($null -ne $entry) { $entry['chosen'] } else { $null }
+            if ($null -eq $chosen) {
+                Write-Host "  [SKIP] ${leaderKey}: no chosen portrait" -ForegroundColor Yellow
+                continue
+            }
+            $rounds = Get-LpRecordRounds -Entry $entry
+            $chosenRound = [int]$chosen['round']
+            $chosenSeed = [int]$chosen['seed']
+            $roundRecord = if ($chosenRound -ge 1 -and $chosenRound -le $rounds.Count) { $rounds[$chosenRound - 1] } else { $null }
+            $runPath = if ($null -ne $roundRecord) { [string]$roundRecord['run'] } else { '' }
+            if (-not $runPath -or -not (Test-Path -LiteralPath $runPath)) {
+                Write-Host "  [SKIP] ${leaderKey}: the run record of round $chosenRound is gone, so its candidate cannot be finished again; a new round with build.ps1 -MakePortraits -Leader $leaderKey gets the finish" -ForegroundColor Yellow
+                continue
+            }
+            $roundFolder = Split-Path -Parent $runPath
+            $facePass = $true
+            $recipe = $roundRecord['recipe']
+            if ($null -ne $recipe -and $null -ne (Get-LpProperty -Object $recipe -Name 'facePass')) {
+                $facePass = [bool](Get-LpProperty -Object $recipe -Name 'facePass')
+            }
+            $paintTemplateName = [string](Get-LpProperty -Object $recipe -Name 'paintTemplate' -Default 'A4')
+            if (-not $paintTemplateName) {
+                $paintTemplateName = 'A4'
+            }
+            $candidatePath = Join-Path $roundFolder (($(if ($facePass) { 'face-pasted' } else { 'paint' })) + '\' + $paintTemplateName + '_s' + $chosenSeed + '.png')
+            $photoPath = Join-Path $roundFolder 'photo.png'
+            $maskPath = Join-Path $roundFolder 'mask\M1_s1.png'
+            $maskArguments = @()
+            if (Test-Path -LiteralPath $maskPath) {
+                $maskArguments = @('-Mask', $maskPath)
+            }
+            $missing = @(@($candidatePath, $photoPath) | Where-Object { -not (Test-Path -LiteralPath $_) })
+            if ($missing.Count -gt 0) {
+                Write-Host "  [SKIP] ${leaderKey}: $($missing[0]) is gone; a new round with build.ps1 -MakePortraits -Leader $leaderKey gets the finish" -ForegroundColor Yellow
+                continue
+            }
+            $chosenPath = Join-Path $packData.RepoRoot (Get-LpChosenRelativePath -Pack $packData -LeaderKey $leaderKey).Replace('/', '\')
+            if (-not (Test-Path -LiteralPath $chosenPath) -or (Get-LpSha256 -Path $chosenPath) -ne [string]$chosen['sha256']) {
+                Write-Host "  [ERROR] ${leaderKey}: the chosen portrait is missing or differs from its recorded SHA-256" -ForegroundColor Red
+                $exitCode = 1
+                continue
+            }
+            Write-Host "Refinishing $leaderKey (round $chosenRound, seed $chosenSeed)" -ForegroundColor Cyan
+            $global:LASTEXITCODE = 0
+            try {
+                $refinishResult = @(& $newPortraitScript -Refinish -Candidate $candidatePath -Photo $photoPath @maskArguments -Tag $packData.Tag -Before $chosenPath -PassThru) | Where-Object { $null -ne $_ -and $_.PSObject.Properties['Final'] } | Select-Object -Last 1
+            } catch {
+                Write-Host "  [ERROR] ${leaderKey}: New-HoiPortrait.ps1 -Refinish failed: $($_.Exception.Message)" -ForegroundColor Red
+                if ($_.Exception.Message -match 'TOOL FAILURE') {
+                    $exitCode = 2
+                } elseif ($exitCode -eq 0) {
+                    $exitCode = 1
+                }
+                continue
+            }
+            if ($LASTEXITCODE -ne 0 -or $null -eq $refinishResult) {
+                Write-Host "  [ERROR] ${leaderKey}: New-HoiPortrait.ps1 -Refinish ended with exit code $LASTEXITCODE" -ForegroundColor Red
+                if ($exitCode -eq 0) {
+                    $exitCode = $(if ($LASTEXITCODE -eq 2) { 2 } else { 1 })
+                }
+                continue
+            }
+            $finalPath = [string]$refinishResult.Final
+            $maskSource = [string](Get-LpProperty -Object $refinishResult -Name 'MaskSource' -Default '')
+            if ($maskSource -eq 'photo') {
+                $photoMaskLeaders.Add($leaderKey)
+            }
+            $before = @(ConvertTo-LpArray $refinishResult.Candidates | Where-Object { [string]$_.label -eq 'before' }) | Select-Object -First 1
+            $after = @(ConvertTo-LpArray $refinishResult.Candidates | Where-Object { [string]$_.label -eq 'refinished' }) | Select-Object -First 1
+            $results.Add([ordered]@{
+                    leader         = $leaderKey
+                    round          = $chosenRound
+                    seed           = $chosenSeed
+                    run            = [string]$refinishResult.Run
+                    maskSource     = $maskSource
+                    final          = $finalPath
+                    sha256         = (Get-LpSha256 -Path $finalPath)
+                    fromSha256     = [string]$chosen['sha256']
+                    likenessBefore = Get-LpProperty -Object $before -Name 'likeness'
+                    likenessAfter  = Get-LpProperty -Object $after -Name 'likeness'
+                    finishBefore   = Get-LpProperty -Object $before -Name 'finish'
+                    finishAfter    = Get-LpProperty -Object $after -Name 'finish'
+                })
+            $beforeCandidates.Add([ordered]@{ label = $leaderKey; file = $chosenPath; likeness = (Get-LpProperty -Object $before -Name 'likeness'); finish = (Get-LpProperty -Object $before -Name 'finish') })
+            $afterCandidates.Add([ordered]@{ label = $leaderKey; file = $finalPath; likeness = (Get-LpProperty -Object $after -Name 'likeness'); finish = (Get-LpProperty -Object $after -Name 'finish') })
+            if (-not $firstPhoto) {
+                $firstPhoto = $photoPath
+            }
+            $skinBefore = Get-LpProperty -Object (Get-LpProperty -Object $before -Name 'finish') -Name 'skinAfter'
+            $skinAfter = Get-LpProperty -Object (Get-LpProperty -Object $after -Name 'finish') -Name 'skinAfter'
+            $numberOrDash = { param($value) if ($null -eq $value -or '' -eq [string]$value) { '-' } else { Format-LpNumber ([math]::Round([double]$value, 2)) } }
+            Write-Host ("  skin L {0} -> {1}, median {2} -> {3}, likeness {4} -> {5}" -f (& $numberOrDash $(if ($skinBefore) { [math]::Round([double]@($skinBefore)[0]) } else { $null })), (& $numberOrDash $(if ($skinAfter) { [math]::Round([double]@($skinAfter)[0]) } else { $null })), (& $numberOrDash (Get-LpProperty -Object (Get-LpProperty -Object $before -Name 'finish') -Name 'median')), (& $numberOrDash (Get-LpProperty -Object (Get-LpProperty -Object $after -Name 'finish') -Name 'median')), (& $numberOrDash (Get-LpProperty -Object $before -Name 'likeness')), (& $numberOrDash (Get-LpProperty -Object $after -Name 'likeness'))) -ForegroundColor Gray
+        }
+    } finally {
+        if ($startedHere) {
+            Invoke-LpComfyStatus -ManagerRoot $ManagerRoot -Action 'Stop' | Out-Null
+        }
+    }
+    if ($photoMaskLeaders.Count -gt 0) {
+        Write-Host "  [WARN] the person mask came from the photo for $($photoMaskLeaders -join ', '): a shoulder the repaint extended can be cut; run again with -StartComfyUI (or with ComfyUI running) to mask each candidate itself" -ForegroundColor Yellow
+    }
+    if ($results.Count -eq 0) {
+        Write-Host "No portrait of pack '$Pack' to refinish." -ForegroundColor Yellow
+        return $exitCode
+    }
+    Write-LpJson -Path $planPath -Value ([ordered]@{ pack = $Pack; date = (Get-LpToday); portraits = $results.ToArray() }) -Depth 8
+    $beforeRunPath = Join-Path $refinishDir 'before-run.json'
+    $afterRunPath = Join-Path $refinishDir 'after-run.json'
+    Write-LpJson -Path $beforeRunPath -Value ([ordered]@{ template = 'shipped'; candidates = $beforeCandidates.ToArray() }) -Depth 8
+    Write-LpJson -Path $afterRunPath -Value ([ordered]@{ template = 'refinished'; candidates = $afterCandidates.ToArray() }) -Depth 8
+    $sheetPath = Join-Path $refinishDir 'sheet.png'
+    $comfyConfig = Get-LpComfyConfig -ManagerRoot $ManagerRoot
+    $sheetScript = Join-Path $ManagerRoot 'Scripts\Portraits\New-PortraitSheet.py'
+    if ($null -eq $comfyConfig -or -not (Test-Path -LiteralPath $sheetScript)) {
+        Write-Host '  [WARN] no sheet: the before-and-after sheet needs the Manager''s New-PortraitSheet.py and the ComfyUI venv of Config\comfyui.json' -ForegroundColor Yellow
+    } else {
+        $sheetArguments = @('-I', $sheetScript, '--out', $sheetPath, '--title', ('Commanders Pack: ' + $packData.DisplayName + ', shipped and refinished'), '--photo', $firstPhoto, '--run', $beforeRunPath, '--run', $afterRunPath)
+        $previousPreference = $ErrorActionPreference
+        $ErrorActionPreference = 'Continue'
+        try {
+            $sheetLines = @(& ([string]$comfyConfig.python) @sheetArguments 2>&1 | ForEach-Object { [string]$_ })
+            $sheetExitCode = $LASTEXITCODE
+        } finally {
+            $ErrorActionPreference = $previousPreference
+        }
+        if ($sheetExitCode -ne 0) {
+            Write-Host "  [WARN] the sheet was not written (exit $sheetExitCode): $(($sheetLines | Select-Object -Last 2) -join ' ')" -ForegroundColor Yellow
+        } else {
+            Write-Host "  Sheet: $sheetPath (the shipped row and the refinished row; compare with the game's own portraits in the game)" -ForegroundColor Gray
+        }
+    }
+    Write-Host ("Pack '{0}': {1} portrait(s) refinished into {2}. Look at the sheet; on the owner's word: build.ps1 -RefinishPortraits -Pack {0} -Apply, then -ConvertPortraits -Pack {0}." -f $Pack, $results.Count, $planPath) -ForegroundColor $(if ($exitCode -eq 0) { 'Green' } else { 'Red' })
+    return $exitCode
 }
 
 function Get-LpReviewLeaders {

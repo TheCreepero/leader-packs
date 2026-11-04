@@ -4,7 +4,9 @@ Reads a manifest of tab-separated lines: the kind ("large" or "small"), the sour
 the destination. A destination ending in .dds is written as an uncompressed 32-bit DDS, one ending
 in .png as a PNG (for tests and previews).
 
-- large: the chosen portrait cropped to the 156x210 aspect around its centre and resized.
+- large: the chosen portrait cropped to the 156x210 aspect around its centre, resized, and given a mild
+  unsharp mask at the game's size (radius 0.7, 30%): the vanilla portraits are crisper at 156x210 than a
+  plain LANCZOS downscale.
 - small: the 65x67 card drawn in code around the source, which is the crop of the chosen portrait
   to the card's photo window (build.ps1 -ConvertPortraits makes it with the Manager's
   Measure-PortraitFaces.py crop). The geometry and colours come from data/portrait-card.json and
@@ -23,6 +25,8 @@ import sys
 from PIL import Image, ImageDraw, ImageFilter
 
 LARGE_SIZE = (156, 210)
+LARGE_UNSHARP_RADIUS = 0.7
+LARGE_UNSHARP_PERCENT = 30
 DDSD_CAPS_HEIGHT_WIDTH_PITCH_PIXELFORMAT = 0x0000100F
 DDPF_RGB_WITH_ALPHA = 0x00000041
 DDSCAPS_TEXTURE = 0x00001000
@@ -171,7 +175,8 @@ def save_picture(picture, destination):
 def convert(kind, source, destination, settings):
     with Image.open(source) as image:
         if kind == "large":
-            picture = crop_to_aspect(image.convert("RGBA"), *LARGE_SIZE)
+            picture = crop_to_aspect(image.convert("RGB"), *LARGE_SIZE)
+            picture = picture.filter(ImageFilter.UnsharpMask(radius=LARGE_UNSHARP_RADIUS, percent=LARGE_UNSHARP_PERCENT, threshold=0)).convert("RGBA")
         elif kind == "small":
             picture = draw_card(image, settings)
         else:

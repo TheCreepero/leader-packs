@@ -157,7 +157,12 @@
                 "round": 2,
                 "seed": 8,
                 "file": "source/finland/portraits/aaro_pajari.png",
-                "sha256": "0ba8f5269ac60d668f84f74ebe0a2d4e1fd17e9a8df0489e9373f2c29fa693d3"
+                "sha256": "34c2d51b1cd979f850eca8f2f3e6a89663909303e5d8f907233624cb4e9f1978",
+                "refinished": {
+                    "date": "2026-11-04",
+                    "run": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fin_aaro_pajari\\round-2\\refinish-3\\refinish-run.json",
+                    "candidateSha256": "0ba8f5269ac60d668f84f74ebe0a2d4e1fd17e9a8df0489e9373f2c29fa693d3"
+                }
             }
         },
         "armas_eino_martola": {
@@ -242,7 +247,12 @@
                 "round": 1,
                 "seed": 1,
                 "file": "source/finland/portraits/armas_eino_martola.png",
-                "sha256": "014d570b4cfddc789c5383c0c73cfc6f55e7e7b3d64009ab861a9a358470089b"
+                "sha256": "05863cef514816c96b497b6c59b183852e72ec4e2638ce5e3f5b701037fc5c62",
+                "refinished": {
+                    "date": "2026-11-04",
+                    "run": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fin_armas_eino_martola\\round-1\\refinish-3\\refinish-run.json",
+                    "candidateSha256": "014d570b4cfddc789c5383c0c73cfc6f55e7e7b3d64009ab861a9a358470089b"
+                }
             }
         },
         "einar_vihma": {
@@ -327,7 +337,12 @@
                 "round": 1,
                 "seed": 3,
                 "file": "source/finland/portraits/einar_vihma.png",
-                "sha256": "de24eef74ae806fb06f209b738da316a9b2e8498d22c242d6fe43330c04726bd"
+                "sha256": "964b3fec7dd88fdd7062b49f4f3d870de4ca0183bfab468659c8cfbebc8e16d0",
+                "refinished": {
+                    "date": "2026-11-04",
+                    "run": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fin_einar_vihma\\round-1\\refinish-3\\refinish-run.json",
+                    "candidateSha256": "de24eef74ae806fb06f209b738da316a9b2e8498d22c242d6fe43330c04726bd"
+                }
             }
         },
         "kaarlo_heiskanen": {
@@ -412,7 +427,12 @@
                 "round": 1,
                 "seed": 2,
                 "file": "source/finland/portraits/kaarlo_heiskanen.png",
-                "sha256": "f03d22b0d7d0d64fe424783fe2dee2eebf6413f895fd31587dcd583378746203"
+                "sha256": "2ae3bba91c46fac5b74e06c8b3fefb3da41f26f93e971e6b67935107b49b55a2",
+                "refinished": {
+                    "date": "2026-11-04",
+                    "run": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fin_kaarlo_heiskanen\\round-1\\refinish-3\\refinish-run.json",
+                    "candidateSha256": "f03d22b0d7d0d64fe424783fe2dee2eebf6413f895fd31587dcd583378746203"
+                }
             }
         },
         "oiva_koivisto": {
@@ -497,7 +517,12 @@
                 "round": 1,
                 "seed": 2,
                 "file": "source/finland/portraits/oiva_koivisto.png",
-                "sha256": "e7229751fb0861a768e076b73406ea83085f3b703c181ec41887ae552ae2a89f"
+                "sha256": "9581fcdc5700396afb70fb0f025d785d87831ad2f2119684ce22b5f4bbef4cbb",
+                "refinished": {
+                    "date": "2026-11-04",
+                    "run": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fin_oiva_koivisto\\round-1\\refinish-3\\refinish-run.json",
+                    "candidateSha256": "e7229751fb0861a768e076b73406ea83085f3b703c181ec41887ae552ae2a89f"
+                }
             }
         }
     }

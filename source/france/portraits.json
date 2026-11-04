@@ -162,7 +162,12 @@
                 "round": 1,
                 "seed": 1,
                 "file": "source/france/portraits/charles_mast.png",
-                "sha256": "fc1027ec60a655392b621bed160fdd7f21a4fe1a7a123f8986ada311651a062d"
+                "sha256": "6dd465356565fa9b3162a5bc6b9b1db6cc149791de458a631e48e47e47efb797",
+                "refinished": {
+                    "date": "2026-11-04",
+                    "run": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_charles_mast\\round-1\\refinish-3\\refinish-run.json",
+                    "candidateSha256": "fc1027ec60a655392b621bed160fdd7f21a4fe1a7a123f8986ada311651a062d"
+                }
             }
         },
         "jean_touzet_du_vigier": {
@@ -406,7 +411,12 @@
                 "round": 2,
                 "seed": 5,
                 "file": "source/france/portraits/joseph_de_goislard_de_monsabert.png",
-                "sha256": "0fa20dd087af251fd97748dbf3ffc1d38f52b1c0c43577f0a151b437ef548993"
+                "sha256": "8643ebb9ea1aa70bed32e278d264696e8ae559651e693c67b06c2ab9f8d9f67d",
+                "refinished": {
+                    "date": "2026-11-04",
+                    "run": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_joseph_de_goislard_de_monsabert\\round-2\\refinish-3\\refinish-run.json",
+                    "candidateSha256": "0fa20dd087af251fd97748dbf3ffc1d38f52b1c0c43577f0a151b437ef548993"
+                }
             }
         },
         "marcel_carpentier": {
@@ -491,7 +501,12 @@
                 "round": 1,
                 "seed": 2,
                 "file": "source/france/portraits/marcel_carpentier.png",
-                "sha256": "da79afde82c6b476c0e159c625869901887e602d32411df1668336664a9b0136"
+                "sha256": "beb9f76e2d5b314837ad673b4e97b0646ce142cc2472ba22d4e5062eace70583",
+                "refinished": {
+                    "date": "2026-11-04",
+                    "run": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_marcel_carpentier\\round-1\\refinish-3\\refinish-run.json",
+                    "candidateSha256": "da79afde82c6b476c0e159c625869901887e602d32411df1668336664a9b0136"
+                }
             }
         },
         "philippe_auboyneau": {
@@ -656,7 +671,12 @@
                 "round": 1,
                 "seed": 2,
                 "file": "source/france/portraits/robert_jaujard.png",
-                "sha256": "353c427f906a7c9663e9a8a8358ef4bf9757af8a7c4d7928eebc38ee0bbacb43"
+                "sha256": "5a406f8273299ff0a294ae4fed117bc59c422aa104b59ea63705a01131550649",
+                "refinished": {
+                    "date": "2026-11-04",
+                    "run": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_fra_robert_jaujard\\round-1\\refinish-3\\refinish-run.json",
+                    "candidateSha256": "353c427f906a7c9663e9a8a8358ef4bf9757af8a7c4d7928eebc38ee0bbacb43"
+                }
             }
         }
     }

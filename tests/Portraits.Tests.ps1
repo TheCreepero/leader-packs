@@ -152,7 +152,11 @@ Describe 'MakePortraits with a stand-in New-HoiPortrait' {
         @($entry.rounds[0].seeds) | Should -Be @(1, 2, 3, 4)
         $entry.rounds[0].settings.headwear | Should -Be 'wearing a soft grey field cap'
         @($entry.rounds[0].recipe.steps | ForEach-Object { $_.template }) | Should -Be @('K1', 'A4')
-        $entry.rounds[0].recipe.gradeStrength | Should -Be 0.6
+        $entry.rounds[0].recipe.finish.style | Should -Be 'style-TST.json'
+        $entry.rounds[0].recipe.framing.centreBlend | Should -Be 0.5
+        $entry.rounds[0].recipe.PSObject.Properties['uniformColour'] | Should -Not -BeNullOrEmpty
+        $entry.rounds[0].recipe.uniformColour | Should -BeNullOrEmpty
+        $entry.rounds[0].settings.uniformColour | Should -Be ''
         @($entry.rounds[0].candidates).Count | Should -Be 4
         foreach ($candidate in @($entry.rounds[0].candidates)) {
             $candidate.sha256 | Should -Be (Get-LpSha256 -Path $candidate.file)
@@ -178,6 +182,25 @@ Describe 'MakePortraits with a stand-in New-HoiPortrait' {
         $entry.rounds[0].settings.facePass | Should -BeFalse
         $entry.rounds[0].recipe.facePass | Should -BeFalse
         (Get-LpRecordEntry -Root $fixtureRoot -Leader 'bravo_leader').rounds[0].settings.facePass | Should -BeTrue
+    }
+
+    It 'passes a leader''s uniformColour to New-HoiPortrait, records it, and refuses one that is not a palette key' {
+        $fixtureRoot = New-LpFixtureRepo -NoPortraits
+        Set-LpFixtureCache -Root $fixtureRoot
+        Set-LpFixtureLeaders -Root $fixtureRoot -Change { param($s) $s.leaders[0].portrait | Add-Member -NotePropertyName 'uniformColour' -NotePropertyValue 'fra_army_horizon_blue' }
+        $managerRoot = New-LpStubManager
+        Invoke-LpMakePortraits -RepoRoot $fixtureRoot -Pack 'testland' -ManagerRoot $managerRoot 6>$null | Select-Object -Last 1 | Should -Be 0
+        $calls = @(Get-LpStubCalls -ManagerRoot $managerRoot)
+        $calls[0].UniformColour | Should -Be 'fra_army_horizon_blue'
+        $calls[1].UniformColour | Should -Be ''
+        $alpha = Get-LpRecordEntry -Root $fixtureRoot -Leader 'alpha_leader'
+        $alpha.rounds[0].settings.uniformColour | Should -Be 'fra_army_horizon_blue'
+        $alpha.rounds[0].recipe.uniformColour.key | Should -Be 'fra_army_horizon_blue'
+        (Get-LpRecordEntry -Root $fixtureRoot -Leader 'bravo_leader').rounds[0].recipe.uniformColour | Should -BeNullOrEmpty
+        Set-LpFixtureLeaders -Root $fixtureRoot -Change { param($s) $s.leaders[2].portrait | Add-Member -NotePropertyName 'uniformColour' -NotePropertyValue 'Horizon Blue' }
+        ((Get-LpFixtureErrors -Root $fixtureRoot) -join "`n") | Should -Match 'portrait\.uniformColour must be a palette key'
+        Invoke-LpMakePortraits -RepoRoot $fixtureRoot -Pack 'testland' -Leader 'charlie_leader' -ManagerRoot $managerRoot 6>$null | Select-Object -Last 1 | Should -Be 1
+        @(Get-LpStubCalls -ManagerRoot $managerRoot | Where-Object { $_.Name -eq 'lp_tst_charlie_leader' }).Count | Should -Be 1 -Because 'the first batch made his round; the bad key stops the second'
     }
 
     It 'passes the age from born and photoYear to New-HoiPortrait, records it, and passes none for a leader without the years' {
@@ -287,6 +310,157 @@ Describe 'MakePortraits with a stand-in New-HoiPortrait' {
         $managerRoot = New-LpStubManager
         Invoke-LpMakePortraits -RepoRoot $fixtureRoot -Pack 'testland' -Leader 'alpha_leader' -ManagerRoot $managerRoot 6>$null | Select-Object -Last 1 | Should -Be 1
         @(Get-LpStubCalls -ManagerRoot $managerRoot).Count | Should -Be 0
+    }
+}
+
+Describe 'RefinishPortraits with a stand-in New-HoiPortrait' {
+    BeforeEach {
+        Remove-Item -Path Env:\LP_STUB_FAIL, Env:\LP_STUB_RUNNING -ErrorAction SilentlyContinue
+    }
+
+    It 'refinishes every chosen portrait from its saved round, writes the plan and changes nothing until -Apply' {
+        $fixtureRoot = New-LpFixtureRepo -NoPortraits
+        $alphaRound = Add-LpFinishedRound -Root $fixtureRoot -Leader 'alpha_leader' -Seed 2
+        Add-LpFinishedRound -Root $fixtureRoot -Leader 'bravo_leader' -Seed 3 -NoFacePass | Out-Null
+        $managerRoot = New-LpStubManager
+        $packData = Get-LpPack -RepoRoot $fixtureRoot -Pack 'testland'
+        $chosenBefore = Get-LpSha256 -Path (Join-Path $packData.PortraitDir 'alpha_leader.png')
+        $output = @(Invoke-LpRefinishPortraits -RepoRoot $fixtureRoot -Pack 'testland' -ManagerRoot $managerRoot 6>&1 | ForEach-Object { [string]$_ })
+        $output[-1] | Should -Be '0'
+        ($output -join "`n") | Should -Match 'charlie_leader: no chosen portrait'
+        $calls = @(Get-LpStubCalls -ManagerRoot $managerRoot)
+        $calls.Count | Should -Be 2
+        $calls[0].Refinish | Should -BeTrue
+        $calls[0].Candidate | Should -Be (Join-Path $alphaRound 'face-pasted\A4_s2.png')
+        $calls[1].Candidate | Should -BeLike '*\bravo_leader\round-1\paint\A4_s3.png' -Because 'a round without the face pass keeps its candidates under paint'
+        $plan = Read-LpJson -Path (Join-Path $fixtureRoot 'scratch\refinish\testland\refinish.json')
+        @($plan.portraits | ForEach-Object { $_.leader }) | Should -Be @('alpha_leader', 'bravo_leader')
+        $plan.portraits[0].final | Should -Be (Join-Path $alphaRound 'refinish-1\final\A4_s2.png')
+        $plan.portraits[0].fromSha256 | Should -Be $chosenBefore
+        $plan.portraits[0].sha256 | Should -Be (Get-LpSha256 -Path $plan.portraits[0].final)
+        $plan.portraits[0].finishAfter.median | Should -Be 45
+        Test-Path -LiteralPath (Join-Path $fixtureRoot 'scratch\refinish\testland\after-run.json') | Should -BeTrue
+        (Get-LpSha256 -Path (Join-Path $packData.PortraitDir 'alpha_leader.png')) | Should -Be $chosenBefore
+        (Get-LpRecordEntry -Root $fixtureRoot -Leader 'alpha_leader').chosen.refinished | Should -BeNullOrEmpty
+        $applyOutput = @(Invoke-LpRefinishPortraits -RepoRoot $fixtureRoot -Pack 'testland' -Apply -ManagerRoot $managerRoot 6>&1 | ForEach-Object { [string]$_ })
+        $applyOutput[-1] | Should -Be '0'
+        [System.IO.File]::ReadAllText((Join-Path $packData.PortraitDir 'alpha_leader.png')) | Should -Be 'refinished pasted alpha_leader 2'
+        $alpha = Get-LpRecordEntry -Root $fixtureRoot -Leader 'alpha_leader'
+        $alpha.chosen.sha256 | Should -Be (Get-LpSha256 -Path (Join-Path $packData.PortraitDir 'alpha_leader.png'))
+        $alpha.chosen.refinished.candidateSha256 | Should -Be $chosenBefore
+        $alpha.chosen.refinished.run | Should -Be (Join-Path $alphaRound 'refinish-1\refinish-run.json')
+        $alpha.chosen.refinished.date | Should -Match '^\d{4}-\d{2}-\d{2}$'
+        $alpha.chosen.round | Should -Be 1
+        $alpha.chosen.seed | Should -Be 2
+        @(Test-LpPortraitRecords -Pack (Get-LpPack -RepoRoot $fixtureRoot -Pack 'testland') | Where-Object { $_.Level -eq 'ERROR' }) | Should -BeNullOrEmpty -Because 'the check compares the round''s candidate with the SHA-256 as picked'
+        $secondApply = @(Invoke-LpRefinishPortraits -RepoRoot $fixtureRoot -Pack 'testland' -Apply -ManagerRoot $managerRoot 6>&1 | ForEach-Object { [string]$_ })
+        $secondApply[-1] | Should -Be '1'
+        ($secondApply -join "`n") | Should -Match 'changed since the refinish was made'
+        Invoke-LpRefinishPortraits -RepoRoot $fixtureRoot -Pack 'testland' -Leader 'alpha_leader' -ManagerRoot $managerRoot 6>$null | Select-Object -Last 1 | Should -Be 0
+        Invoke-LpRefinishPortraits -RepoRoot $fixtureRoot -Pack 'testland' -Leader 'alpha_leader' -Apply -ManagerRoot $managerRoot 6>$null | Select-Object -Last 1 | Should -Be 0
+        $alphaAgain = Get-LpRecordEntry -Root $fixtureRoot -Leader 'alpha_leader'
+        $alphaAgain.chosen.refinished.candidateSha256 | Should -Be $chosenBefore -Because 'a second refinish keeps the SHA-256 of the candidate as picked'
+        $alphaAgain.chosen.refinished.run | Should -Be (Join-Path $alphaRound 'refinish-2\refinish-run.json')
+        @(Test-LpPortraitRecords -Pack (Get-LpPack -RepoRoot $fixtureRoot -Pack 'testland') | Where-Object { $_.Level -eq 'ERROR' }) | Should -BeNullOrEmpty
+    }
+
+    It '-Check refuses a refinished record whose candidate hash, run or date is wrong' {
+        $fixtureRoot = New-LpFixtureRepo -NoPortraits
+        Add-LpFinishedRound -Root $fixtureRoot -Leader 'alpha_leader' | Out-Null
+        $managerRoot = New-LpStubManager
+        Invoke-LpRefinishPortraits -RepoRoot $fixtureRoot -Pack 'testland' -ManagerRoot $managerRoot 6>$null | Out-Null
+        Invoke-LpRefinishPortraits -RepoRoot $fixtureRoot -Pack 'testland' -Apply -ManagerRoot $managerRoot 6>$null | Select-Object -Last 1 | Should -Be 0
+        @(Get-LpFixtureErrors -Root $fixtureRoot | Where-Object { $_ -match 'portraits\.json' }) | Should -BeNullOrEmpty
+        Set-LpFixtureRecords -Root $fixtureRoot -Change { param($s) $s.leaders.alpha_leader.chosen.refinished.candidateSha256 = 'deadbeef' }
+        ((Get-LpFixtureErrors -Root $fixtureRoot) -join "`n") | Should -Match 'alpha_leader: the chosen portrait is not the candidate recorded in its round'
+        Set-LpFixtureRecords -Root $fixtureRoot -Change { param($s) $s.leaders.alpha_leader.chosen.refinished.candidateSha256 = (Get-LpRecordEntry -Root $fixtureRoot -Leader 'alpha_leader').rounds[0].candidates[1].sha256; $s.leaders.alpha_leader.chosen.refinished.run = '' }
+        ((Get-LpFixtureErrors -Root $fixtureRoot) -join "`n") | Should -Match 'alpha_leader: the refinish record names no run'
+        Set-LpFixtureRecords -Root $fixtureRoot -Change { param($s) $s.leaders.alpha_leader.chosen.refinished.run = 'C:\somewhere\refinish-run.json'; $s.leaders.alpha_leader.chosen.refinished.date = 'yesterday' }
+        ((Get-LpFixtureErrors -Root $fixtureRoot) -join "`n") | Should -Match 'alpha_leader: the refinish record has no yyyy-MM-dd date'
+        Set-LpFixtureRecords -Root $fixtureRoot -Change { param($s) $s.leaders.alpha_leader.chosen.refinished.date = '2026-11-03' }
+        @(Get-LpFixtureErrors -Root $fixtureRoot | Where-Object { $_ -match 'portraits\.json' }) | Should -BeNullOrEmpty
+    }
+
+    It '-Apply refuses a refinished file that changed and applies only the named leader' {
+        $fixtureRoot = New-LpFixtureRepo -NoPortraits
+        Add-LpFinishedRound -Root $fixtureRoot -Leader 'alpha_leader' | Out-Null
+        $bravoRound = Add-LpFinishedRound -Root $fixtureRoot -Leader 'bravo_leader'
+        $managerRoot = New-LpStubManager
+        Invoke-LpRefinishPortraits -RepoRoot $fixtureRoot -Pack 'testland' -ManagerRoot $managerRoot 6>$null | Select-Object -Last 1 | Should -Be 0
+        $packData = Get-LpPack -RepoRoot $fixtureRoot -Pack 'testland'
+        $bravoBefore = Get-LpSha256 -Path (Join-Path $packData.PortraitDir 'bravo_leader.png')
+        Invoke-LpRefinishPortraits -RepoRoot $fixtureRoot -Pack 'testland' -Apply -Leader 'alpha_leader' -ManagerRoot $managerRoot 6>$null | Select-Object -Last 1 | Should -Be 0
+        (Get-LpRecordEntry -Root $fixtureRoot -Leader 'alpha_leader').chosen.refinished | Should -Not -BeNullOrEmpty
+        (Get-LpRecordEntry -Root $fixtureRoot -Leader 'bravo_leader').chosen.refinished | Should -BeNullOrEmpty
+        (Get-LpSha256 -Path (Join-Path $packData.PortraitDir 'bravo_leader.png')) | Should -Be $bravoBefore
+        [System.IO.File]::WriteAllText((Join-Path $bravoRound 'refinish-1\final\A4_s2.png'), 'tampered')
+        $output = @(Invoke-LpRefinishPortraits -RepoRoot $fixtureRoot -Pack 'testland' -Apply -Leader 'bravo_leader' -ManagerRoot $managerRoot 6>&1 | ForEach-Object { [string]$_ })
+        $output[-1] | Should -Be '1'
+        ($output -join "`n") | Should -Match 'bravo_leader: the refinished file .* is gone or changed'
+        (Get-LpSha256 -Path (Join-Path $packData.PortraitDir 'bravo_leader.png')) | Should -Be $bravoBefore
+        (Get-LpRecordEntry -Root $fixtureRoot -Leader 'bravo_leader').chosen.refinished | Should -BeNullOrEmpty
+    }
+
+    It 'skips a leader whose round folder is gone, refuses a changed chosen portrait, and refuses to apply without a plan' {
+        $fixtureRoot = New-LpFixtureRepo -NoPortraits
+        $alphaRound = Add-LpFinishedRound -Root $fixtureRoot -Leader 'alpha_leader'
+        Add-LpFinishedRound -Root $fixtureRoot -Leader 'bravo_leader' | Out-Null
+        $managerRoot = New-LpStubManager
+        Invoke-LpRefinishPortraits -RepoRoot $fixtureRoot -Pack 'testland' -Apply -ManagerRoot $managerRoot 6>$null | Select-Object -Last 1 | Should -Be 1
+        Remove-Item -LiteralPath (Join-Path $alphaRound 'photo.png')
+        $packData = Get-LpPack -RepoRoot $fixtureRoot -Pack 'testland'
+        [System.IO.File]::WriteAllText((Join-Path $packData.PortraitDir 'bravo_leader.png'), 'edited by hand')
+        $output = @(Invoke-LpRefinishPortraits -RepoRoot $fixtureRoot -Pack 'testland' -ManagerRoot $managerRoot 6>&1 | ForEach-Object { [string]$_ })
+        $output[-1] | Should -Be '1'
+        ($output -join "`n") | Should -Match 'alpha_leader: .*photo\.png is gone'
+        ($output -join "`n") | Should -Match 'bravo_leader: the chosen portrait is missing or differs'
+        @(Get-LpStubCalls -ManagerRoot $managerRoot).Count | Should -Be 0
+        Invoke-LpRefinishPortraits -RepoRoot $fixtureRoot -Pack 'testland' -ManagerRoot '' 6>$null | Select-Object -Last 1 | Should -Be 1
+    }
+
+    It 'with -StartComfyUI starts ComfyUI once for the batch and stops it, and warns when a mask came from the photo' {
+        $fixtureRoot = New-LpFixtureRepo -NoPortraits
+        Add-LpFinishedRound -Root $fixtureRoot -Leader 'alpha_leader' | Out-Null
+        Add-LpFinishedRound -Root $fixtureRoot -Leader 'bravo_leader' | Out-Null
+        $managerRoot = New-LpStubManager
+        $output = @(Invoke-LpRefinishPortraits -RepoRoot $fixtureRoot -Pack 'testland' -ManagerRoot $managerRoot 6>&1 | ForEach-Object { [string]$_ })
+        $output[-1] | Should -Be '0'
+        ($output -join "`n") | Should -Match '\[WARN\] the person mask came from the photo for alpha_leader, bravo_leader'
+        (Read-LpJson -Path (Join-Path $fixtureRoot 'scratch\refinish\testland\refinish.json')).portraits[0].maskSource | Should -Be 'photo'
+        Test-Path -LiteralPath (Join-Path $managerRoot 'status.log') | Should -BeFalse
+        $applyOutput = @(Invoke-LpRefinishPortraits -RepoRoot $fixtureRoot -Pack 'testland' -Apply -Leader 'bravo_leader' -ManagerRoot $managerRoot 6>&1 | ForEach-Object { [string]$_ })
+        $applyOutput[-1] | Should -Be '0'
+        ($applyOutput -join "`n") | Should -Match "\[WARN\] bravo_leader: this refinish composited behind the photo's mask"
+        Remove-Item -LiteralPath (Join-Path $fixtureRoot 'review\alpha_leader\round-1\mask\M1_s1.png')
+        $env:LP_STUB_RUNNING = '1'
+        try {
+            $output = @(Invoke-LpRefinishPortraits -RepoRoot $fixtureRoot -Pack 'testland' -StartComfyUI -ManagerRoot $managerRoot 6>&1 | ForEach-Object { [string]$_ })
+        } finally {
+            Remove-Item -Path Env:\LP_STUB_RUNNING -ErrorAction SilentlyContinue
+        }
+        $output[-1] | Should -Be '0'
+        ($output -join "`n") | Should -Not -Match 'mask came from the photo'
+        @(Get-Content -LiteralPath (Join-Path $managerRoot 'status.log')) | Should -Be @('start') -Because 'a ComfyUI it did not start is left running'
+        (Read-LpJson -Path (Join-Path $fixtureRoot 'scratch\refinish\testland\refinish.json')).portraits[0].maskSource | Should -Be 'candidate'
+        Remove-Item -LiteralPath (Join-Path $managerRoot 'status.log')
+        $env:LP_STUB_MASKED = '1'
+        try {
+            Invoke-LpRefinishPortraits -RepoRoot $fixtureRoot -Pack 'testland' -StartComfyUI -ManagerRoot $managerRoot 6>$null | Select-Object -Last 1 | Should -Be 0
+        } finally {
+            Remove-Item -Path Env:\LP_STUB_MASKED -ErrorAction SilentlyContinue
+        }
+        @(Get-Content -LiteralPath (Join-Path $managerRoot 'status.log')) | Should -Be @('start', 'stop')
+    }
+
+    It 'reports a TOOL FAILURE of the Manager with exit 2 and goes on with the next leader' {
+        $fixtureRoot = New-LpFixtureRepo -NoPortraits
+        Add-LpFinishedRound -Root $fixtureRoot -Leader 'alpha_leader' | Out-Null
+        Add-LpFinishedRound -Root $fixtureRoot -Leader 'bravo_leader' | Out-Null
+        $managerRoot = New-LpStubManager
+        $env:LP_STUB_FAIL = 'alpha_leader'
+        Invoke-LpRefinishPortraits -RepoRoot $fixtureRoot -Pack 'testland' -ManagerRoot $managerRoot 6>$null | Select-Object -Last 1 | Should -Be 2
+        $plan = Read-LpJson -Path (Join-Path $fixtureRoot 'scratch\refinish\testland\refinish.json')
+        @($plan.portraits | ForEach-Object { $_.leader }) | Should -Be @('bravo_leader')
     }
 }
 
@@ -426,6 +600,19 @@ Describe 'Portrait converter' -Skip:(-not $script:HasPillow) {
         $ddsBytes = [System.IO.File]::ReadAllBytes($largePath)
         [System.BitConverter]::ToInt32($ddsBytes, 80) | Should -Be 0x41
         [System.BitConverter]::ToInt32($ddsBytes, 88) | Should -Be 32
+    }
+
+    It 'sharpens the large portrait at the game''s size, so an edge differs from a plain downscale' {
+        $edged = Join-Path $script:Work 'edged.png'
+        Invoke-LpTestPython -Python $script:Python -Code 'import sys; from PIL import Image; i = Image.new(''RGB'', (768, 1032), (60, 60, 60)); i.paste((200, 200, 200), (384, 0, 768, 1032)); i.save(sys.argv[1])' -Arguments @($edged) | Out-Null
+        $largePng = Join-Path $script:Work 'large-check.png'
+        Invoke-LpConverter -ManifestLines @("large`t$edged`t$largePng") | Should -Be 0
+        $difference = Invoke-LpTestPython -Python $script:Python -Code 'import sys; from PIL import Image, ImageChops; src = Image.open(sys.argv[1]).convert(''RGB''); w, h = src.size; kept = round(h * 156 / 210); left = round((w - kept) / 2); plain = src.crop((left, 0, left + kept, h)).resize((156, 210), Image.LANCZOS); ours = Image.open(sys.argv[2]).convert(''RGB''); print(ours.size == plain.size, max(ImageChops.difference(ours, plain).getextrema(), key=lambda e: e[1])[1], ours.getpixel((10, 10)) == plain.getpixel((10, 10)))' -Arguments @($edged, $largePng)
+        $values = @((($difference -join '').Trim() -split ' '))
+        $values[0] | Should -Be 'True'
+        [int]$values[1] | Should -BeGreaterThan 3 -Because 'the unsharp mask lifts the edge'
+        [int]$values[1] | Should -BeLessThan 60 -Because 'and only mildly'
+        $values[2] | Should -Be 'True' -Because 'a flat area stays as it was'
     }
 
     It 'draws the small card as a 65x67 DDS with a transparent corner and an opaque card' {
