@@ -92,7 +92,7 @@ One section per leader, `## <key>`, with the facts behind the leader, his role a
 
 ## `source/<pack>/workshop-intro.bbcode`
 
-The opening of the pack's Workshop description in Steam BBCode. `-Generate` adds the leader list, a sentence that the portraits are AI-assisted repaints of period photographs with a link to the pack's wiki page for the photo credits, and the author's other mods (`data/workshop.json`).
+The opening of the pack's Workshop description in Steam BBCode. `-Generate` adds the leader list, a sentence that the portraits are AI-assisted repaints of period photographs with a link to the pack's wiki page for the photo credits, and the cross-link block between the `<!-- cross-links:begin -->` and `<!-- cross-links:end -->` lines. The block is the Manager's, not this repository's: `Scripts/Workshop/Sync-WorkshopCrossLinks.ps1` of the Modding Manager writes it into each pack's description, and `-Generate` carries what is between the markers over unchanged.
 
 ## `source/<pack>/showcase.json`
 
@@ -244,7 +244,7 @@ Written only by `-ConvertPortraits -Pack <pack> [-Force]`: for each DDS of the p
 | `data/<pack>/game-characters.json` | Written by `-RefreshGameData -Pack <pack>` (needs the game): the country's characters in vanilla and in Road to 56, with ids, names, roles and slots. `-Check` and CI read this file, never the game. Refresh it before each release [RT56-011]. |
 | `data/<pack>/start-traits.json` | Written by `-RefreshGameData -Pack <pack>`: per role kind (`army`, `navy`), every trait a vanilla unit leader of that kind has at the start in any country, except a trait named after a country (an upper-case prefix such as `JAP_`), which is kept only when a character of the pack's own tag has it. Under `rt56`, from the trait definitions read with and without Road to 56: `undefined`, the start traits vanilla defines and Road to 56 does not; `counterparts`, for such a trait the one unit-leader trait that only Road to 56 defines and whose name holds the trait's name (`jaeger` to `jaeger_trait`), where exactly one does. |
 | `data/stat-bands.json` | Hand-written: the start ranges of `skill` and the attribute skills per role kind [CHR-006] [CHR-012]. |
-| `data/workshop.json` | The wiki address and the author's other mods, shared by every pack. |
+| `data/workshop.json` | The wiki address, shared by every pack. |
 | `data/portrait-card.json` | The small card's geometry and the face position inside its photo window [CHR-005]; read by the converter. The owner approved these values: they change only on the owner's word. |
 
 `game-characters.json`, `start-traits.json` and `portrait-card.json` are protected from hand edits by the project hook.

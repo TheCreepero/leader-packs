@@ -47,6 +47,22 @@ Describe 'Generation' {
         $characters | Should -Not -Match 'delta_advisor'
     }
 
+    It 'carries the cross-link block between the markers over when it generates again' {
+        $fixtureRoot = New-LpGeneratedFixture
+        $descriptionPath = Join-Path $fixtureRoot 'packs\testland\WORKSHOP_DESCRIPTION_GUIDELINES.md'
+        $emptyText = [System.IO.File]::ReadAllText($descriptionPath)
+        $emptyText | Should -Match '<!-- cross-links:begin -->\r\n<!-- cross-links:end -->'
+        $emptyText | Should -Not -Match 'More from the author'
+        $filledText = $emptyText.Replace("<!-- cross-links:begin -->`r`n<!-- cross-links:end -->", "<!-- cross-links:begin -->`r`n[b]More[/b] block line one`r`nblock line two`r`n<!-- cross-links:end -->")
+        [System.IO.File]::WriteAllText($descriptionPath, $filledText, [System.Text.UTF8Encoding]::new($false))
+        $delta = Get-LpGenerationDelta -Pack (Get-LpPack -RepoRoot $fixtureRoot -Pack 'testland')
+        $delta.Changed.Count | Should -Be 0
+        $delta.Stale.Count | Should -Be 0
+        Invoke-LpGenerate -RepoRoot $fixtureRoot -Pack 'testland' 6>$null | Out-Null
+        [System.IO.File]::ReadAllText($descriptionPath) | Should -Be $filledText
+        Get-LpFixtureErrors -Root $fixtureRoot | Should -BeNullOrEmpty
+    }
+
     It 'writes nothing the second time and then finds no error' {
         $fixtureRoot = New-LpGeneratedFixture
         $delta = Get-LpGenerationDelta -Pack (Get-LpPack -RepoRoot $fixtureRoot -Pack 'testland')
