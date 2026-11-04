@@ -33,6 +33,8 @@
       "Bash(powershell*build.ps1 -ApplyPortraitReview*)",
       "Bash(powershell*build.ps1 -ReviewPage*)",
       "Bash(powershell*build.ps1 -ConvertPortraits*)",
+      "PowerShell(powershell -File .\\build.ps1 -RefinishPortraits*)",
+      "Bash(powershell*build.ps1 -RefinishPortraits*)",
       "Bash(powershell*build.ps1 -PreviewPortraits*)",
       "Bash(powershell*build.ps1 -RefreshGameData*)",
       "Bash(powershell*build.ps1 -SyncMirrors*)",
