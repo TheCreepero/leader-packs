@@ -63,7 +63,7 @@ Describe 'Generation' {
         Get-LpFixtureErrors -Root $fixtureRoot | Should -BeNullOrEmpty
     }
 
-    It 'writes the strip and button regions, and carries what a region holds over when it generates again' {
+    It 'writes the strip regions, no buttons region, and carries what a region holds over when it generates again' {
         $fixtureRoot = New-LpGeneratedFixture
         $introPath = Join-Path $fixtureRoot 'source\testland\workshop-intro.bbcode'
         [System.IO.File]::WriteAllText($introPath, "<!-- region:image:hero -->`r`n<!-- /region -->`r`nFixture commanders for Testland.`r`n`r`n[h1]Info:[/h1]`r`n<!-- region:info:game-version -->`r`n<!-- /region -->`r`n", [System.Text.UTF8Encoding]::new($false))
@@ -73,7 +73,8 @@ Describe 'Generation' {
         $emptyText | Should -Match '(?m)^<!-- region:image:hero -->\r\n<!-- /region -->\r\nFixture commanders'
         $emptyText | Should -Match '(?m)^<!-- region:image:strip-commanders -->\r\n<!-- /region -->\r\n\[h1\]Commanders\[/h1\]'
         $emptyText | Should -Match '(?m)^<!-- region:image:strip-portraits -->\r\n<!-- /region -->\r\n\[h1\]Portraits\[/h1\]'
-        $emptyText | Should -Match '(?m)^<!-- region:buttons:wiki,github -->\r\n<!-- /region -->\r\n\r\n<!-- cross-links:begin -->'
+        $emptyText | Should -Not -Match 'region:buttons'
+        $emptyText | Should -Match '(?m)\r\n\r\n<!-- cross-links:begin -->'
         $filledText = $emptyText.Replace("<!-- region:info:game-version -->`r`n<!-- /region -->", "<!-- region:info:game-version -->`r`n- Built for game version 1.19.`r`n<!-- /region -->").Replace("<!-- region:image:strip-portraits -->`r`n<!-- /region -->", "<!-- region:image:strip-portraits -->`r`n[img]https://images.example/strip.png[/img]`r`n<!-- /region -->")
         $filledText | Should -Not -Be $emptyText
         [System.IO.File]::WriteAllText($descriptionPath, $filledText, [System.Text.UTF8Encoding]::new($false))

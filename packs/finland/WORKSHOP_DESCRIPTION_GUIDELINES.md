@@ -41,11 +41,7 @@ Historical flavor events for Finland, from the same author.
 [img]https://i.imgur.com/KZyU44s.png[/img]
 <!-- /region -->
 [h1]Portraits[/h1]
-The portraits are AI-assisted repaints of historical photographs from Wikimedia Commons, used under licences that allow it (public domain). Each photograph was coloured and repainted in the style of the game with a local image model, then cropped and resized for the game. The source, author and licence of each photograph are on the [url=https://github.com/TheCreepero/leader-packs/wiki/Commanders-Pack-Finland]wiki page of this pack[/url].
-
-<!-- region:buttons:wiki,github -->
-[url=https://github.com/TheCreepero/leader-packs/wiki/Commanders-Pack-Finland][img]https://i.imgur.com/3STMmAD.png[/img][/url] [url=https://github.com/TheCreepero/leader-packs][img]https://i.imgur.com/reIvmZ2.png[/img][/url]
-<!-- /region -->
+The portraits are AI-assisted repaints of historical photographs from Wikimedia Commons, used under licences that allow it (public domain). Each photograph was coloured and repainted in the style of the game with a local image model, then cropped and resized for the game.
 
 <!-- cross-links:begin -->
 [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3833590274][img]https://i.imgur.com/qJpjDyO.png[/img][/url]
@@ -55,6 +51,7 @@ The portraits are AI-assisted repaints of historical photographs from Wikimedia 
 [*][url=https://steamcommunity.com/sharedfiles/filedetails/?id=3807415216]Immersive Ship Names Expanded[/url]
 [*][url=https://steamcommunity.com/sharedfiles/filedetails/?id=3830946508]Event Pack: Finland[/url]
 [*][url=https://steamcommunity.com/sharedfiles/filedetails/?id=3832953557]Event Pack: France[/url]
+[*][url=https://steamcommunity.com/sharedfiles/filedetails/?id=3834124691]Event Pack: Poland[/url]
 [*][url=https://steamcommunity.com/sharedfiles/filedetails/?id=3831847770]Commanders Pack: Finland[/url]
 [*][url=https://steamcommunity.com/sharedfiles/filedetails/?id=3832957297]Commanders Pack: France[/url]
 [/list]

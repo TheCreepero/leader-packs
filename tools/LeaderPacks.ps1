@@ -711,7 +711,6 @@ function New-LpWorkshopText {
         $bbcodeLines.Add('[/list]')
         $bbcodeLines.Add('')
     }
-    $wikiPageUrl = ([string]$Pack.Workshop.wikiUrl).TrimEnd('/') + '/' + (Get-LpWikiPageName -Pack $Pack)
     $usedPhotos = @(Get-LpUsedPhotos -Pack $Pack)
     $shareAlikeLeaderNames = @($generatedLeaders | Where-Object { Test-LpShareAlikePhoto -Photo (Get-LpPhotoByKey -Pack $Pack -PhotoKey (Get-LpLeaderPhotoKey -Leader $_)) } | ForEach-Object { ([string]$_.name).Trim() })
     $shareAlikeText = ''
@@ -729,9 +728,7 @@ function New-LpWorkshopText {
     }
     Add-LpRegion -Lines $bbcodeLines -Header '<!-- region:image:strip-portraits -->'
     $bbcodeLines.Add('[h1]Portraits[/h1]')
-    $bbcodeLines.Add('The portraits are AI-assisted repaints of historical photographs from ' + (Get-HoiImageSourceText -Records $usedPhotos) + ', used under licences that allow it' + $licenceText + '. Each photograph was coloured and repainted in the style of the game with a local image model, then cropped and resized for the game. The source, author and licence of each photograph are on the [url=' + $wikiPageUrl + ']wiki page of this pack[/url].' + $shareAlikeText)
-    $bbcodeLines.Add('')
-    Add-LpRegion -Lines $bbcodeLines -Header '<!-- region:buttons:wiki,github -->'
+    $bbcodeLines.Add('The portraits are AI-assisted repaints of historical photographs from ' + (Get-HoiImageSourceText -Records $usedPhotos) + ', used under licences that allow it' + $licenceText + '. Each photograph was coloured and repainted in the style of the game with a local image model, then cropped and resized for the game.' + $shareAlikeText)
     $bbcodeLines.Add('')
     $bbcodeLines.Add('<!-- cross-links:begin -->')
     foreach ($crossLinkLine in @(Get-LpCarriedCrossLinkLines -Pack $Pack)) {
