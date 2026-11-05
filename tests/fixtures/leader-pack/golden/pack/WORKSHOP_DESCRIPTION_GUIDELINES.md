@@ -8,6 +8,8 @@ Fixture commanders for Testland.
 <!-- region:image:strip-commanders -->
 <!-- /region -->
 [h1]Commanders[/h1]
+<!-- region:image:overview -->
+<!-- /region -->
 [list]
 [*]Alpha Leader, general
 [*]Bravo Leader, field marshal

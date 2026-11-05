@@ -703,6 +703,7 @@ function New-LpWorkshopText {
     if ($generatedLeaders.Count -gt 0) {
         Add-LpRegion -Lines $bbcodeLines -Header '<!-- region:image:strip-commanders -->'
         $bbcodeLines.Add('[h1]Commanders[/h1]')
+        Add-LpRegion -Lines $bbcodeLines -Header '<!-- region:image:overview -->'
         $bbcodeLines.Add('[list]')
         foreach ($leader in $generatedLeaders) {
             $bbcodeLines.Add('[*]' + (Get-LpLeaderLabel -Leader $leader))

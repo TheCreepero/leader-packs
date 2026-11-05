@@ -26,6 +26,9 @@ Historical flavor events for France, from the same author.
 [img]https://i.imgur.com/3ArgZ2b.png[/img]
 <!-- /region -->
 [h1]Commanders[/h1]
+<!-- region:image:overview -->
+[img]https://i.imgur.com/WNqlmnr.png[/img]
+<!-- /region -->
 [list]
 [*]Joseph de Monsabert, general
 [*]Marcel Carpentier, general
