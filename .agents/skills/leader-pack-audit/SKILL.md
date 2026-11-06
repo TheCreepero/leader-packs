@@ -21,7 +21,7 @@ Finds what an existing pack needs: photos whose licence changed or that left the
 ## Phase 0: licences
 1. `powershell -File .\build.ps1 -Audit -Pack <pack>`: the table of leaders (mode, role, character, skills, traits, photo licence, portrait), every licence read again from its source (Commons, Finna or Europeana; for a manual photo, the quoted rights sentence looked up again on the archive's page), and every `[ERROR]` and `[WARN]`. A `[WARN]` that a licence was last read over 180 days ago is fixed at release by fetching the photo again.
 2. For each photo whose licence the audit reports changed or unreadable, dry-run its fetch with the command of its `source` in `photos.json` (`docs/source-format.md`, "Photo sources"): `-File "<its commonsTitle>"`, `-Source <source> -Id "<its sourceId>"`, or for a manual photo a fresh evidence file from its `evidence` block. `REJECTED` is Critical.
-3. `powershell -File ..\..\Scripts\Workshop\Test-WorkshopText.ps1 -Mod "Leader Packs" -Pack <pack>`: the Workshop page as a whole (wording, page order, shared lines, images, regions, the AI statement). A line it reports for a published pack is Important.
+3. `powershell -File ..\..\Scripts\Workshop\Test-WorkshopText.ps1 -Mod "Leader Packs" -Pack <pack>`: the Workshop page as a whole (wording, page order, shared lines, images, regions). A line it reports for a published pack is Important.
 
 ## Phase 1: snapshot
 1. `powershell -File .\build.ps1 -RefreshGameData -Pack <pack>` (needs the game and the Road to 56 files). `git diff --stat data/<pack>/` shows whether the game or Road to 56 moved.
@@ -32,7 +32,7 @@ Finds what an existing pack needs: photos whose licence changed or that left the
 1. Dispatch `lp-audit-researcher` with the fact-sheet sections of the pack's leaders (pasted from `source/<pack>/fact-sheets.md`) and one row per photo from `source/<pack>/photos.json` (key, source, title, page URL, licence, author).
 2. For each photo it marks `RECHECK`, run the `-FetchPhoto ... -DryRun` of Phase 0: `REJECTED` is Critical.
 3. For each fact it marks `FIX` or `DROP`, judge the stats and traits that rest on it against `docs/stat-guide.md`: a stat or trait left without a fact is Important.
-4. Dispatch `workshop-editor` in mod mode (the Modding Manager's `docs/workshop-text-style.md` (`..\..\docs\workshop-text-style.md`), section "Auditing a page") with the mod folder (the repository root) and `source/<pack>/workshop-intro.bbcode` as the text, so that the intro is judged against `source/<pack>/leaders.json` and `photos.json`: the number of leaders, the AI-assisted portraits sentence (it is never removed or shortened), a claim the files do not show, a wording that differs from the other packs' intros. Every REWRITE or REJECT is Important.
+4. Dispatch `workshop-editor` in mod mode (the Modding Manager's `docs/workshop-text-style.md` (`..\..\docs\workshop-text-style.md`), section "Auditing a page") with the mod folder (the repository root) and `source/<pack>/workshop-intro.bbcode` as the text, so that the intro is judged against `source/<pack>/leaders.json` and `photos.json`: the number of leaders, the portraits licence sentence (it is never removed or shortened), a claim the files do not show, a wording that differs from the other packs' intros. Every REWRITE or REJECT is Important.
 
 ## Phase 3: report
 Write the report into a new plan, `docs/plans/<YYYY-MM-DD>-<pack>-audit.md` from `docs/plans/TEMPLATE-pack.md` with `Kind: audit fixes`, under an `## Audit report` heading placed after "Context":

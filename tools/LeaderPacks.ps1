@@ -728,7 +728,7 @@ function New-LpWorkshopText {
     }
     Add-LpRegion -Lines $bbcodeLines -Header '<!-- region:image:strip-portraits -->'
     $bbcodeLines.Add('[h1]Portraits[/h1]')
-    $bbcodeLines.Add('The portraits are AI-assisted repaints of historical photographs from ' + (Get-HoiImageSourceText -Records $usedPhotos) + ', used under licences that allow it' + $licenceText + '. Each photograph was coloured and repainted in the style of the game with a local image model, then cropped and resized for the game.' + $shareAlikeText)
+    $bbcodeLines.Add('The portraits are repaints of historical photographs from ' + (Get-HoiImageSourceText -Records $usedPhotos) + ', used under licences that allow it' + $licenceText + '. Each photograph was coloured and repainted in the style of the game, then cropped and resized for the game.' + $shareAlikeText)
     $bbcodeLines.Add('')
     $bbcodeLines.Add('<!-- cross-links:begin -->')
     foreach ($crossLinkLine in @(Get-LpCarriedCrossLinkLines -Pack $Pack)) {
@@ -3254,7 +3254,7 @@ function Invoke-LpNewPack {
     $leaderSourceText = @('{', "    `"pack`": `"$Pack`",", "    `"tag`": `"$Tag`",", "    `"prefix`": `"$prefix`",", "    `"displayName`": `"$DisplayName`",", '    "leaders": []', '}') -join "`r`n"
     Write-LpText -Path (Join-Path $sourceDir 'leaders.json') -Text ($leaderSourceText + "`r`n")
     Write-LpText -Path (Join-Path $sourceDir 'fact-sheets.md') -Text ("# Fact sheets: $DisplayName`r`n`r`nOne section per leader, headed ``## <leader key>``, written by the historical researcher: the facts behind the leader, his role and his stats, each with its source URL.`r`n")
-    Write-LpText -Path (Join-Path $sourceDir 'workshop-intro.bbcode') -Text ("<!-- region:image:hero -->`r`n<!-- /region -->`r`nHistorical generals, field marshals and admirals for $DisplayName that the base game leaves out, each with an AI-assisted portrait made from a historical photograph.`r`n`r`n<!-- region:image:strip-info -->`r`n<!-- /region -->`r`n[h1]Info:[/h1]`r`n<!-- region:info:checksum-commanders-pack,new-game,standalone-commanders-pack,game-version -->`r`n<!-- /region -->`r`n")
+    Write-LpText -Path (Join-Path $sourceDir 'workshop-intro.bbcode') -Text ("<!-- region:image:hero -->`r`n<!-- /region -->`r`nHistorical generals, field marshals and admirals for $DisplayName that the base game leaves out, each with a portrait made from a historical photograph.`r`n`r`n<!-- region:image:strip-info -->`r`n<!-- /region -->`r`n[h1]Info:[/h1]`r`n<!-- region:info:checksum-commanders-pack,new-game,standalone-commanders-pack,game-version -->`r`n<!-- /region -->`r`n")
     $descriptorText = @('version="1.0"', 'tags={', "`t`"Historical`"", "`t`"Military`"", "`t`"Gameplay`"", '}', "name=`"Commanders Pack: $DisplayName`"", 'picture="thumbnail.png"', "supported_version=`"$SupportedVersion`"") -join "`r`n"
     Write-LpText -Path (Join-Path $packRoot 'descriptor.mod') -Text ($descriptorText + "`r`n")
     $settingsPath = Join-Path $RepoRoot 'tools\HoiModBuild.json'

@@ -113,7 +113,6 @@ function Test-LpShowcaseSource {
 function Get-LpShowcaseCredit {
     param($Photo)
 
-    # Only the attribution a CC BY or CC BY-SA photo requires; the AI disclosure is in the Workshop description.
     if ($Photo -and [string]$Photo.licenseCategory -eq 'CC BY-SA') {
         return ('Portrait ({0}) adapted from a photograph by {1} ({2})' -f (Get-HoiShareAlikePortraitLicence).ShortName, (Get-LpPhotoCreditName -Photo $Photo), [string]$Photo.licenseShortName)
     }

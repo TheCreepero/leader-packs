@@ -21,7 +21,7 @@ Fixture commanders for Testland.
 <!-- region:image:strip-portraits -->
 <!-- /region -->
 [h1]Portraits[/h1]
-The portraits are AI-assisted repaints of historical photographs from Wikimedia Commons, used under licences that allow it (public domain, CC0 and CC BY 4.0). Each photograph was coloured and repainted in the style of the game with a local image model, then cropped and resized for the game.
+The portraits are repaints of historical photographs from Wikimedia Commons, used under licences that allow it (public domain, CC0 and CC BY 4.0). Each photograph was coloured and repainted in the style of the game, then cropped and resized for the game.
 
 <!-- cross-links:begin -->
 <!-- cross-links:end -->

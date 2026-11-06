@@ -92,7 +92,7 @@ One section per leader, `## <key>`, with the facts behind the leader, his role a
 
 ## `source/<pack>/workshop-intro.bbcode`
 
-The opening of the pack's Workshop description in Steam BBCode. `-Generate` adds the leader list, a sentence that the portraits are AI-assisted repaints of period photographs (no link to the wiki: the Workshop page carries no Wiki or GitHub links), and the cross-link block between the `<!-- cross-links:begin -->` and `<!-- cross-links:end -->` lines. The block is the Manager's, not this repository's: `Scripts/Workshop/Sync-WorkshopCrossLinks.ps1` of the Modding Manager writes it into each pack's description, and `-Generate` carries what is between the markers over unchanged.
+The opening of the pack's Workshop description in Steam BBCode. `-Generate` adds the leader list, a sentence that the portraits are repaints of period photographs under the photos' licences (no link to the wiki: the Workshop page carries no Wiki or GitHub links), and the cross-link block between the `<!-- cross-links:begin -->` and `<!-- cross-links:end -->` lines. The block is the Manager's, not this repository's: `Scripts/Workshop/Sync-WorkshopCrossLinks.ps1` of the Modding Manager writes it into each pack's description, and `-Generate` carries what is between the markers over unchanged.
 
 ## `source/<pack>/showcase.json`
 
@@ -263,7 +263,7 @@ The spec of the Workshop thumbnails, read by the Manager's `Scripts/Showcase/New
 | `packs/<pack>/gfx/leaders/<TAG>/<prefix>_<key>.dds` | `build.ps1 -ConvertPortraits`: 156x210 uncompressed 32-bit DDS [CHR-004] [SPR-009] |
 | `packs/<pack>/gfx/interface/ideas/<prefix>_<key>_small.dds` | `build.ps1 -ConvertPortraits`: the 65x67 code-drawn card with a crop of the chosen portrait [CHR-005] |
 | `packs/<pack>/localisation/<language>/<prefix>_l_<language>.yml` | the `new` leaders' names in all ten languages [LOC-017], UTF-8 with BOM [LOC-001] |
-| `packs/<pack>/WORKSHOP_DESCRIPTION_GUIDELINES.md` | intro, leader list, the AI-assisted portrait sentence, other mods |
+| `packs/<pack>/WORKSHOP_DESCRIPTION_GUIDELINES.md` | intro, leader list, the portrait licence sentence, other mods |
 | `wiki/Commanders-Pack-<Country>.md` | the leader table with each photo's source, licence (CC BY linked), author, and "AI-assisted repaint" |
 
 The characters file and the localisation files are written only when the pack has a `new` leader, the on_actions file and the `.gfx` only when it has a `new` or `addRole` leader; a pack without leaders holds only its descriptor, thumbnail and Workshop description.

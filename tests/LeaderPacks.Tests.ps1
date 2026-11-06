@@ -22,6 +22,14 @@ Describe 'Generation' {
         }
     }
 
+    It 'says nothing about AI in the Workshop description of any pack, in its source or its generated file' {
+        $descriptionFiles = @(Get-ChildItem -Path (Join-Path $script:LpRepoRoot 'source') -Filter 'workshop-intro.bbcode' -Recurse -File) + @(Get-ChildItem -Path (Join-Path $script:LpRepoRoot 'packs') -Filter 'WORKSHOP_DESCRIPTION_GUIDELINES.md' -Recurse -File)
+        $descriptionFiles.Count | Should -BeGreaterThan 0
+        foreach ($descriptionFile in $descriptionFiles) {
+            [System.IO.File]::ReadAllText($descriptionFile.FullName) | Should -Not -Match '\bAI\b|AI-assisted|image model|artificial intelligence|ComfyUI' -Because "$($descriptionFile.FullName) is a Workshop description"
+        }
+    }
+
     It 'writes ASCII script with no empty NOT block, and localisation with a BOM' {
         $fixtureRoot = New-LpGeneratedFixture
         $delta = Get-LpGenerationDelta -Pack (Get-LpPack -RepoRoot $fixtureRoot -Pack 'testland')
@@ -442,6 +450,7 @@ Describe 'Packs stand alone' {
         $leaderSource = Read-LpJson -Path (Join-Path $fixtureRoot 'source\newland\leaders.json')
         $leaderSource.prefix | Should -Be 'lp_new'
         @($leaderSource.leaders).Count | Should -Be 0
+        [System.IO.File]::ReadAllText((Join-Path $fixtureRoot 'source\newland\workshop-intro.bbcode')) | Should -Not -Match '\bAI\b|AI-assisted|image model|artificial intelligence|ComfyUI'
         [System.IO.File]::ReadAllText((Join-Path $fixtureRoot 'packs\newland\descriptor.mod')) | Should -Match '(?m)^name="Commanders Pack: New Land"\r?$'
         (Read-LpJson -Path (Join-Path $fixtureRoot 'tools\HoiModBuild.json')).packages.newland.modFolderName | Should -Be 'commanders_pack_newland'
         Test-Path -LiteralPath (Join-Path $fixtureRoot 'packs\newland\thumbnail.png') | Should -BeTrue
