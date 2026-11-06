@@ -734,7 +734,7 @@ Describe 'This repository' {
             $startTraits.tag | Should -Be $packData.Tag
             @($startTraits.army).Count | Should -BeGreaterThan 10
             @($startTraits.navy).Count | Should -BeGreaterThan 5
-            @(@($startTraits.army) + @($startTraits.navy) | Where-Object { $_ -cmatch '^(JAP|POL|BALTIC|INS|IRQ|PRC)_' }) | Should -BeNullOrEmpty -Because 'traits of other countries stay out of a pack'
+            @(@($startTraits.army) + @($startTraits.navy) | Where-Object { $_ -cmatch '^(JAP|POL|BALTIC|INS|IRQ|PRC)_' -and $_ -cnotmatch ('^' + [regex]::Escape([string]$packData.Tag) + '_') }) | Should -BeNullOrEmpty -Because 'traits of other countries stay out of a pack; the pack''s own tag keeps its own'
         }
         Test-Path -LiteralPath (Join-Path $script:LpRepoRoot 'data\start-traits.json') | Should -BeFalse
         $statBands = Read-LpJson -Path (Join-Path $script:LpRepoRoot 'data\stat-bands.json')
