@@ -14,6 +14,13 @@
                 "source/finland/portraits/armas_eino_martola.png"
             ]
         },
+        "poland": {
+            "portraits": [
+                "source/poland/portraits/stefan_rowecki.png",
+                "source/poland/portraits/antoni_chrusciel.png",
+                "source/poland/portraits/leopold_okulicki.png"
+            ]
+        },
         "france": {
             "portraits": [
                 "source/france/portraits/charles_mast.png",
