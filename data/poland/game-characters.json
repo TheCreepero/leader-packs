@@ -1,0 +1,2485 @@
+{
+    "tag": "POL",
+    "refreshed": "2026-11-06",
+    "game": "1.19.4.2",
+    "sets": [
+        {
+            "name": "vanilla",
+            "mod": "",
+            "characters": [
+                {
+                    "id": "POL_aleksander_kakowski",
+                    "name": "Aleksander Kakowski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_anna_andersson",
+                    "name": "Anastasia Romanov",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_boleslaw_bierut",
+                    "name": "Bolesław Bierut",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_boleslaw_piasecki",
+                    "name": "Bolesław Piasecki",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_boleslaw_wieniawa_glugoszowski",
+                    "name": "Bolesław Wieniawa-Długoszowski",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_edward_osobka_morawski",
+                    "name": "Edward Osóbka-Morawski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_edward_rydzsmigly",
+                    "name": "Edward Rydz-Śmigły",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "theorist"
+                        },
+                        {
+                            "kind": "field_marshal",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_eugeniusz_kwiatkowiski",
+                    "name": "Eugeniusz Kwiatkowski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_friedrich_christian",
+                    "name": "Friedrich Christian",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_henryk_floyar_rajchman",
+                    "name": "Henryk Floyar-Rajchman",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_ignacy_moscicki",
+                    "name": "Ignacy Mościcki",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        },
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_irena_anders",
+                    "name": "Irena Anders",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_jan_kowalewski",
+                    "name": "Jan Kowalewski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_jan_mosdorf",
+                    "name": "Jan Mosdorf",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_jan_zumbach",
+                    "name": "Jan Zumbach",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_jerzy_rutkowski",
+                    "name": "Jerzy Rutkowski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_joachim_stefan_bartoszewicz",
+                    "name": "Joachim Stefan Bartoszewicz",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_jozef_beck",
+                    "name": "Józef Beck",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_jozef_haller",
+                    "name": "Józef Haller",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        },
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_jozef_unrug",
+                    "name": "Józef Unrug",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "navy_chief"
+                        },
+                        {
+                            "kind": "navy_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_jozef_zajac",
+                    "name": "Józef Zając",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "air_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_karl_albrecht",
+                    "name": "Karl Albrecht I",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_karol_korytowski",
+                    "name": "Karol Korytowski",
+                    "roles": [
+                        {
+                            "kind": "navy_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_kazimierz_sosnkowski",
+                    "name": "Kazimierz Sosnkowski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "army_chief"
+                        },
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_kazimierz_switalski",
+                    "name": "Kazimierz Świtalski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_lucjan_zeligowski",
+                    "name": "Lucjan Żeligowski",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_ludomil_rayski",
+                    "name": "Ludomił Rayski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "air_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_maria_koszutska",
+                    "name": "Maria Koszutska",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_marian_kukiel",
+                    "name": "Marian Kukiel",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_marian_rejewski",
+                    "name": "Marian Rejewski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_mieczyslaw_michalowicz",
+                    "name": "Mieczysław Michałowicz",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_pavel_bermondt_avalov",
+                    "name": "Pavel Bermondt-Avalov",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_roman_abraham",
+                    "name": "Roman Abraham",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_roman_dmowski",
+                    "name": "Roman Dmowski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        },
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_rudinger_von_der_goltz",
+                    "name": "Rüdiger von der Goltz",
+                    "roles": [
+                        {
+                            "kind": "field_marshal",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_sejmik_regency",
+                    "name": "Sejmik Regency",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_stanislav_maczek",
+                    "name": "Stanisław Maczek",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_stanislaw_kopanski",
+                    "name": "Stanisław Kopański",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_stanislaw_mikolajczyk",
+                    "name": "Stanisław Mikołajczyk",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_stanislaw_pawluc",
+                    "name": "Stanisław Pawluć",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_stanislaw_radkiewicz",
+                    "name": "Stanisław Radkiewicz",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_stanislaw_sosabowski",
+                    "name": "Stanisław Sosabowski",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_stanislaw_wojciechowski",
+                    "name": "Stanisław Wojciechowski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_stefan_frankowski",
+                    "name": "Stefan Frankowski",
+                    "roles": [
+                        {
+                            "kind": "navy_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_tadeusz_bielecki",
+                    "name": "Tadeusz Bielecki",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_tadeusz_kutrzeba",
+                    "name": "Tadeusz Kutrzeba",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_tomislaw_lupaszko",
+                    "name": "Tomisław Łupaszko",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "theorist"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_vladislav_korchits",
+                    "name": "Vladislav Korchits",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_walery_slawek",
+                    "name": "Walery Sławek",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_wanda_wasilewska",
+                    "name": "Wanda Wasilewska",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_wincenty_kowalski",
+                    "name": "Wincenty Kowalski",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_wincenty_witos",
+                    "name": "Wincenty Witos",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_witold_pilecki",
+                    "name": "Witold Pilecki",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_wladyslaw_anders",
+                    "name": "Władysław Anders",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        },
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_wladyslaw_bortnowski",
+                    "name": "Władysław Bortnowski",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_wladyslaw_gomulka",
+                    "name": "Władysław Gomułka",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_wladyslaw_kalkus",
+                    "name": "Władysław Kalkus",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "theorist"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_wladyslaw_raczkiewicz",
+                    "name": "Władysław Raczkiewicz",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_wladyslaw_sikorski",
+                    "name": "Władysław Sikorski",
+                    "roles": [
+                        {
+                            "kind": "field_marshal",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_wojtek",
+                    "name": "Wojtek",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_xawery_czernicki",
+                    "name": "Xawery Czernicki",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "navy_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_zdzislaw_lubomirski",
+                    "name": "Zdzisław Lubomirski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_zygmunt_buhusz_szysko",
+                    "name": "Zygmunt Bohusz-Szyszko",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "rt56",
+            "mod": "The Road to 56",
+            "characters": [
+                {
+                    "id": "POL_Adam_Ciolkosz",
+                    "name": "Adam Ciołkosz",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Adam_Doboszynski",
+                    "name": "Adam Doboszyński",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Adam_Koc",
+                    "name": "Adam Koc",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Adam_Mohuczy",
+                    "name": "Adam Mohuczy",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "navy_chief"
+                        },
+                        {
+                            "kind": "navy_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Adam_Poszwinski",
+                    "name": "Adam Poszwiński",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Adam_Ronikier",
+                    "name": "Adam Ronikier",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Adolf_Nowaczynski",
+                    "name": "Adolf Nowaczyński",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_adrian_carton_de_wiart",
+                    "name": "Adrian Carton de Wiart",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_aleksander_kakowski",
+                    "name": "Aleksander Kakowski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Aleksander_Osinski",
+                    "name": "Aleksander Osiński",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_aleksander_potyrala",
+                    "name": "Aleksander Potyrała",
+                    "roles": [
+                        {
+                            "kind": "scientist",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Aleksander_Prystor",
+                    "name": "Aleksander Prystor",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Aleksander_Szychowski",
+                    "name": "Aleksander Szychowski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_anna_andersson",
+                    "name": "Anastasia Romanov",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_antoni_balcar",
+                    "name": "Antoni Balcar",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_antoni_xiezopolski",
+                    "name": "Antoni Xiężopolski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_August_Zaleski",
+                    "name": "August Zaleski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_boleslaw_bierut",
+                    "name": "Bolesław Bierut",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_boleslaw_piasecki",
+                    "name": "Bolesław Piasecki",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "army_chief"
+                        },
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_boleslaw_wieniawa_glugoszowski",
+                    "name": "Bolesław Wieniawa-Długoszowski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "army_chief"
+                        },
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Bronislaw_Prugar_Ketling",
+                    "name": "Bronisław Prugar-Ketling",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        },
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_cardinal_Adam_Sapieha",
+                    "name": "Cardinal, Adam Sapieha",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Czeslaw_Mlot_Fijalkowski",
+                    "name": "Czesław Młot-Fijałkowski",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Edmund_Knoll_Kownacki",
+                    "name": "Edmund Knoll-Kownacki",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_edward_drozniak",
+                    "name": "Edward Drożniak",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Edward_Gierek",
+                    "name": "Edward Gierek",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_edward_osobka_morawski",
+                    "name": "Edward Osobka-Morawski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_edward_rydzsmigly",
+                    "name": "Edward Rydz-Śmigły",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "theorist"
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "army_chief"
+                        },
+                        {
+                            "kind": "field_marshal",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Emil_Krukowicz_Przedrzymirski",
+                    "name": "Emil Krukowicz-Przedrzymirski",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_emil_rauer",
+                    "name": "Emil Rauer",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_eugeniusz_kwiatkowiski",
+                    "name": "Eugeniusz Kwiatkowski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Eustachy_Sapieha",
+                    "name": "Eustachy Sapieha",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Felicjan_Skladkowski",
+                    "name": "Felicjan Składkowski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Franciszek_Kleeberg",
+                    "name": "Franciszek Kleeberg",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_franciszek_misztal",
+                    "name": "Franciszek Misztal",
+                    "roles": [
+                        {
+                            "kind": "scientist",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Franciszek_Skibinksi",
+                    "name": "Franciszek Skibiński",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Franciszek_Wlad",
+                    "name": "Franciszek Wład",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_friedrich_christian",
+                    "name": "Friedrich Christian",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_fryderyk_krystian_wettyn",
+                    "name": "Fryderyk Krystian Wettyn",
+                    "roles": []
+                },
+                {
+                    "id": "POL_Gustaw_Orlicz_Dreszer",
+                    "name": "Gustaw Orlicz-Dreszer",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_henryk_floyar_rajchman",
+                    "name": "Henryk Floyar-Rajchman",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_henryk_jozewski",
+                    "name": "Henryk Józewski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Henryk_Strasburger",
+                    "name": "Kazimierz Bartel",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Ignacy_Matuszewski",
+                    "name": "Ignacy Matuszewski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_ignacy_moscicki",
+                    "name": "Ignacy Mościcki",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        },
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Ignacy_Paderewski",
+                    "name": "Ignacy Paderewski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_irena_anders",
+                    "name": "Irena Anders",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_jan_kowalewski",
+                    "name": "Jan Kowalewski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Jan_Kruszewski",
+                    "name": "Jan Kruszewski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Jan_Kwapinski",
+                    "name": "Kazimierz Bartel",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_jan_lapuszewski",
+                    "name": "Jan Łapuszewski",
+                    "roles": [
+                        {
+                            "kind": "scientist",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_jan_mosdorf",
+                    "name": "Jan Mosdorf",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Jan_Pilsudski",
+                    "name": "Jan Piłsudski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_jan_zumbach",
+                    "name": "Jan Zumbach",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Janusz_Jedrzejewicz",
+                    "name": "Janusz Jędrzejewicz",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Janusz_Radziwill",
+                    "name": "Janusz Radziwiłł",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_jedrzeg_moraczewski",
+                    "name": "Jędrzej Moraczewski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_jerzy_rutkowski",
+                    "name": "Jerzy Rutkowski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "theorist"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Jerzy_Swirski",
+                    "name": "Jerzy Świrski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "theorist"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_joachim_stefan_bartoszewicz",
+                    "name": "Joachim Stefan Bartoszewicz",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Josef_Kapciuk",
+                    "name": "Józef Kapciuk",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_joseph_rotblat",
+                    "name": "Joseph Rotblat",
+                    "roles": [
+                        {
+                            "kind": "scientist",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_jozef_beck",
+                    "name": "Józef Beck",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Jozef_Cyrankiewicz",
+                    "name": "Józef Cyrankiewicz",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_jozef_haller",
+                    "name": "Józef Haller",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        },
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_jozef_unrug",
+                    "name": "Józef Unrug",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "navy_chief"
+                        },
+                        {
+                            "kind": "navy_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_jozef_zajac",
+                    "name": "Józef Zając",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "air_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_julian_leszczynski_lenski",
+                    "name": "Bolesław Wieniawa-Długoszowski",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Juliusz_Rommel",
+                    "name": "Juliusz Rómmel",
+                    "roles": [
+                        {
+                            "kind": "field_marshal",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Juliusz_Ulrych",
+                    "name": "Juliusz Ulrych",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Juliusz_Zulauf",
+                    "name": "Juliusz Zulauf",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_karl_albrecht",
+                    "name": "Karol Olbracht I",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_karol_korytowski",
+                    "name": "Karol Korytowski",
+                    "roles": [
+                        {
+                            "kind": "navy_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Kazimierz_Bartel",
+                    "name": "Kazimierz Bartel",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Kazimierz_Dzierzanowski",
+                    "name": "Kazimierz Dzierżanowski",
+                    "roles": [
+                        {
+                            "kind": "field_marshal",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Kazimierz_Fabrycy",
+                    "name": "Kazimierz Fabrycy",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Kazimierz_Puzak",
+                    "name": "Kazimierz Pużak",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        },
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Kazimierz_Schally",
+                    "name": "Kazimierz Schally",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "army_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_kazimierz_sosnkowski",
+                    "name": "Kazimierz Sosnkowski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "army_chief"
+                        },
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_kazimierz_switalski",
+                    "name": "Kazimierz Świtalski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_konstantin_rokossovsky",
+                    "name": "Konstantin Rokossovsky",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Kordian_Zamorski",
+                    "name": "Kordian Zamorski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Leon_Berbecki",
+                    "name": "Leon Berbecki",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Leon_Kozlowski",
+                    "name": "Leon Kozłowski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_leonard_skierski",
+                    "name": "Leonard Skierski",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_lucjan_zeligowski",
+                    "name": "Lucjan Żeligowski",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_ludomil_rayski",
+                    "name": "Ludomił Rayski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "air_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Maciej_Rataj",
+                    "name": "Maciej Rataj",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_maria_koszutska",
+                    "name": "Maria Koszutska",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Marian_Januszajtis_Zegota",
+                    "name": "Marian Januszajtis-Żegota",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "army_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_marian_kukiel",
+                    "name": "Marian Kukiel",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        },
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_marian_rejewski",
+                    "name": "Marian Rejewski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "theorist"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Marian_Spychalski",
+                    "name": "Marian Spychalski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "army_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Marian_Zyndram_Koscialkowski",
+                    "name": "Marian Zyndram-Kościałkowski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Mariusz_Zaruski",
+                    "name": "Mariusz Zaruskir",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "navy_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Michal_Tokarzewski_Karaszewicz",
+                    "name": "Michał Tokarzewski-Karaszewicz",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Michal_Zymierski",
+                    "name": "Michał Rola-Żymierski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "army_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Mieczyslaw_Boruta_Spiechowicz",
+                    "name": "Mieczysław Boruta-Spiechowicz",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Mieczyslaw_Dabkowski",
+                    "name": "Mieczysław Dąbkowski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_mieczyslaw_filipowicz",
+                    "name": "Mieczysław Filipowicz ",
+                    "roles": [
+                        {
+                            "kind": "scientist",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Mieczyslaw_Kulinski",
+                    "name": "Mieczysław Kuliński",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "army_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_mieczyslaw_michalowicz",
+                    "name": "Mieczysław Michałowicz",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Mieczyslaw_Norwid_Neugebauer",
+                    "name": "Mieczysław Norwid-Neugebauer",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_pavel_bermondt_avalov",
+                    "name": "Pavel Bermondt-Avalov",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_roman_abraham",
+                    "name": "Roman Abraham",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_roman_dmowski",
+                    "name": "Roman Dmowski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        },
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Roman_Rybarski",
+                    "name": "Roman Rybarkski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_rudinger_von_der_goltz",
+                    "name": "Rüdiger von der Goltz",
+                    "roles": [
+                        {
+                            "kind": "field_marshal",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_rudolf_gundlach",
+                    "name": "Rudolf Gundlach",
+                    "roles": [
+                        {
+                            "kind": "scientist",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Rudolf_Prich",
+                    "name": "Rudolf Prich",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_sejmik_regency",
+                    "name": "Sejmik Regency",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_stanislav_maczek",
+                    "name": "Stanisław Maczek",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Stanislaw_Glabinski",
+                    "name": "Stanisław Głąbiński",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Stanislaw_Grabski",
+                    "name": "Stanisław Grabski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Stanislaw_Grzmot_Skotnicki",
+                    "name": "Stanisław Grzmot-Skotnicki",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Stanislaw_Haller",
+                    "name": "Stanisław Haller",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "army_chief"
+                        },
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Stanislaw_Hryniewiecki",
+                    "name": "Stanisław Hryniewiecki",
+                    "roles": [
+                        {
+                            "kind": "navy_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_stanislaw_kopanski",
+                    "name": "Stanisław Kopański",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        },
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_stanislaw_mikolajczyk",
+                    "name": "Stanisław Mikołajczyk",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_stanislaw_pawluc",
+                    "name": "Stanisław Pawluć",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Stanislaw_Piasecki",
+                    "name": "Stanisław Piasecki",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_stanislaw_prauss",
+                    "name": "Stanisław Prauss",
+                    "roles": [
+                        {
+                            "kind": "scientist",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_stanislaw_radkiewicz",
+                    "name": "Stanisław Radkiewicz",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_stanislaw_sosabowski",
+                    "name": "Stanisław Sosabowski",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Stanislaw_Ujejski",
+                    "name": "Stanisław Ujejski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "air_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Stanislaw_Ulam",
+                    "name": "Stanisław Ulam",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "theorist"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_stanislaw_wojciechowski",
+                    "name": "Stanisław Wojciechowski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_stefan_dab_biernacki",
+                    "name": "Stefan Dąb-Biernacki",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_stefan_frankowski",
+                    "name": "Stefan Frankowski",
+                    "roles": [
+                        {
+                            "kind": "navy_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Stefan_Mossor",
+                    "name": "Stefan Mossor",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "theorist"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_tadeusz_bielecki",
+                    "name": "Tadeusz Bielecki",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Tadeusz_Kasprzycki",
+                    "name": "Tadeusz Kasprzycki",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Tadeusz_Klimecki",
+                    "name": "Tadeusz Klimecki",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "army_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Tadeusz_Komorowski",
+                    "name": "Tadeusz Komorowski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_tadeusz_kutrzeba",
+                    "name": "Tadeusz Kutrzeba",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Tadeusz_Malinowski",
+                    "name": "Tadeusz Malinowski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "theorist"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Tadeusz_Piskor",
+                    "name": "Tadeusz Piskor",
+                    "roles": [
+                        {
+                            "kind": "field_marshal",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Tadeusz_Schaetzel",
+                    "name": "Tadeusz Schaetzel",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_tomasz_arciszewski",
+                    "name": "Tomasz Arciszewski",
+                    "roles": []
+                },
+                {
+                    "id": "POL_vladislav_korchits",
+                    "name": "Vladislav Korchits",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Waclaw_Stachiewicz",
+                    "name": "Wacław Stachiewicz",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "army_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Walerian_Czuma",
+                    "name": "Walerian Czuma",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_walery_slawek",
+                    "name": "Walery Sławek",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_wanda_wasilewska",
+                    "name": "Wanda Wasilewska",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Wiktor_Thommee",
+                    "name": "Wiktor Thommée",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Wilhelm_Orlik_Ruckemann",
+                    "name": "Wilhelm Orlik-Rückemann",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_wincenty_kowalski",
+                    "name": "Wincenty Kowalski",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_wincenty_witos",
+                    "name": "Wincenty Witos",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_witold_pilecki",
+                    "name": "Witold Pilecki",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        },
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_wladyslaw_anders",
+                    "name": "Władysław Anders",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "high_command"
+                        },
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_wladyslaw_bortnowski",
+                    "name": "Władysław Bortnowski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "army_chief"
+                        },
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_wladyslaw_gomulka",
+                    "name": "Władysław Gomułka",
+                    "roles": [
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_wladyslaw_kalkus",
+                    "name": "Władysław Kalkus",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "theorist"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Wladyslaw_Langner",
+                    "name": "Władysław Langner",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_wladyslaw_raczkiewicz",
+                    "name": "Władysław Raczkiewicz",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        },
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_wladyslaw_sikorski",
+                    "name": "Władysław Sikorski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "army_chief"
+                        },
+                        {
+                            "kind": "field_marshal",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Wladyslaw_Studnicki",
+                    "name": "Władysław Studnicki",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Wlodzimierz_Steyer",
+                    "name": "Włodzimierz Steyer",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "navy_chief"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Wojciech_Korfanty",
+                    "name": "Wojciech Korfanty",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Wojciech_Kwasieborski",
+                    "name": "Wojciech Kwasieborski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Wojciech_Zaleski",
+                    "name": "Wojciech Zaleski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_wojtek",
+                    "name": "Wojtek",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        },
+                        {
+                            "kind": "country_leader",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_xawery_czernicki",
+                    "name": "Xawery Czernicki",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "navy_chief"
+                        },
+                        {
+                            "kind": "scientist",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_zdzislaw_lubomirski",
+                    "name": "Zdzisław Lubomirski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_zygmunt_buhusz_szysko",
+                    "name": "Zygmunt Bohusz-Szyszko",
+                    "roles": [
+                        {
+                            "kind": "corps_commander",
+                            "slot": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Zygmunt_Modzelewski",
+                    "name": "Zygmunt Modzelewski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Zygmunt_Zaremba",
+                    "name": "Zygmunt Zaremba",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_Zygmunt_Zulawski",
+                    "name": "Zygmunt Żuławski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                },
+                {
+                    "id": "POL_zymunt_modzelewski",
+                    "name": "Zygmunt Modzelewski",
+                    "roles": [
+                        {
+                            "kind": "advisor",
+                            "slot": "political_advisor"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

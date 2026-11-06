@@ -1,0 +1,108 @@
+{
+    "pack": "poland",
+    "tag": "POL",
+    "prefix": "lp_pol",
+    "displayName": "Poland",
+    "leaders": [
+        {
+            "key": "stefan_rowecki",
+            "name": "Stefan Rowecki",
+            "mode": "new",
+            "sameAs": [],
+            "role": "corps_commander",
+            "skill": 3,
+            "attack": 2,
+            "defense": 2,
+            "planning": 4,
+            "logistics": 1,
+            "traits": ["guerilla_fighter"],
+            "factSheet": "stefan_rowecki",
+            "portrait": {
+                "photo": "stefan_rowecki",
+                "role": "Polish colonel",
+                "headwear": "bareheaded",
+                "uniform": "khaki-olive Polish Army tunic with a high stiff collar, silver zig-zag collar embroidery with small eagles, a leather shoulder strap, silver shoulder cords, a row of medal ribbons and several crosses and medals on the chest",
+                "uniformColour": "eng_army_khaki",
+                "avoidHeadwear": "cap, hat, helmet",
+                "notes": "short dark hair brushed up, clean-shaven, stern direct look",
+                "born": 1895,
+                "photoYear": 1934
+            }
+        },
+        {
+            "key": "antoni_chrusciel",
+            "name": "Antoni Chrusciel",
+            "mode": "new",
+            "sameAs": [],
+            "role": "corps_commander",
+            "skill": 2,
+            "attack": 2,
+            "defense": 3,
+            "planning": 2,
+            "logistics": 1,
+            "traits": ["urban_assault_specialist"],
+            "factSheet": "antoni_chrusciel",
+            "portrait": {
+                "photo": "antoni_chrusciel",
+                "role": "Polish colonel",
+                "headwear": "bareheaded",
+                "uniform": "khaki-olive Polish Army tunic with a high collar, silver zig-zag collar embroidery with a small eagle, a leather cross strap, shoulder boards with a star and bars, a row of medal ribbons and a Virtuti Militari cross on the chest",
+                "uniformColour": "eng_army_khaki",
+                "avoidHeadwear": "cap, hat, helmet",
+                "notes": "short dark hair combed back, clean-shaven, calm look",
+                "born": 1895,
+                "photoYear": 1931
+            }
+        },
+        {
+            "key": "boleslaw_duch",
+            "name": "Boleslaw Duch",
+            "mode": "new",
+            "sameAs": [],
+            "role": "corps_commander",
+            "skill": 2,
+            "attack": 3,
+            "defense": 1,
+            "planning": 1,
+            "logistics": 1,
+            "traits": ["infantry_officer"],
+            "factSheet": "boleslaw_duch",
+            "portrait": {
+                "photo": "boleslaw_duch",
+                "role": "Polish general",
+                "headwear": "wearing a stiff four-cornered Polish rogatywka cap with a dark band, a silver eagle badge and a general's silver zig-zag embroidery on the band and visor",
+                "uniform": "khaki British battledress with a black collar patch bearing a silver eagle, a POLAND shoulder title, general's rank insignia on the shoulder strap and rows of medal ribbons and crosses on the chest",
+                "uniformColour": "eng_army_khaki",
+                "avoidHeadwear": "helmet, beret, bareheaded, soft cap",
+                "notes": "clean-shaven, heavy face, serious look over his shoulder",
+                "born": 1896,
+                "photoYear": 1945
+            }
+        },
+        {
+            "key": "leopold_okulicki",
+            "name": "Leopold Okulicki",
+            "mode": "new",
+            "sameAs": [],
+            "role": "corps_commander",
+            "skill": 2,
+            "attack": 2,
+            "defense": 1,
+            "planning": 3,
+            "logistics": 1,
+            "traits": ["organizer"],
+            "factSheet": "leopold_okulicki",
+            "portrait": {
+                "photo": "leopold_okulicki",
+                "role": "Polish colonel",
+                "headwear": "bareheaded",
+                "uniform": "light khaki Polish Army tunic with an open collar, shirt and khaki tie, a black collar patch with a small silver eagle, shoulder straps with small silver pips",
+                "uniformColour": "eng_army_khaki",
+                "avoidHeadwear": "cap, hat, helmet",
+                "notes": "slicked-back brown hair, clean-shaven, a slight smile",
+                "born": 1898,
+                "photoYear": 1943
+            }
+        }
+    ]
+}

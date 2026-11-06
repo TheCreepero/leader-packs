@@ -1,0 +1,12 @@
+on_actions = {
+	on_startup = {
+		effect = {
+			POL = {
+				recruit_character = lp_pol_stefan_rowecki
+				recruit_character = lp_pol_antoni_chrusciel
+				recruit_character = lp_pol_boleslaw_duch
+				recruit_character = lp_pol_leopold_okulicki
+			}
+		}
+	}
+}

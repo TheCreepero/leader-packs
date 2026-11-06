@@ -1,0 +1,39 @@
+{
+    "leaders": {
+        "stefan_rowecki": {
+            "card": [
+                "Commanded the Warsaw Armoured-Motorized Brigade in the 1939 campaign.",
+                "Organised the sabotage operation Wachlarz east of the pre-war border, 1941.",
+                "Commander-in-chief of the ZWZ from 1940 and of the Home Army from 1942."
+            ],
+            "years": [1895, 1944]
+        },
+        "antoni_chrusciel": {
+            "card": [
+                "Commanded the 82nd Infantry Regiment, which took part in the defence of Modlin in 1939.",
+                "Ordered the Home Army's mobilisation for 1 August 1944.",
+                "De facto commander of all insurgents in the Warsaw Uprising.",
+                "Promoted brigadier general on 14 September 1944."
+            ],
+            "years": [1895, 1960]
+        },
+        "boleslaw_duch": {
+            "card": [
+                "Brigadier general in May 1940.",
+                "Commanded the 1st Rifle Brigade of the 1st Polish Armoured Division, 1942-43.",
+                "His 3rd Carpathian Rifle Division took the ruins of Monte Cassino monastery.",
+                "Took part in the liberation of Ancona, and of Bologna in April 1945."
+            ],
+            "years": [1896, 1980]
+        },
+        "leopold_okulicki": {
+            "card": [
+                "Chief of staff of Anders' Army, 1941-42; commanded the 7th Infantry Division.",
+                "Led the Home Army's 2nd Echelon in Operation Tempest, July 1944.",
+                "Commander of the Home Army from 3 October 1944.",
+                "An SOE officer called him \"decisive, sincere and clear-minded\"."
+            ],
+            "years": [1898, 1946]
+        }
+    }
+}

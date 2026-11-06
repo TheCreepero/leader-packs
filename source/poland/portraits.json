@@ -1,0 +1,628 @@
+{
+    "leaders": {
+        "antoni_chrusciel": {
+            "rounds": [
+                {
+                    "round": 1,
+                    "date": "2026-11-06",
+                    "seeds": [
+                        1,
+                        2,
+                        3,
+                        4
+                    ],
+                    "settings": {
+                        "role": "Polish colonel",
+                        "headwear": "bareheaded",
+                        "uniform": "khaki-olive Polish Army tunic with a high collar, silver zig-zag collar embroidery with a small eagle, a leather cross strap, shoulder boards with a star and bars, a row of medal ribbons and a Virtuti Militari cross on the chest",
+                        "avoidHeadwear": "cap, hat, helmet",
+                        "notes": "short dark hair combed back, clean-shaven, calm look",
+                        "uniformColour": "eng_army_khaki",
+                        "colourSeed": 1,
+                        "facePass": true,
+                        "born": 1895,
+                        "photoYear": 1931,
+                        "age": 36,
+                        "ageSent": true
+                    },
+                    "run": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_pol_antoni_chrusciel\\round-1\\portrait-run.json",
+                    "recipe": {
+                        "steps": [
+                            {
+                                "template": "K1",
+                                "sha256": "a588be7979eafe9630eda04e9719b85dcf4cfea75f5f65b11b9fc5703362e12d"
+                            },
+                            {
+                                "template": "M1",
+                                "sha256": "2557e8c223cc395302454fbd490cce469d8c9d427280e61911f1bf626b2bb7c3"
+                            },
+                            {
+                                "template": "A4",
+                                "sha256": "030c11e5048c6af8f1fe07f63d279d79129cb084bb7227902b242400f326551e"
+                            },
+                            {
+                                "template": "F2",
+                                "sha256": "4127af63f740f6c879c4765d4551e413edf5697eecc83d769e716763a4e23597"
+                            }
+                        ],
+                        "facePass": true,
+                        "finish": {
+                            "style": "style-POL.json",
+                            "styleCount": 22,
+                            "detailStrength": 0.25,
+                            "toneStrength": 0.8,
+                            "chromaStrength": 0.75,
+                            "maskSource": "candidate"
+                        },
+                        "framing": {
+                            "eyeCentreX": 166.4,
+                            "headCentreX": 199.7,
+                            "centreBlend": 0.5,
+                            "headTop": 48.4,
+                            "photoClipsCrown": false,
+                            "headroom": 0.1051,
+                            "faceHeight": 0.51
+                        },
+                        "uniformColour": {
+                            "key": "eng_army_khaki",
+                            "name": "khaki",
+                            "lab": [
+                                48,
+                                2,
+                                18
+                            ],
+                            "default": false,
+                            "applied": true,
+                            "before": [
+                                41.81,
+                                -0.32,
+                                25.22
+                            ],
+                            "after": [
+                                44.73,
+                                1.74,
+                                18.09
+                            ],
+                            "deltaE": 3.28,
+                            "reason": null
+                        }
+                    },
+                    "candidates": [
+                        {
+                            "seed": 1,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_pol_antoni_chrusciel\\round-1\\final\\A4_s1.png",
+                            "sha256": "70046ada3193f68cd4f0b4450408cbe8bd0d9feae404c31d0bc7c4b898c2fe26",
+                            "likeness": 0.4715
+                        },
+                        {
+                            "seed": 2,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_pol_antoni_chrusciel\\round-1\\final\\A4_s2.png",
+                            "sha256": "958c3eb6881d4bd76aa63c3b12ecc3cb92b487719f98b23d7c7223ffc20d6450",
+                            "likeness": 0.4485
+                        },
+                        {
+                            "seed": 3,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_pol_antoni_chrusciel\\round-1\\final\\A4_s3.png",
+                            "sha256": "6991c9567213283191786428c3fa120809eecf80a14048458549f29ecee21b2c",
+                            "likeness": 0.5225
+                        },
+                        {
+                            "seed": 4,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_pol_antoni_chrusciel\\round-1\\final\\A4_s4.png",
+                            "sha256": "22b5ec2067074dcfd197c7bd2bc1d49e52744a30165ee1df241433e97cb4081f",
+                            "likeness": 0.4866
+                        }
+                    ],
+                    "decision": {
+                        "pick": 1
+                    }
+                }
+            ],
+            "chosen": {
+                "round": 1,
+                "seed": 1,
+                "file": "source/poland/portraits/antoni_chrusciel.png",
+                "sha256": "70046ada3193f68cd4f0b4450408cbe8bd0d9feae404c31d0bc7c4b898c2fe26"
+            }
+        },
+        "antoni_szylling": {
+            "rounds": [
+                {
+                    "round": 1,
+                    "date": "2026-11-06",
+                    "seeds": [
+                        1,
+                        2,
+                        3,
+                        4
+                    ],
+                    "settings": {
+                        "role": "Polish general",
+                        "headwear": "wearing a soft khaki-olive Polish field cap with a short visor and a lighter band around it",
+                        "uniform": "khaki-olive greatcoat with a turned-down collar, a small silver eagle badge on the collar and large plain buttons",
+                        "avoidHeadwear": "helmet, tall peaked cap, bareheaded",
+                        "notes": "heavy-set face seen in three-quarter profile, clean-shaven",
+                        "uniformColour": "eng_army_khaki",
+                        "colourSeed": 1,
+                        "facePass": true,
+                        "born": 1884,
+                        "photoYear": 1939,
+                        "age": 55,
+                        "ageSent": true
+                    },
+                    "run": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_pol_antoni_szylling\\round-1\\portrait-run.json",
+                    "recipe": {
+                        "steps": [
+                            {
+                                "template": "K1",
+                                "sha256": "a588be7979eafe9630eda04e9719b85dcf4cfea75f5f65b11b9fc5703362e12d"
+                            },
+                            {
+                                "template": "M1",
+                                "sha256": "2557e8c223cc395302454fbd490cce469d8c9d427280e61911f1bf626b2bb7c3"
+                            },
+                            {
+                                "template": "A4",
+                                "sha256": "030c11e5048c6af8f1fe07f63d279d79129cb084bb7227902b242400f326551e"
+                            },
+                            {
+                                "template": "F2",
+                                "sha256": "4127af63f740f6c879c4765d4551e413edf5697eecc83d769e716763a4e23597"
+                            }
+                        ],
+                        "facePass": true,
+                        "finish": {
+                            "style": "style-POL.json",
+                            "styleCount": 22,
+                            "detailStrength": 0.25,
+                            "toneStrength": 0.8,
+                            "chromaStrength": 0.75,
+                            "maskSource": "candidate"
+                        },
+                        "framing": {
+                            "eyeCentreX": 226.2,
+                            "headCentreX": 188.1,
+                            "centreBlend": 0.5,
+                            "headTop": 19.0,
+                            "photoClipsCrown": false,
+                            "headroom": 0.0226,
+                            "faceHeight": 0.48
+                        },
+                        "uniformColour": {
+                            "key": "eng_army_khaki",
+                            "name": "khaki",
+                            "lab": [
+                                48,
+                                2,
+                                18
+                            ],
+                            "default": false,
+                            "applied": true,
+                            "before": [
+                                48.76,
+                                1.69,
+                                30.78
+                            ],
+                            "after": [
+                                48.39,
+                                1.77,
+                                18.3
+                            ],
+                            "deltaE": 0.54,
+                            "reason": null
+                        }
+                    },
+                    "candidates": [
+                        {
+                            "seed": 1,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_pol_antoni_szylling\\round-1\\final\\A4_s1.png",
+                            "sha256": "c37a3f35996934d99f890e8e1bbfe2141905dcd51d4c9223375525df5dd7ddb3",
+                            "likeness": 0.2574
+                        },
+                        {
+                            "seed": 2,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_pol_antoni_szylling\\round-1\\final\\A4_s2.png",
+                            "sha256": "30723b22bf3624a1f3174f9f69aa21976ff3ef1329c1867648fc0a6084c10041",
+                            "likeness": 0.2141
+                        },
+                        {
+                            "seed": 3,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_pol_antoni_szylling\\round-1\\final\\A4_s3.png",
+                            "sha256": "30e082d146006ecf0a943c9f926849cb0d680dc83a1ecb46f83369107db03a9c",
+                            "likeness": 0.3019
+                        },
+                        {
+                            "seed": 4,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_pol_antoni_szylling\\round-1\\final\\A4_s4.png",
+                            "sha256": "e48201e41ef5570f292ae54dd55214f7653c8b7d9dd89a2405ea69e0f6f85d11",
+                            "likeness": 0.2991
+                        }
+                    ],
+                    "decision": {
+                        "reject": "Source photo too low quality to be useful; use another photo"
+                    },
+                    "withdrawn": {
+                        "date": "2026-11-06",
+                        "reason": "No usable photo: his only portraits are tiny and grainy, the larger ones are 1931 parade shots; replaced by leopold_okulicki"
+                    }
+                }
+            ],
+            "chosen": null
+        },
+        "boleslaw_duch": {
+            "rounds": [
+                {
+                    "round": 1,
+                    "date": "2026-11-06",
+                    "seeds": [
+                        1,
+                        2,
+                        3,
+                        4
+                    ],
+                    "settings": {
+                        "role": "Polish general",
+                        "headwear": "wearing a stiff four-cornered Polish rogatywka cap with a dark band, a silver eagle badge and a general\u0027s silver zig-zag embroidery on the band and visor",
+                        "uniform": "khaki British battledress with a black collar patch bearing a silver eagle, a POLAND shoulder title, general\u0027s rank insignia on the shoulder strap and rows of medal ribbons and crosses on the chest",
+                        "avoidHeadwear": "helmet, beret, bareheaded, soft cap",
+                        "notes": "clean-shaven, heavy face, serious look over his shoulder",
+                        "uniformColour": "eng_army_khaki",
+                        "colourSeed": 1,
+                        "facePass": true,
+                        "born": 1896,
+                        "photoYear": 1945,
+                        "age": 49,
+                        "ageSent": true
+                    },
+                    "run": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_pol_boleslaw_duch\\round-1\\portrait-run.json",
+                    "recipe": {
+                        "steps": [
+                            {
+                                "template": "K1",
+                                "sha256": "a588be7979eafe9630eda04e9719b85dcf4cfea75f5f65b11b9fc5703362e12d"
+                            },
+                            {
+                                "template": "M1",
+                                "sha256": "2557e8c223cc395302454fbd490cce469d8c9d427280e61911f1bf626b2bb7c3"
+                            },
+                            {
+                                "template": "A4",
+                                "sha256": "030c11e5048c6af8f1fe07f63d279d79129cb084bb7227902b242400f326551e"
+                            },
+                            {
+                                "template": "F2",
+                                "sha256": "4127af63f740f6c879c4765d4551e413edf5697eecc83d769e716763a4e23597"
+                            }
+                        ],
+                        "facePass": true,
+                        "finish": {
+                            "style": "style-POL.json",
+                            "styleCount": 22,
+                            "detailStrength": 0.25,
+                            "toneStrength": 0.8,
+                            "chromaStrength": 0.75,
+                            "maskSource": "candidate"
+                        },
+                        "framing": {
+                            "eyeCentreX": 462.1,
+                            "headCentreX": 583.6,
+                            "centreBlend": 0.5,
+                            "headTop": 132.8,
+                            "photoClipsCrown": false,
+                            "headroom": 0.0227,
+                            "faceHeight": 0.48
+                        },
+                        "uniformColour": {
+                            "key": "eng_army_khaki",
+                            "name": "khaki",
+                            "lab": [
+                                48,
+                                2,
+                                18
+                            ],
+                            "default": false,
+                            "applied": true,
+                            "before": [
+                                37.45,
+                                2.75,
+                                24.74
+                            ],
+                            "after": [
+                                42.18,
+                                2.2,
+                                18.87
+                            ],
+                            "deltaE": 5.89,
+                            "reason": null
+                        }
+                    },
+                    "candidates": [
+                        {
+                            "seed": 1,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_pol_boleslaw_duch\\round-1\\final\\A4_s1.png",
+                            "sha256": "c1ce8e88428775f943910d4d4771a8cde07407c5dd3a71636a04629914ea3b22",
+                            "likeness": 0.6178
+                        },
+                        {
+                            "seed": 2,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_pol_boleslaw_duch\\round-1\\final\\A4_s2.png",
+                            "sha256": "401ded6805ef4a9ad5c3f6f3c79c991e4d043ffd9158f255a72ee99a8a1e074f",
+                            "likeness": 0.5805
+                        },
+                        {
+                            "seed": 3,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_pol_boleslaw_duch\\round-1\\final\\A4_s3.png",
+                            "sha256": "e38210e26dc0ebd9c8a5b35b9366288381f79a926c9c50db8f9901e3a43d9da9",
+                            "likeness": 0.6656
+                        },
+                        {
+                            "seed": 4,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_pol_boleslaw_duch\\round-1\\final\\A4_s4.png",
+                            "sha256": "f225755eb1e441dfd870245080038a15942f0f0996f9938330d0f54a00ed6bd5",
+                            "likeness": 0.6114
+                        }
+                    ],
+                    "decision": {
+                        "pick": 3
+                    }
+                }
+            ],
+            "chosen": {
+                "round": 1,
+                "seed": 3,
+                "file": "source/poland/portraits/boleslaw_duch.png",
+                "sha256": "e38210e26dc0ebd9c8a5b35b9366288381f79a926c9c50db8f9901e3a43d9da9"
+            }
+        },
+        "leopold_okulicki": {
+            "rounds": [
+                {
+                    "round": 1,
+                    "date": "2026-11-06",
+                    "seeds": [
+                        1,
+                        2,
+                        3,
+                        4
+                    ],
+                    "settings": {
+                        "role": "Polish colonel",
+                        "headwear": "bareheaded",
+                        "uniform": "light khaki Polish Army tunic with an open collar, shirt and khaki tie, a black collar patch with a small silver eagle, shoulder straps with small silver pips",
+                        "avoidHeadwear": "cap, hat, helmet",
+                        "notes": "slicked-back brown hair, clean-shaven, a slight smile",
+                        "uniformColour": "eng_army_khaki",
+                        "colourSeed": 1,
+                        "facePass": true,
+                        "born": 1898,
+                        "photoYear": 1943,
+                        "age": 45,
+                        "ageSent": true
+                    },
+                    "run": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_pol_leopold_okulicki\\round-1\\portrait-run.json",
+                    "recipe": {
+                        "steps": [
+                            {
+                                "template": "K1",
+                                "sha256": "a588be7979eafe9630eda04e9719b85dcf4cfea75f5f65b11b9fc5703362e12d"
+                            },
+                            {
+                                "template": "M1",
+                                "sha256": "2557e8c223cc395302454fbd490cce469d8c9d427280e61911f1bf626b2bb7c3"
+                            },
+                            {
+                                "template": "A4",
+                                "sha256": "030c11e5048c6af8f1fe07f63d279d79129cb084bb7227902b242400f326551e"
+                            },
+                            {
+                                "template": "F2",
+                                "sha256": "4127af63f740f6c879c4765d4551e413edf5697eecc83d769e716763a4e23597"
+                            }
+                        ],
+                        "facePass": true,
+                        "finish": {
+                            "style": "style-POL.json",
+                            "styleCount": 22,
+                            "detailStrength": 0.25,
+                            "toneStrength": 0.8,
+                            "chromaStrength": 0.75,
+                            "maskSource": "candidate"
+                        },
+                        "framing": {
+                            "eyeCentreX": 281.9,
+                            "headCentreX": 306.0,
+                            "centreBlend": 0.5,
+                            "headTop": 29.0,
+                            "photoClipsCrown": false,
+                            "headroom": 0.0721,
+                            "faceHeight": 0.51
+                        },
+                        "uniformColour": {
+                            "key": "eng_army_khaki",
+                            "name": "khaki",
+                            "lab": [
+                                48,
+                                2,
+                                18
+                            ],
+                            "default": false,
+                            "applied": true,
+                            "before": [
+                                60.91,
+                                2.28,
+                                22.79
+                            ],
+                            "after": [
+                                54.85,
+                                1.87,
+                                18.18
+                            ],
+                            "deltaE": 6.85,
+                            "reason": null
+                        }
+                    },
+                    "candidates": [
+                        {
+                            "seed": 1,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_pol_leopold_okulicki\\round-1\\final\\A4_s1.png",
+                            "sha256": "288aef948713817cb1c84a8942e3752d24b8a454c763a5117e13ea0cdfab609c",
+                            "likeness": 0.4357
+                        },
+                        {
+                            "seed": 2,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_pol_leopold_okulicki\\round-1\\final\\A4_s2.png",
+                            "sha256": "2da67e88495efd1b9d1e01c96d58021ada6c30c711ee1b312fc4486ea88f65e1",
+                            "likeness": 0.4702
+                        },
+                        {
+                            "seed": 3,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_pol_leopold_okulicki\\round-1\\final\\A4_s3.png",
+                            "sha256": "d2a9b135e51fc747f1fe55d137f8d793765d27e474ce2a4502c8f62296e73eaa",
+                            "likeness": 0.4464
+                        },
+                        {
+                            "seed": 4,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_pol_leopold_okulicki\\round-1\\final\\A4_s4.png",
+                            "sha256": "2480649371e89f26184387cef35432a8f11b14e57446415522702a73674dc9b0",
+                            "likeness": 0.4795
+                        }
+                    ],
+                    "decision": {
+                        "pick": 2
+                    }
+                }
+            ],
+            "chosen": {
+                "round": 1,
+                "seed": 2,
+                "file": "source/poland/portraits/leopold_okulicki.png",
+                "sha256": "2da67e88495efd1b9d1e01c96d58021ada6c30c711ee1b312fc4486ea88f65e1"
+            }
+        },
+        "stefan_rowecki": {
+            "rounds": [
+                {
+                    "round": 1,
+                    "date": "2026-11-06",
+                    "seeds": [
+                        1,
+                        2,
+                        3,
+                        4
+                    ],
+                    "settings": {
+                        "role": "Polish colonel",
+                        "headwear": "bareheaded",
+                        "uniform": "khaki-olive Polish Army tunic with a high stiff collar, silver zig-zag collar embroidery with small eagles, a leather shoulder strap, silver shoulder cords, a row of medal ribbons and several crosses and medals on the chest",
+                        "avoidHeadwear": "cap, hat, helmet",
+                        "notes": "short dark hair brushed up, clean-shaven, stern direct look",
+                        "uniformColour": "eng_army_khaki",
+                        "colourSeed": 1,
+                        "facePass": true,
+                        "born": 1895,
+                        "photoYear": 1934,
+                        "age": 39,
+                        "ageSent": true
+                    },
+                    "run": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_pol_stefan_rowecki\\round-1\\portrait-run.json",
+                    "recipe": {
+                        "steps": [
+                            {
+                                "template": "K1",
+                                "sha256": "a588be7979eafe9630eda04e9719b85dcf4cfea75f5f65b11b9fc5703362e12d"
+                            },
+                            {
+                                "template": "M1",
+                                "sha256": "2557e8c223cc395302454fbd490cce469d8c9d427280e61911f1bf626b2bb7c3"
+                            },
+                            {
+                                "template": "A4",
+                                "sha256": "030c11e5048c6af8f1fe07f63d279d79129cb084bb7227902b242400f326551e"
+                            },
+                            {
+                                "template": "F2",
+                                "sha256": "4127af63f740f6c879c4765d4551e413edf5697eecc83d769e716763a4e23597"
+                            }
+                        ],
+                        "facePass": true,
+                        "finish": {
+                            "style": "style-POL.json",
+                            "styleCount": 22,
+                            "detailStrength": 0.25,
+                            "toneStrength": 0.8,
+                            "chromaStrength": 0.75,
+                            "maskSource": "candidate"
+                        },
+                        "framing": {
+                            "eyeCentreX": 279.3,
+                            "headCentreX": 283.8,
+                            "centreBlend": 0.5,
+                            "headTop": 35.1,
+                            "photoClipsCrown": false,
+                            "headroom": 0.0228,
+                            "faceHeight": 0.48
+                        },
+                        "uniformColour": {
+                            "key": "eng_army_khaki",
+                            "name": "khaki",
+                            "lab": [
+                                48,
+                                2,
+                                18
+                            ],
+                            "default": false,
+                            "applied": true,
+                            "before": [
+                                24.38,
+                                -1.01,
+                                25.33
+                            ],
+                            "after": [
+                                34.8,
+                                1.01,
+                                19.74
+                            ],
+                            "deltaE": 13.35,
+                            "reason": null
+                        }
+                    },
+                    "candidates": [
+                        {
+                            "seed": 1,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_pol_stefan_rowecki\\round-1\\final\\A4_s1.png",
+                            "sha256": "9d308fb658cebdbf5bf516b7a0db04bc204b5b4e7fb162186ca1c60c5b8a9d94",
+                            "likeness": 0.5321
+                        },
+                        {
+                            "seed": 2,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_pol_stefan_rowecki\\round-1\\final\\A4_s2.png",
+                            "sha256": "e9072d41976675d85e7c6e046ab2aaa9431254a16c23d57bb03f5107f31a35ac",
+                            "likeness": 0.5388
+                        },
+                        {
+                            "seed": 3,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_pol_stefan_rowecki\\round-1\\final\\A4_s3.png",
+                            "sha256": "4bbd51cb9c081b0777f5ba66f33ada83711ef2ffad6e18c9180ee96a761a6ccd",
+                            "likeness": 0.5447
+                        },
+                        {
+                            "seed": 4,
+                            "file": "C:\\dev\\Hearts of Iron IV Modding Manager\\Artifacts\\portraits\\lp_pol_stefan_rowecki\\round-1\\final\\A4_s4.png",
+                            "sha256": "3853fd90aa238a2578431778e569218ec55476a7f797c1a1a2388bf60c119715",
+                            "likeness": 0.5697
+                        }
+                    ],
+                    "decision": {
+                        "pick": 1
+                    }
+                }
+            ],
+            "chosen": {
+                "round": 1,
+                "seed": 1,
+                "file": "source/poland/portraits/stefan_rowecki.png",
+                "sha256": "9d308fb658cebdbf5bf516b7a0db04bc204b5b4e7fb162186ca1c60c5b8a9d94"
+            }
+        }
+    }
+}

@@ -7,6 +7,10 @@
         "france": {
             "root": "packs/france",
             "modFolderName": "commanders_pack_france"
+        },
+        "poland": {
+            "root": "packs/poland",
+            "modFolderName": "commanders_pack_poland"
         }
     },
     "sharedTools": [

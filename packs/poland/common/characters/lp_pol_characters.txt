@@ -1,0 +1,70 @@
+characters = {
+	lp_pol_stefan_rowecki = {
+		name = lp_pol_stefan_rowecki
+		portraits = {
+			army = {
+				large = GFX_portrait_lp_pol_stefan_rowecki
+				small = GFX_portrait_lp_pol_stefan_rowecki_small
+			}
+		}
+		corps_commander = {
+			traits = { guerilla_fighter }
+			skill = 3
+			attack_skill = 2
+			defense_skill = 2
+			planning_skill = 4
+			logistics_skill = 1
+		}
+	}
+	lp_pol_antoni_chrusciel = {
+		name = lp_pol_antoni_chrusciel
+		portraits = {
+			army = {
+				large = GFX_portrait_lp_pol_antoni_chrusciel
+				small = GFX_portrait_lp_pol_antoni_chrusciel_small
+			}
+		}
+		corps_commander = {
+			traits = { urban_assault_specialist }
+			skill = 2
+			attack_skill = 2
+			defense_skill = 3
+			planning_skill = 2
+			logistics_skill = 1
+		}
+	}
+	lp_pol_boleslaw_duch = {
+		name = lp_pol_boleslaw_duch
+		portraits = {
+			army = {
+				large = GFX_portrait_lp_pol_boleslaw_duch
+				small = GFX_portrait_lp_pol_boleslaw_duch_small
+			}
+		}
+		corps_commander = {
+			traits = { infantry_officer }
+			skill = 2
+			attack_skill = 3
+			defense_skill = 1
+			planning_skill = 1
+			logistics_skill = 1
+		}
+	}
+	lp_pol_leopold_okulicki = {
+		name = lp_pol_leopold_okulicki
+		portraits = {
+			army = {
+				large = GFX_portrait_lp_pol_leopold_okulicki
+				small = GFX_portrait_lp_pol_leopold_okulicki_small
+			}
+		}
+		corps_commander = {
+			traits = { organizer }
+			skill = 2
+			attack_skill = 2
+			defense_skill = 1
+			planning_skill = 3
+			logistics_skill = 1
+		}
+	}
+}

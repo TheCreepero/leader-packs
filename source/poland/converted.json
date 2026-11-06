@@ -1,0 +1,60 @@
+{
+    "portraits": {
+        "gfx/interface/ideas/lp_pol_antoni_chrusciel_small.dds": {
+            "leader": "antoni_chrusciel",
+            "kind": "small",
+            "chosenSha256": "70046ada3193f68cd4f0b4450408cbe8bd0d9feae404c31d0bc7c4b898c2fe26",
+            "cardSha256": "51cded3677ea06067ae0467bfd974daa5f3c59c1797c4546dd70cd47a594a956",
+            "ddsSha256": "eddd9f9c63ded109baa6d9f2e325bd018192e7c9cbdc647a12cbf16bef891ea9"
+        },
+        "gfx/interface/ideas/lp_pol_boleslaw_duch_small.dds": {
+            "leader": "boleslaw_duch",
+            "kind": "small",
+            "chosenSha256": "e38210e26dc0ebd9c8a5b35b9366288381f79a926c9c50db8f9901e3a43d9da9",
+            "cardSha256": "51cded3677ea06067ae0467bfd974daa5f3c59c1797c4546dd70cd47a594a956",
+            "ddsSha256": "78ff85e07b2f1229a998d0765d46995a9f506797666ea868e096ac74d01e24fa"
+        },
+        "gfx/interface/ideas/lp_pol_leopold_okulicki_small.dds": {
+            "leader": "leopold_okulicki",
+            "kind": "small",
+            "chosenSha256": "2da67e88495efd1b9d1e01c96d58021ada6c30c711ee1b312fc4486ea88f65e1",
+            "cardSha256": "51cded3677ea06067ae0467bfd974daa5f3c59c1797c4546dd70cd47a594a956",
+            "ddsSha256": "eab6c6845f0c3c4211dd3b2d05c4dc01684ac72752c891354cada0c1159ccdef"
+        },
+        "gfx/interface/ideas/lp_pol_stefan_rowecki_small.dds": {
+            "leader": "stefan_rowecki",
+            "kind": "small",
+            "chosenSha256": "9d308fb658cebdbf5bf516b7a0db04bc204b5b4e7fb162186ca1c60c5b8a9d94",
+            "cardSha256": "51cded3677ea06067ae0467bfd974daa5f3c59c1797c4546dd70cd47a594a956",
+            "ddsSha256": "33816ea9747059e5d41bdfaca721d8a56d95af3c8685216e2d26276009492c45"
+        },
+        "gfx/leaders/POL/lp_pol_antoni_chrusciel.dds": {
+            "leader": "antoni_chrusciel",
+            "kind": "large",
+            "chosenSha256": "70046ada3193f68cd4f0b4450408cbe8bd0d9feae404c31d0bc7c4b898c2fe26",
+            "cardSha256": "",
+            "ddsSha256": "ae33b108e233745933e45e018297af8cdebcdd7ca8ddd27ed24461d923e7f9be"
+        },
+        "gfx/leaders/POL/lp_pol_boleslaw_duch.dds": {
+            "leader": "boleslaw_duch",
+            "kind": "large",
+            "chosenSha256": "e38210e26dc0ebd9c8a5b35b9366288381f79a926c9c50db8f9901e3a43d9da9",
+            "cardSha256": "",
+            "ddsSha256": "05b2e82dd22e48d2608af8248edf1c483b14d0d263584c11a4e8ca393755e740"
+        },
+        "gfx/leaders/POL/lp_pol_leopold_okulicki.dds": {
+            "leader": "leopold_okulicki",
+            "kind": "large",
+            "chosenSha256": "2da67e88495efd1b9d1e01c96d58021ada6c30c711ee1b312fc4486ea88f65e1",
+            "cardSha256": "",
+            "ddsSha256": "2ca2e70d98b2669a7acf641b74525a308fab7efd48e989dd85fa7fc0a90a07fd"
+        },
+        "gfx/leaders/POL/lp_pol_stefan_rowecki.dds": {
+            "leader": "stefan_rowecki",
+            "kind": "large",
+            "chosenSha256": "9d308fb658cebdbf5bf516b7a0db04bc204b5b4e7fb162186ca1c60c5b8a9d94",
+            "cardSha256": "",
+            "ddsSha256": "8041384e14e086406853d6bfdbdff3522bc3a4341c4bacf23160877a25430817"
+        }
+    }
+}

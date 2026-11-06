@@ -1,0 +1,34 @@
+spriteTypes = {
+	spriteType = {
+		name = "GFX_portrait_lp_pol_stefan_rowecki"
+		texturefile = "gfx/leaders/POL/lp_pol_stefan_rowecki.dds"
+	}
+	spriteType = {
+		name = "GFX_portrait_lp_pol_stefan_rowecki_small"
+		texturefile = "gfx/interface/ideas/lp_pol_stefan_rowecki_small.dds"
+	}
+	spriteType = {
+		name = "GFX_portrait_lp_pol_antoni_chrusciel"
+		texturefile = "gfx/leaders/POL/lp_pol_antoni_chrusciel.dds"
+	}
+	spriteType = {
+		name = "GFX_portrait_lp_pol_antoni_chrusciel_small"
+		texturefile = "gfx/interface/ideas/lp_pol_antoni_chrusciel_small.dds"
+	}
+	spriteType = {
+		name = "GFX_portrait_lp_pol_boleslaw_duch"
+		texturefile = "gfx/leaders/POL/lp_pol_boleslaw_duch.dds"
+	}
+	spriteType = {
+		name = "GFX_portrait_lp_pol_boleslaw_duch_small"
+		texturefile = "gfx/interface/ideas/lp_pol_boleslaw_duch_small.dds"
+	}
+	spriteType = {
+		name = "GFX_portrait_lp_pol_leopold_okulicki"
+		texturefile = "gfx/leaders/POL/lp_pol_leopold_okulicki.dds"
+	}
+	spriteType = {
+		name = "GFX_portrait_lp_pol_leopold_okulicki_small"
+		texturefile = "gfx/interface/ideas/lp_pol_leopold_okulicki_small.dds"
+	}
+}
