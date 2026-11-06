@@ -35,6 +35,12 @@ Every pack's thumbnail is drawn by the Manager's `New-HoiThumbnail.ps1` (skill `
 2. `powershell -File .\build.ps1 -RenderShowcase -Pack <pack>` writes the roster and one card per leader to `artifacts/workshop-images/<pack>/`. A `Warning:` line (a text cut short, a missing sprite or flag) is fixed in the data, not accepted. Look at every image, then show them to the owner.
 3. After the upload of section 4, the owner adds or replaces them on the pack's Workshop page ("Add/edit images & videos"); the upload carries only the thumbnail.
 
+## 2c. Description images
+The generated description has a `hero` and an `overview` region, and the preflight's Workshop text row fails a first upload while either has no address in the Manager's `Config/workshop-image-urls.json` (`commanders-pack-<country>/hero` and `/overview`; the strips are shared by the family and exist).
+1. `powershell -File .\build.ps1 -RenderShowcase -Pack <pack>` first (section 2b): the overview is drawn from its files.
+2. `powershell -NoProfile -File "<Manager root>\Scripts\Showcase\Export-HoiDescriptionImages.ps1" "Leader Packs" -MissingOnly` writes the images that have no address yet (both of the new pack) to the Manager's `Artifacts\description-images\`. Look at them, then show them to the owner.
+3. The owner uploads them to Imgur and gives the addresses; add them to `Config/workshop-image-urls.json`, run the Manager's `Sync-WorkshopRegions.ps1 "Leader Packs"` and `Sync-WorkshopCrossLinks.ps1` (the "More from the author" block carries the series banner and lists the series), and commit the Manager and this repository on the owner's word.
+
 ## 3. Change note, credits and description
 1. The change note names the leaders added or changed, by name, and any leader set to `skip` with the reason.
 2. The photo credits are on the pack's wiki page (`wiki/Commanders-Pack-<Country>.md`, generated), which the Workshop description does not link to (it carries no Wiki or GitHub links): run `powershell -File .\wiki\push-wiki.ps1` before the upload, so the page is live and complete.
