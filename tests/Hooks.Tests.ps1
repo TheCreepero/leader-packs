@@ -50,6 +50,9 @@ Describe 'Protect-ProjectFiles hook' {
         @{ Path = 'packs\finland\history\x.txt' },
         @{ Path = 'packs\finland\WORKSHOP_DESCRIPTION_GUIDELINES.md' },
         @{ Path = 'packs\finland\thumbnail.png' },
+        @{ Path = 'packs\all\WORKSHOP_DESCRIPTION_GUIDELINES.md' },
+        @{ Path = 'packs\all\thumbnail.png' },
+        @{ Path = 'packs\all\common\characters\x.txt' },
         @{ Path = 'source\finland\photos.json' },
         @{ Path = 'source\finland\portraits.json' },
         @{ Path = 'source\finland\portraits\einar_vihma.png' },
@@ -73,9 +76,11 @@ Describe 'Protect-ProjectFiles hook' {
 
     It 'allows an edit of <Path>' -TestCases @(
         @{ Path = 'packs\finland\descriptor.mod' },
+        @{ Path = 'packs\all\descriptor.mod' },
         @{ Path = 'source\finland\leaders.json' },
         @{ Path = 'source\finland\fact-sheets.md' },
         @{ Path = 'source\finland\workshop-intro.bbcode' },
+        @{ Path = 'source\all\workshop-intro.bbcode' },
         @{ Path = 'data\stat-bands.json' },
         @{ Path = 'tools\LeaderPacks.ps1' },
         @{ Path = 'docs\plans\2026-11-01-finland-pack.md' },
@@ -88,6 +93,7 @@ Describe 'Protect-ProjectFiles hook' {
 
     It 'refuses the shell write <Command>' -TestCases @(
         @{ Command = 'Set-Content packs\finland\localisation\english\x.yml "a"' },
+        @{ Command = 'Set-Content packs\all\WORKSHOP_DESCRIPTION_GUIDELINES.md "a"' },
         @{ Command = 'Set-Content source\finland\photos.json "{}"' },
         @{ Command = 'Set-Content source\finland\portraits.json "{}"' },
         @{ Command = 'Copy-Item "C:\dev\Hearts of Iron IV Modding Manager\Artifacts\portraits\lp_fin_x\round-1\final\A3_s2.png" source\finland\portraits\x.png' },

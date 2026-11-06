@@ -1,5 +1,10 @@
 {
     "packages": {
+        "all": {
+            "root": "packs/all",
+            "modFolderName": "immersive_commanders_expanded",
+            "members": ["finland", "france", "poland"]
+        },
         "finland": {
             "root": "packs/finland",
             "modFolderName": "commanders_pack_finland"

@@ -231,7 +231,7 @@ function ConvertTo-LpOrdered {
     return $ordered
 }
 
-function Get-LpPackNames {
+function Get-LpPackageEntries {
     param([Parameter(Mandatory = $true)][string]$RepoRoot)
 
     $settingsPath = Join-Path $RepoRoot 'tools\HoiModBuild.json'
@@ -242,7 +242,61 @@ function Get-LpPackNames {
     if ($null -eq $packages) {
         return @()
     }
-    return @($packages.PSObject.Properties | ForEach-Object { $_.Name })
+    return @($packages.PSObject.Properties)
+}
+
+function Get-LpPackNames {
+    param([Parameter(Mandatory = $true)][string]$RepoRoot)
+
+    return @(Get-LpPackageEntries -RepoRoot $RepoRoot | Where-Object { $null -eq (Get-LpProperty -Object $_.Value -Name 'members') } | ForEach-Object { $_.Name })
+}
+
+function Get-LpBundleNames {
+    param(
+        [Parameter(Mandatory = $true)][string]$RepoRoot,
+        [string[]]$Member
+    )
+
+    $bundleEntries = @(Get-LpPackageEntries -RepoRoot $RepoRoot | Where-Object { $null -ne (Get-LpProperty -Object $_.Value -Name 'members') })
+    if ($Member) {
+        $bundleEntries = @($bundleEntries | Where-Object { $holdsMember = $false; foreach ($memberName in @($_.Value.members)) { if ($Member -contains $memberName) { $holdsMember = $true } }; $holdsMember })
+    }
+    return @($bundleEntries | ForEach-Object { $_.Name })
+}
+
+function Get-LpBundle {
+    param(
+        [Parameter(Mandatory = $true)][string]$RepoRoot,
+        [Parameter(Mandatory = $true)][string]$Bundle
+    )
+
+    $RepoRoot = (Get-Item -LiteralPath $RepoRoot).FullName.TrimEnd('\')
+    $bundleEntry = @(Get-LpPackageEntries -RepoRoot $RepoRoot | Where-Object { $_.Name -eq $Bundle -and $null -ne (Get-LpProperty -Object $_.Value -Name 'members') })[0]
+    if ($null -eq $bundleEntry) {
+        throw "tools\HoiModBuild.json has no bundle '$Bundle' (a package with members)"
+    }
+    $packRoot = Join-Path $RepoRoot ('packs\' + $Bundle)
+    $descriptorPath = Join-Path $packRoot 'descriptor.mod'
+    $displayName = $Bundle
+    if (Test-Path -LiteralPath $descriptorPath) {
+        $nameMatch = [regex]::Match([System.IO.File]::ReadAllText($descriptorPath, [System.Text.Encoding]::UTF8), '(?m)^\s*name\s*=\s*"([^"]*)"')
+        if ($nameMatch.Success) {
+            $displayName = $nameMatch.Groups[1].Value
+        }
+    }
+    $introPath = Join-Path $RepoRoot ('source\' + $Bundle + '\workshop-intro.bbcode')
+    $memberNames = @($bundleEntry.Value.members | ForEach-Object { [string]$_ })
+    return [PSCustomObject]@{
+        Name          = $Bundle
+        IsBundle      = $true
+        RepoRoot      = $RepoRoot
+        PackRoot      = $packRoot
+        SourceDir     = Join-Path $RepoRoot ('source\' + $Bundle)
+        DisplayName   = $displayName
+        Members       = $memberNames
+        MemberPacks   = @($memberNames | Where-Object { @(Get-LpPackNames -RepoRoot $RepoRoot) -contains $_ } | ForEach-Object { Get-LpPack -RepoRoot $RepoRoot -Pack $_ })
+        WorkshopIntro = $(if (Test-Path -LiteralPath $introPath) { [System.IO.File]::ReadAllText($introPath, [System.Text.Encoding]::UTF8).Trim() } else { '' })
+    }
 }
 
 function Read-LpOptionalJson {
@@ -691,6 +745,168 @@ function Set-LpCarriedRegionContents {
     return @($filledLines)
 }
 
+function Get-LpPortraitsParagraph {
+    param([Parameter(Mandatory = $true)][object[]]$Packs)
+
+    $usedPhotos = @($Packs | ForEach-Object { Get-LpUsedPhotos -Pack $_ })
+    $shareAlikeLeaderNames = @($Packs | ForEach-Object {
+            $leaderPack = $_
+            Get-LpGeneratedLeaders -Pack $leaderPack | Where-Object { Test-LpShareAlikePhoto -Photo (Get-LpPhotoByKey -Pack $leaderPack -PhotoKey (Get-LpLeaderPhotoKey -Leader $_)) } | ForEach-Object { ([string]$_.name).Trim() }
+        })
+    $shareAlikeText = ''
+    if ($shareAlikeLeaderNames.Count -gt 0) {
+        $shareAlikeNameText = if ($shareAlikeLeaderNames.Count -eq 1) { $shareAlikeLeaderNames[0] } else { (($shareAlikeLeaderNames[0..($shareAlikeLeaderNames.Count - 2)]) -join ', ') + ' and ' + $shareAlikeLeaderNames[-1] }
+        $portraitLicence = Get-HoiShareAlikePortraitLicence
+        $shareAlikeText = ' The portraits of ' + $shareAlikeNameText + ' adapt photographs licensed CC BY-SA and are themselves licensed [url=' + $portraitLicence.Url + ']' + $portraitLicence.ShortName + '[/url].'
+    }
+    $licenceNames = @($usedPhotos | ForEach-Object { ([string]$_.licenseShortName) -replace '^Public domain$', 'public domain' } | Where-Object { $_ } | Sort-Object -Unique -Descending)
+    $licenceText = ''
+    if ($licenceNames.Count -gt 1) {
+        $licenceText = ' (' + ((($licenceNames[0..($licenceNames.Count - 2)]) -join ', ') + ' and ' + $licenceNames[-1]) + ')'
+    } elseif ($licenceNames.Count -eq 1) {
+        $licenceText = ' (' + $licenceNames[0] + ')'
+    }
+    return ('The portraits are repaints of historical photographs from ' + (Get-HoiImageSourceText -Records $usedPhotos) + ', used under licences that allow it' + $licenceText + '. Each photograph was coloured and repainted in the style of the game, then cropped and resized for the game.' + $shareAlikeText)
+}
+
+function New-LpBundleWorkshopText {
+    param($Bundle)
+
+    $bbcodeLines = [System.Collections.Generic.List[string]]::new()
+    if ($Bundle.WorkshopIntro) {
+        $bbcodeLines.Add($Bundle.WorkshopIntro)
+        $bbcodeLines.Add('')
+    }
+    Add-LpRegion -Lines $bbcodeLines -Header '<!-- region:image:strip-countries -->'
+    $bbcodeLines.Add('[h1]Countries[/h1]')
+    $bbcodeLines.Add('[list]')
+    foreach ($memberPack in @($Bundle.MemberPacks)) {
+        $leaderCount = @(Get-LpGeneratedLeaders -Pack $memberPack).Count
+        $bbcodeLines.Add('[*]' + $memberPack.DisplayName + ': ' + $leaderCount + $(if ($leaderCount -eq 1) { ' commander' } else { ' commanders' }))
+    }
+    $bbcodeLines.Add('[/list]')
+    $bbcodeLines.Add('')
+    Add-LpRegion -Lines $bbcodeLines -Header '<!-- region:image:strip-portraits -->'
+    $bbcodeLines.Add('[h1]Portraits[/h1]')
+    $bbcodeLines.Add((Get-LpPortraitsParagraph -Packs @($Bundle.MemberPacks)))
+    $bbcodeLines.Add('')
+    $bbcodeLines.Add('<!-- cross-links:begin -->')
+    foreach ($crossLinkLine in @(Get-LpCarriedCrossLinkLines -Pack $Bundle)) {
+        $bbcodeLines.Add($crossLinkLine)
+    }
+    $bbcodeLines.Add('<!-- cross-links:end -->')
+
+    $flatBbcodeLines = @(([string]::Join("`n", @($bbcodeLines))) -split '\r?\n')
+    $filledBbcodeLines = @(Set-LpCarriedRegionContents -Lines $flatBbcodeLines -CarriedContents (Get-LpCarriedRegionContents -Pack $Bundle))
+
+    $lines = [System.Collections.Generic.List[string]]::new()
+    $lines.Add('# ' + $Bundle.DisplayName + ' - Workshop description')
+    $lines.Add('')
+    $lines.Add('Generated by `build.ps1 -Generate` from `source/' + $Bundle.Name + '/workshop-intro.bbcode` and the leaders and photos of its members. Do not edit this file: change the sources and generate again. The lines between the cross-links markers are written by `Scripts/Workshop/Sync-WorkshopCrossLinks.ps1` of the Modding Manager, and those between the region markers by `Scripts/Workshop/Sync-WorkshopRegions.ps1`; `-Generate` keeps both.')
+    $lines.Add('')
+    $lines.Add('```bbcode')
+    foreach ($bbcodeLine in $filledBbcodeLines) {
+        $lines.Add($bbcodeLine)
+    }
+    $lines.Add('```')
+    return (($lines -join "`r`n") + "`r`n")
+}
+
+function Get-LpBundleGeneratedFiles {
+    param($Bundle)
+
+    $generatedFiles = [ordered]@{}
+    $generatedFiles['packs/' + $Bundle.Name + '/WORKSHOP_DESCRIPTION_GUIDELINES.md'] = @{ Text = (New-LpBundleWorkshopText -Bundle $Bundle); Bom = $false }
+    return $generatedFiles
+}
+
+function Get-LpBundleDelta {
+    param($Bundle)
+
+    $generatedFiles = Get-LpBundleGeneratedFiles -Bundle $Bundle
+    $changedPaths = [System.Collections.Generic.List[string]]::new()
+    foreach ($relativePath in @($generatedFiles.Keys)) {
+        $fullPath = Join-Path $Bundle.RepoRoot $relativePath
+        $expectedBytes = [byte[]]@((Get-LpUtf8 -Bom:$generatedFiles[$relativePath].Bom).GetPreamble()) + (Get-LpUtf8).GetBytes($generatedFiles[$relativePath].Text)
+        if (-not (Test-Path -LiteralPath $fullPath) -or [System.Convert]::ToBase64String($expectedBytes) -cne [System.Convert]::ToBase64String([System.IO.File]::ReadAllBytes($fullPath))) {
+            $changedPaths.Add($relativePath)
+        }
+    }
+    return [PSCustomObject]@{ Files = $generatedFiles; Changed = $changedPaths }
+}
+
+function Invoke-LpGenerateBundle {
+    param(
+        [Parameter(Mandatory = $true)][string]$RepoRoot,
+        [Parameter(Mandatory = $true)][string]$Bundle,
+        [switch]$DryRun
+    )
+
+    $bundleData = Get-LpBundle -RepoRoot $RepoRoot -Bundle $Bundle
+    $delta = Get-LpBundleDelta -Bundle $bundleData
+    foreach ($changedPath in $delta.Changed) {
+        if ($DryRun) {
+            Write-Host "  would write $changedPath" -ForegroundColor Gray
+        } else {
+            Write-LpText -Path (Join-Path $RepoRoot $changedPath) -Text $delta.Files[$changedPath].Text -Bom:$delta.Files[$changedPath].Bom
+            Write-Host "  wrote $changedPath" -ForegroundColor Gray
+        }
+    }
+    $verb = if ($DryRun) { 'to write' } else { 'written' }
+    Write-Host "Bundle '$Bundle': $(@($bundleData.Members).Count) member(s), $($delta.Changed.Count) file(s) $verb." -ForegroundColor Green
+    return 0
+}
+
+function Test-LpBundle {
+    param(
+        [Parameter(Mandatory = $true)][string]$RepoRoot,
+        [Parameter(Mandatory = $true)][string]$Bundle
+    )
+
+    $problems = [System.Collections.Generic.List[PSObject]]::new()
+    $bundleData = Get-LpBundle -RepoRoot $RepoRoot -Bundle $Bundle
+    $packNames = @(Get-LpPackNames -RepoRoot $RepoRoot)
+    foreach ($packName in $packNames) {
+        if ($bundleData.Members -notcontains $packName) {
+            $problems.Add((New-LpProblem -Level 'ERROR' -Where 'tools/HoiModBuild.json' -Message "pack '$packName' is not a member of bundle '$Bundle': add it to the members list, or its release would leave it out of the bundle"))
+        }
+    }
+    foreach ($memberName in $bundleData.Members) {
+        if ($packNames -notcontains $memberName) {
+            $problems.Add((New-LpProblem -Level 'ERROR' -Where 'tools/HoiModBuild.json' -Message "member '$memberName' of bundle '$Bundle' is not a commanders pack"))
+        }
+    }
+    $bundleVersion = [regex]::Match([System.IO.File]::ReadAllText((Join-Path $bundleData.PackRoot 'descriptor.mod'), [System.Text.Encoding]::UTF8), '(?m)^\s*supported_version\s*=\s*"([^"]*)"').Groups[1].Value
+    foreach ($memberName in $bundleData.Members) {
+        $memberDescriptorPath = Join-Path $RepoRoot ('packs\' + $memberName + '\descriptor.mod')
+        if (Test-Path -LiteralPath $memberDescriptorPath) {
+            $memberVersion = [regex]::Match([System.IO.File]::ReadAllText($memberDescriptorPath, [System.Text.Encoding]::UTF8), '(?m)^\s*supported_version\s*=\s*"([^"]*)"').Groups[1].Value
+            if ($memberVersion -ne $bundleVersion) {
+                $problems.Add((New-LpProblem -Level 'ERROR' -Where "packs/$Bundle/descriptor.mod" -Message "supported_version '$bundleVersion' differs from '$memberVersion' of member '$memberName'"))
+            }
+        }
+    }
+    foreach ($memberPack in @($bundleData.MemberPacks)) {
+        if ($bundleData.WorkshopIntro -notlike ('*' + $memberPack.DisplayName + '*')) {
+            $problems.Add((New-LpProblem -Level 'ERROR' -Where "source/$Bundle/workshop-intro.bbcode" -Message "the intro does not name '$($memberPack.DisplayName)', a member of the bundle"))
+        }
+    }
+    $delta = Get-LpBundleDelta -Bundle $bundleData
+    foreach ($changedPath in $delta.Changed) {
+        $problems.Add((New-LpProblem -Level 'ERROR' -Where $changedPath -Message 'differs from what the source generates: run build.ps1 -Generate (never edit it by hand)'))
+    }
+    $knownBundleFiles = @('descriptor.mod', 'thumbnail.png', 'WORKSHOP_DESCRIPTION_GUIDELINES.md')
+    if (Test-Path -LiteralPath $bundleData.PackRoot) {
+        foreach ($bundleFile in @(Get-ChildItem -LiteralPath $bundleData.PackRoot -Recurse -File -Force)) {
+            $relativePath = $bundleFile.FullName.Substring($bundleData.PackRoot.Length + 1).Replace('\', '/')
+            if ($knownBundleFiles -notcontains $relativePath) {
+                $problems.Add((New-LpProblem -Level 'ERROR' -Where "packs/$Bundle/$relativePath" -Message 'a bundle holds only its descriptor, thumbnail and description: its content comes from the members at build time'))
+            }
+        }
+    }
+    return $problems.ToArray()
+}
+
 function New-LpWorkshopText {
     param($Pack)
 
@@ -711,24 +927,9 @@ function New-LpWorkshopText {
         $bbcodeLines.Add('[/list]')
         $bbcodeLines.Add('')
     }
-    $usedPhotos = @(Get-LpUsedPhotos -Pack $Pack)
-    $shareAlikeLeaderNames = @($generatedLeaders | Where-Object { Test-LpShareAlikePhoto -Photo (Get-LpPhotoByKey -Pack $Pack -PhotoKey (Get-LpLeaderPhotoKey -Leader $_)) } | ForEach-Object { ([string]$_.name).Trim() })
-    $shareAlikeText = ''
-    if ($shareAlikeLeaderNames.Count -gt 0) {
-        $shareAlikeNameText = if ($shareAlikeLeaderNames.Count -eq 1) { $shareAlikeLeaderNames[0] } else { (($shareAlikeLeaderNames[0..($shareAlikeLeaderNames.Count - 2)]) -join ', ') + ' and ' + $shareAlikeLeaderNames[-1] }
-        $portraitLicence = Get-HoiShareAlikePortraitLicence
-        $shareAlikeText = ' The portraits of ' + $shareAlikeNameText + ' adapt photographs licensed CC BY-SA and are themselves licensed [url=' + $portraitLicence.Url + ']' + $portraitLicence.ShortName + '[/url].'
-    }
-    $licenceNames = @($usedPhotos | ForEach-Object { ([string]$_.licenseShortName) -replace '^Public domain$', 'public domain' } | Where-Object { $_ } | Sort-Object -Unique -Descending)
-    $licenceText = ''
-    if ($licenceNames.Count -gt 1) {
-        $licenceText = ' (' + ((($licenceNames[0..($licenceNames.Count - 2)]) -join ', ') + ' and ' + $licenceNames[-1]) + ')'
-    } elseif ($licenceNames.Count -eq 1) {
-        $licenceText = ' (' + $licenceNames[0] + ')'
-    }
     Add-LpRegion -Lines $bbcodeLines -Header '<!-- region:image:strip-portraits -->'
     $bbcodeLines.Add('[h1]Portraits[/h1]')
-    $bbcodeLines.Add('The portraits are repaints of historical photographs from ' + (Get-HoiImageSourceText -Records $usedPhotos) + ', used under licences that allow it' + $licenceText + '. Each photograph was coloured and repainted in the style of the game, then cropped and resized for the game.' + $shareAlikeText)
+    $bbcodeLines.Add((Get-LpPortraitsParagraph -Packs @($Pack)))
     $bbcodeLines.Add('')
     $bbcodeLines.Add('<!-- cross-links:begin -->')
     foreach ($crossLinkLine in @(Get-LpCarriedCrossLinkLines -Pack $Pack)) {
@@ -884,6 +1085,9 @@ function Invoke-LpGenerate {
         [switch]$DryRun
     )
 
+    if (@(Get-LpBundleNames -RepoRoot $RepoRoot) -contains $Pack) {
+        return (Invoke-LpGenerateBundle -RepoRoot $RepoRoot -Bundle $Pack -DryRun:$DryRun)
+    }
     $packData = Get-LpPack -RepoRoot $RepoRoot -Pack $Pack
     $problems = @(Test-LpPackSource -Pack $packData)
     $errors = @($problems | Where-Object { $_.Level -eq 'ERROR' })
@@ -902,6 +1106,9 @@ function Invoke-LpGenerate {
             Write-Host "  would remove $stalePath" -ForegroundColor Gray
         }
         Write-Host "Dry run OK: $leaderCount leader(s), $($delta.Changed.Count) file(s) to write, $($delta.Stale.Count) to remove." -ForegroundColor Green
+        foreach ($bundleName in @(Get-LpBundleNames -RepoRoot $RepoRoot -Member $Pack)) {
+            Invoke-LpGenerateBundle -RepoRoot $RepoRoot -Bundle $bundleName -DryRun | Out-Null
+        }
         return 0
     }
     foreach ($changedPath in $delta.Changed) {
@@ -914,6 +1121,9 @@ function Invoke-LpGenerate {
         Write-Host "  removed $stalePath" -ForegroundColor Gray
     }
     Write-Host "Generated pack '$Pack': $leaderCount leader(s), $($delta.Changed.Count) file(s) written, $($delta.Stale.Count) removed." -ForegroundColor Green
+    foreach ($bundleName in @(Get-LpBundleNames -RepoRoot $RepoRoot -Member $Pack)) {
+        Invoke-LpGenerateBundle -RepoRoot $RepoRoot -Bundle $bundleName | Out-Null
+    }
     return 0
 }
 
@@ -1537,9 +1747,18 @@ function Invoke-LpCheck {
         [string[]]$Pack
     )
 
-    $packNames = if ($Pack) { @($Pack) } else { @(Get-LpPackNames -RepoRoot $RepoRoot) }
+    $allBundleNames = @(Get-LpBundleNames -RepoRoot $RepoRoot)
+    $packNames = if ($Pack) { @($Pack | Where-Object { $allBundleNames -notcontains $_ }) } else { @(Get-LpPackNames -RepoRoot $RepoRoot) }
+    $bundleNames = if ($Pack) { @($allBundleNames | Where-Object { $Pack -contains $_ -or @(Get-LpBundleNames -RepoRoot $RepoRoot -Member $Pack) -contains $_ }) } else { $allBundleNames }
     $errorCount = 0
     $warningCount = 0
+    foreach ($bundleName in $bundleNames) {
+        $bundleProblems = @(Test-LpBundle -RepoRoot $RepoRoot -Bundle $bundleName)
+        Write-LpProblems -Problems $bundleProblems
+        $bundleErrors = @($bundleProblems | Where-Object { $_.Level -eq 'ERROR' }).Count
+        $errorCount += $bundleErrors
+        Write-Host ("Bundle '{0}': {1} member(s), {2} error(s)" -f $bundleName, @((Get-LpBundle -RepoRoot $RepoRoot -Bundle $bundleName).Members).Count, $bundleErrors) -ForegroundColor $(if ($bundleErrors -gt 0) { 'Red' } else { 'Green' })
+    }
     foreach ($packName in $packNames) {
         $problems = @(Test-LpPack -RepoRoot $RepoRoot -Pack $packName)
         Write-LpProblems -Problems $problems
@@ -1553,7 +1772,7 @@ function Invoke-LpCheck {
         Write-Host "Check FAILED: $errorCount error(s), $warningCount warning(s)." -ForegroundColor Red
         return 1
     }
-    Write-Host "Check OK: $($packNames.Count) pack(s), $warningCount warning(s)." -ForegroundColor Green
+    Write-Host "Check OK: $($packNames.Count) pack(s), $(@($bundleNames).Count) bundle(s), $warningCount warning(s)." -ForegroundColor Green
     return 0
 }
 
@@ -3262,9 +3481,14 @@ function Invoke-LpNewPack {
     if ($null -eq (Get-LpProperty -Object $settings -Name 'packages')) {
         $settings | Add-Member -NotePropertyName 'packages' -NotePropertyValue ([PSCustomObject]@{}) -Force
     }
+    $joinedBundleNames = @(Get-LpBundleNames -RepoRoot $RepoRoot)
     $settings.packages | Add-Member -NotePropertyName $Pack -NotePropertyValue ([PSCustomObject][ordered]@{ root = "packs/$Pack"; modFolderName = "commanders_pack_$Pack" })
+    foreach ($bundleName in $joinedBundleNames) {
+        $bundleEntry = $settings.packages.$bundleName
+        $bundleEntry.members = @(@($bundleEntry.members) + $Pack)
+    }
     Write-LpJson -Path $settingsPath -Value $settings -Depth 6
-    Write-Host "Created pack '$Pack' ($Tag, prefix $prefix): source\$Pack and packs\$Pack; registered in tools\HoiModBuild.json." -ForegroundColor Green
+    Write-Host "Created pack '$Pack' ($Tag, prefix $prefix): source\$Pack and packs\$Pack; registered in tools\HoiModBuild.json$(if ($joinedBundleNames.Count -gt 0) { ' and in the members of ' + ($joinedBundleNames -join ', ') })." -ForegroundColor Green
     $thumbnailCommand = 'New-HoiThumbnail.ps1 "Leader Packs" -Pack ' + $Pack + ' -Apply'
     if (-not (New-LpPackThumbnail -RepoRoot $RepoRoot -Pack $Pack)) {
         $masterThumbnail = Join-Path $RepoRoot 'assets\thumbnail_master.png'

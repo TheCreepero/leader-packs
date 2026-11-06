@@ -14,13 +14,15 @@ Historical generals, field marshals and admirals for each nation, with portraits
 
 ## Directory Architecture
 
-One source repository, published as one Workshop item per country ("Commanders Pack: <Country>"). The file formats and switches are in `docs/source-format.md`.
+One source repository, published as one Workshop item per country ("Commanders Pack: <Country>") and one bundle item that holds every country ("Immersive Commanders Expanded"). The file formats and switches are in `docs/source-format.md`.
 
 ```
 leader-packs/
 |-- build.ps1                       # Lifecycle commands and the pack switches (-Generate, -Check, -MakePortraits, ...)
 |-- packs/<pack>/                   # One complete mod root per country: descriptor.mod, thumbnail.png, generated content
+|-- packs/all/                      # The bundle: only descriptor.mod, thumbnail.png and the generated Workshop description; its content comes from the packs at build time
 |-- source/<pack>/                  # leaders.json, fact sheets, photos.json, portraits.json, chosen portraits
+|-- source/all/                     # The bundle's hand-written workshop-intro.bbcode
 |-- data/                           # Game snapshots, start traits, stat bands, card geometry, Workshop links
 |-- assets/                         # Master art assets
 |-- artifacts/                      # Packaged release archives (git-ignored)
@@ -41,6 +43,8 @@ All lifecycle tasks are managed through `build.ps1`:
 
 # 2. Configure zero-copy DevLink (the launcher loads this folder itself; restart the game to see a change)
 .\build.ps1 -DevLink
+#    The bundle: .\build.ps1 -DevLink -Pack all links a git-ignored .devlink folder of hard links to every pack's files;
+#    .\build.ps1 -DevLink -CheckLinks -Pack all reports links that a checkout or pull broke
 
 # 3. Validate syntax and bracket balance without deploying
 .\build.ps1 -ValidateOnly

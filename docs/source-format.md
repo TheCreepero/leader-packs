@@ -94,6 +94,10 @@ One section per leader, `## <key>`, with the facts behind the leader, his role a
 
 The opening of the pack's Workshop description in Steam BBCode. `-Generate` adds the leader list, a sentence that the portraits are repaints of period photographs under the photos' licences (no link to the wiki: the Workshop page carries no Wiki or GitHub links), and the cross-link block between the `<!-- cross-links:begin -->` and `<!-- cross-links:end -->` lines. The block is the Manager's, not this repository's: `Scripts/Workshop/Sync-WorkshopCrossLinks.ps1` of the Modding Manager writes it into each pack's description, and `-Generate` carries what is between the markers over unchanged.
 
+## `source/all/workshop-intro.bbcode` and the bundle page
+
+The bundle is the package `all` in `tools/HoiModBuild.json` (`"members": ["finland", "france", "poland"]`, every pack listed there; `-NewPack` adds a new one). `packs/all/` holds only `descriptor.mod` (the name "Immersive Commanders Expanded", the tags of its packs, `version="1.0"`, the packs' `supported_version`), `thumbnail.png` (`New-HoiThumbnail.ps1 -Pack all`) and the generated `WORKSHOP_DESCRIPTION_GUIDELINES.md`; its content comes from the member packs at build time. `source/all/workshop-intro.bbcode` is its one hand-written file: the hero region, the opening sentences (they name every member country, for example "Finland, France and Poland", and `-Check -Pack all` fails when one is missing), the `strip-info` region, `[h1]Info:[/h1]` and the `info` region with `checksum-commanders-pack,new-game,bundle-choice,game-version`. `-Generate -Pack all` (and every pack's `-Generate`) adds, after it, a `strip-countries` region and `[h1]Countries[/h1]` with one line per member (`<Country>: <n> commanders`, counted from its `leaders.json`), a Portraits paragraph (`[h1]Portraits[/h1]`) that covers the photo sources, licences and CC BY-SA adaptations of every member as a pack's own does, and the cross-link block, which `-Generate` carries over as for a pack.
+
 ## `source/<pack>/showcase.json`
 
 Optional; the owner's approved text for the pack's Workshop gallery images. It changes only on the owner's word.
@@ -264,8 +268,9 @@ The spec of the Workshop thumbnails, read by the Manager's `Scripts/Showcase/New
 | `packs/<pack>/gfx/interface/ideas/<prefix>_<key>_small.dds` | `build.ps1 -ConvertPortraits`: the 65x67 code-drawn card with a crop of the chosen portrait [CHR-005] |
 | `packs/<pack>/localisation/<language>/<prefix>_l_<language>.yml` | the `new` leaders' names in all ten languages [LOC-017], UTF-8 with BOM [LOC-001] |
 | `packs/<pack>/WORKSHOP_DESCRIPTION_GUIDELINES.md` | intro, leader list, the portrait licence sentence, other mods |
+| `packs/all/WORKSHOP_DESCRIPTION_GUIDELINES.md` | the bundle: `source/all/workshop-intro.bbcode`, the country list with commander counts, the portraits paragraph of all members, other mods |
 | `wiki/Commanders-Pack-<Country>.md` | the leader table with each photo's source, licence (CC BY linked), author, and "AI-assisted repaint" |
 
 The characters file and the localisation files are written only when the pack has a `new` leader, the on_actions file and the `.gfx` only when it has a `new` or `addRole` leader; a pack without leaders holds only its descriptor, thumbnail and Workshop description.
 
-Nothing else may sit in `packs/<pack>/`: `-Check` fails on any other file there. `build.ps1 -PreviewPortraits -Pack <pack>` writes PNG copies of the converted portraits and a sheet to `scratch/preview/<pack>/`.
+Nothing else may sit in `packs/<pack>/`: `-Check` fails on any other file there, and in `packs/all/` on any file but its descriptor, thumbnail and description. `build.ps1 -PreviewPortraits -Pack <pack>` writes PNG copies of the converted portraits and a sheet to `scratch/preview/<pack>/`.

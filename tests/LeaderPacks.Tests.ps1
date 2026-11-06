@@ -719,12 +719,166 @@ exit 0
     }
 }
 
+Describe 'Bundle' {
+    BeforeAll {
+        function New-LpBundleFixtureRepo {
+            $fixtureRoot = New-LpFixtureRepo -Packs @('testland', 'otherland') -NoPortraits
+            $packageSettings = [ordered]@{
+                all       = [ordered]@{ root = 'packs/all'; modFolderName = 'immersive_commanders_expanded'; members = @('testland', 'otherland') }
+                testland  = [ordered]@{ root = 'packs/testland'; modFolderName = 'commanders_pack_testland' }
+                otherland = [ordered]@{ root = 'packs/otherland'; modFolderName = 'commanders_pack_otherland' }
+            }
+            Write-LpJson -Path (Join-Path $fixtureRoot 'tools\HoiModBuild.json') -Value ([ordered]@{ packages = $packageSettings })
+            Write-LpText -Path (Join-Path $fixtureRoot 'packs\all\descriptor.mod') -Text ("version=`"1.0`"`r`nname=`"Immersive Commanders Expanded`"`r`npicture=`"thumbnail.png`"`r`nsupported_version=`"1.19.*`"`r`n")
+            Copy-Item -LiteralPath (Join-Path $script:LpRepoRoot 'assets\thumbnail_master.png') -Destination (Join-Path $fixtureRoot 'packs\all\thumbnail.png')
+            New-Item -ItemType Directory -Path (Join-Path $fixtureRoot 'assets') -Force | Out-Null
+            Copy-Item -LiteralPath (Join-Path $script:LpRepoRoot 'assets\thumbnail_master.png') -Destination (Join-Path $fixtureRoot 'assets\thumbnail_master.png')
+            Write-LpText -Path (Join-Path $fixtureRoot 'source\all\workshop-intro.bbcode') -Text "<!-- region:image:hero -->`r`n<!-- /region -->`r`nHistorical generals for Testland and Otherland in one item.`r`n"
+            return $fixtureRoot
+        }
+
+        function Get-LpBundleErrors {
+            param([string]$Root)
+
+            return @(Test-LpBundle -RepoRoot $Root -Bundle 'all' | Where-Object { $_.Level -eq 'ERROR' } | ForEach-Object { "$($_.Where): $($_.Message)" })
+        }
+    }
+
+    It 'keeps the bundle out of the pack names, and finds the bundle that holds a member' {
+        $fixtureRoot = New-LpBundleFixtureRepo
+        @(Get-LpPackNames -RepoRoot $fixtureRoot) | Should -Be @('testland', 'otherland')
+        @(Get-LpBundleNames -RepoRoot $fixtureRoot) | Should -Be @('all')
+        @(Get-LpBundleNames -RepoRoot $fixtureRoot -Member 'otherland') | Should -Be @('all')
+        @(Get-LpBundleNames -RepoRoot $fixtureRoot -Member 'elsewhere').Count | Should -Be 0
+    }
+
+    It 'writes the bundle page: the intro, a country list with the commander counts, the portrait licences and the link markers' {
+        $fixtureRoot = New-LpBundleFixtureRepo
+        Invoke-LpGenerate -RepoRoot $fixtureRoot -Pack 'all' 6>$null | Select-Object -Last 1 | Should -Be 0
+        $pageText = [System.IO.File]::ReadAllText((Join-Path $fixtureRoot 'packs\all\WORKSHOP_DESCRIPTION_GUIDELINES.md'), [System.Text.Encoding]::UTF8)
+        $pageText | Should -Match '(?m)^# Immersive Commanders Expanded - Workshop description'
+        $pageText | Should -Match 'Historical generals for Testland and Otherland in one item\.'
+        $testlandCount = @(Get-LpGeneratedLeaders -Pack (Get-LpPack -RepoRoot $fixtureRoot -Pack 'testland')).Count
+        $otherlandCount = @(Get-LpGeneratedLeaders -Pack (Get-LpPack -RepoRoot $fixtureRoot -Pack 'otherland')).Count
+        $testlandCount | Should -BeGreaterThan 1
+        $pageText | Should -Match ('\[\*\]Testland: ' + $testlandCount + ' commanders\r?\n\[\*\]Otherland: ' + $otherlandCount + ' commanders\r?\n')
+        $pageText | Should -Match '<!-- region:image:strip-countries -->'
+        $pageText | Should -Match '\[h1\]Portraits\[/h1\]\r?\nThe portraits are repaints of historical photographs from '
+        $pageText | Should -Match '<!-- cross-links:begin -->\r?\n<!-- cross-links:end -->'
+        $pageText | Should -Not -Match '\bAI\b|AI-assisted|image model|artificial intelligence|ComfyUI'
+        Get-LpBundleErrors -Root $fixtureRoot | Should -BeNullOrEmpty
+    }
+
+    It 'writes the portraits paragraph of a single pack as before' {
+        $fixtureRoot = New-LpBundleFixtureRepo
+        Invoke-LpGenerate -RepoRoot $fixtureRoot -Pack 'testland' 6>$null | Select-Object -Last 1 | Should -Be 0
+        $packText = [System.IO.File]::ReadAllText((Join-Path $fixtureRoot 'packs\testland\WORKSHOP_DESCRIPTION_GUIDELINES.md'), [System.Text.Encoding]::UTF8)
+        $packParagraph = Get-LpPortraitsParagraph -Packs @(Get-LpPack -RepoRoot $fixtureRoot -Pack 'testland')
+        $packText | Should -Match ([regex]::Escape($packParagraph))
+    }
+
+    It 'names the share-alike portraits of every member on the bundle page, not only the first' {
+        $fixtureRoot = New-LpBundleFixtureRepo
+        $shareAlikePhoto = New-LpFixturePhoto -Key 'alpha' -Fixture 'cc-by-sa-3.0-de'
+        Set-LpFixturePhotos -Root $fixtureRoot -Pack 'otherland' -Change { param($s) $shareAlikePhoto.downloadSha256 = $s.photos[0].downloadSha256; $s.photos[0] = $shareAlikePhoto }
+        Invoke-LpGenerate -RepoRoot $fixtureRoot -Pack 'all' 6>$null | Select-Object -Last 1 | Should -Be 0
+        $pageText = [System.IO.File]::ReadAllText((Join-Path $fixtureRoot 'packs\all\WORKSHOP_DESCRIPTION_GUIDELINES.md'), [System.Text.Encoding]::UTF8)
+        $otherlandPack = Get-LpPack -RepoRoot $fixtureRoot -Pack 'otherland'
+        $expectedParagraph = Get-LpPortraitsParagraph -Packs @((Get-LpPack -RepoRoot $fixtureRoot -Pack 'testland'), $otherlandPack)
+        $expectedParagraph | Should -Match 'licensed CC BY-SA and are themselves licensed'
+        $pageText | Should -Match ([regex]::Escape($expectedParagraph))
+        $firstPackParagraph = Get-LpPortraitsParagraph -Packs @(Get-LpPack -RepoRoot $fixtureRoot -Pack 'testland')
+        $firstPackParagraph | Should -Not -Be $expectedParagraph
+    }
+
+    It 'writes the bundle page again when a member pack is generated, and keeps what the Manager wrote in it' {
+        $fixtureRoot = New-LpBundleFixtureRepo
+        Invoke-LpGenerate -RepoRoot $fixtureRoot -Pack 'all' 6>$null | Out-Null
+        $pagePath = Join-Path $fixtureRoot 'packs\all\WORKSHOP_DESCRIPTION_GUIDELINES.md'
+        $carriedText = ([System.IO.File]::ReadAllText($pagePath, [System.Text.Encoding]::UTF8)).Replace("<!-- cross-links:begin -->`r`n<!-- cross-links:end -->", "<!-- cross-links:begin -->`r`n[b]More from the author[/b]`r`n<!-- cross-links:end -->")
+        Write-LpText -Path $pagePath -Text $carriedText
+        Invoke-LpGenerate -RepoRoot $fixtureRoot -Pack 'testland' 6>$null | Select-Object -Last 1 | Should -Be 0
+        [System.IO.File]::ReadAllText($pagePath, [System.Text.Encoding]::UTF8) | Should -Match '\[b\]More from the author\[/b\]'
+        Remove-Item -LiteralPath $pagePath
+        Invoke-LpGenerate -RepoRoot $fixtureRoot -Pack 'otherland' 6>$null | Select-Object -Last 1 | Should -Be 0
+        Test-Path -LiteralPath $pagePath | Should -BeTrue
+    }
+
+    It 'fails the check when a pack is not a member of the bundle' {
+        $fixtureRoot = New-LpBundleFixtureRepo
+        Invoke-LpGenerate -RepoRoot $fixtureRoot -Pack 'all' 6>$null | Out-Null
+        Set-LpFixtureJson -Path (Join-Path $fixtureRoot 'tools\HoiModBuild.json') -Change { param($settings) $settings.packages.all.members = @('testland') }
+        Get-LpBundleErrors -Root $fixtureRoot | Should -Contain "tools/HoiModBuild.json: pack 'otherland' is not a member of bundle 'all': add it to the members list, or its release would leave it out of the bundle"
+    }
+
+    It 'lists a member that is not a pack as a problem instead of stopping' {
+        $fixtureRoot = New-LpBundleFixtureRepo
+        Set-LpFixtureJson -Path (Join-Path $fixtureRoot 'tools\HoiModBuild.json') -Change { param($settings) $settings.packages.all.members = @('testland', 'otherland', 'ghostland') }
+        @(Get-LpBundleErrors -Root $fixtureRoot | Where-Object { $_ -like "*member 'ghostland' of bundle 'all' is not a commanders pack*" }).Count | Should -Be 1
+    }
+
+    It 'fails the check for an intro that does not name a member' {
+        $fixtureRoot = New-LpBundleFixtureRepo
+        Write-LpText -Path (Join-Path $fixtureRoot 'source\all\workshop-intro.bbcode') -Text "<!-- region:image:hero -->`r`n<!-- /region -->`r`nHistorical generals for Testland in one item.`r`n"
+        Invoke-LpGenerate -RepoRoot $fixtureRoot -Pack 'all' 6>$null | Out-Null
+        @(Get-LpBundleErrors -Root $fixtureRoot | Where-Object { $_ -like "*does not name 'Otherland'*" }).Count | Should -Be 1
+    }
+
+    It 'fails the check for a page edited by hand, a file in the bundle root and a different supported version' {
+        $fixtureRoot = New-LpBundleFixtureRepo
+        Invoke-LpGenerate -RepoRoot $fixtureRoot -Pack 'all' 6>$null | Out-Null
+        $pagePath = Join-Path $fixtureRoot 'packs\all\WORKSHOP_DESCRIPTION_GUIDELINES.md'
+        Write-LpText -Path $pagePath -Text (([System.IO.File]::ReadAllText($pagePath, [System.Text.Encoding]::UTF8)) + 'by hand')
+        Write-LpText -Path (Join-Path $fixtureRoot 'packs\all\common\extra.txt') -Text 'x'
+        Write-LpText -Path (Join-Path $fixtureRoot 'packs\all\descriptor.mod') -Text ("version=`"1.0`"`r`nname=`"Immersive Commanders Expanded`"`r`nsupported_version=`"1.18.*`"`r`n")
+        $bundleErrors = Get-LpBundleErrors -Root $fixtureRoot
+        @($bundleErrors | Where-Object { $_ -like '*differs from what the source generates*' }).Count | Should -Be 1
+        @($bundleErrors | Where-Object { $_ -like '*a bundle holds only its descriptor*' }).Count | Should -Be 1
+        @($bundleErrors | Where-Object { $_ -like "*supported_version '1.18.*' differs from '1.19.*'*" }).Count | Should -Be 2
+    }
+
+    It 'checks the bundle with the packs it holds' {
+        $fixtureRoot = New-LpBundleFixtureRepo
+        Invoke-LpGenerate -RepoRoot $fixtureRoot -Pack 'all' 6>$null | Out-Null
+        $checkOutput = @(Invoke-LpCheck -RepoRoot $fixtureRoot -Pack 'all' 6>&1 | ForEach-Object { [string]$_ })
+        ($checkOutput -join "`n") | Should -Match "Bundle 'all': 2 member"
+    }
+
+    It 'returns a failing exit code from the check for a bundle error, and 0 without one' {
+        $fixtureRoot = New-LpBundleFixtureRepo
+        Invoke-LpGenerate -RepoRoot $fixtureRoot -Pack 'all' 6>$null | Out-Null
+        Invoke-LpCheck -RepoRoot $fixtureRoot -Pack 'all' 6>$null | Select-Object -Last 1 | Should -Be 0
+        Set-LpFixtureJson -Path (Join-Path $fixtureRoot 'tools\HoiModBuild.json') -Change { param($settings) $settings.packages.all.members = @('testland') }
+        Invoke-LpCheck -RepoRoot $fixtureRoot -Pack 'all' 6>$null | Select-Object -Last 1 | Should -Be 1
+    }
+
+    It 'adds a new pack to the members of the bundle' {
+        $fixtureRoot = New-LpBundleFixtureRepo
+        Invoke-LpNewPack -RepoRoot $fixtureRoot -Pack 'newland' -Tag 'NEW' -DisplayName 'New Land' 6>$null | Select-Object -Last 1 | Should -Be 0
+        $settings = Read-LpJson -Path (Join-Path $fixtureRoot 'tools\HoiModBuild.json')
+        @($settings.packages.all.members) | Should -Be @('testland', 'otherland', 'newland')
+        $settings.packages.newland.root | Should -BeExactly 'packs/newland'
+        @(Get-LpPackNames -RepoRoot $fixtureRoot) | Should -Be @('testland', 'otherland', 'newland')
+    }
+}
+
 Describe 'This repository' {
     It 'every pack passes the check' {
         $packNames = @(Get-LpPackNames -RepoRoot $script:LpRepoRoot)
         $packNames.Count | Should -BeGreaterThan 0
         foreach ($packName in $packNames) {
             @(Test-LpPack -RepoRoot $script:LpRepoRoot -Pack $packName | Where-Object { $_.Level -eq 'ERROR' } | ForEach-Object { "$($_.Where): $($_.Message)" }) | Should -BeNullOrEmpty -Because "pack '$packName' must pass build.ps1 -Check"
+        }
+    }
+
+    It 'every bundle passes the check and holds every pack as a member' {
+        $bundleNames = @(Get-LpBundleNames -RepoRoot $script:LpRepoRoot)
+        $bundleNames.Count | Should -BeGreaterThan 0
+        foreach ($bundleName in $bundleNames) {
+            @(Test-LpBundle -RepoRoot $script:LpRepoRoot -Bundle $bundleName | Where-Object { $_.Level -eq 'ERROR' } | ForEach-Object { "$($_.Where): $($_.Message)" }) | Should -BeNullOrEmpty -Because "bundle '$bundleName' must pass build.ps1 -Check"
+        }
+        foreach ($packName in @(Get-LpPackNames -RepoRoot $script:LpRepoRoot)) {
+            @(Get-LpBundleNames -RepoRoot $script:LpRepoRoot -Member $packName).Count | Should -BeGreaterThan 0 -Because "pack '$packName' must be a member of a bundle"
         }
     }
 

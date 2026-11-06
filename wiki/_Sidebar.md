@@ -1,5 +1,6 @@
 - **[Leader Packs](Home)**
 - **Packs**
+  - [The bundle](Home)
   - [Finland](Commanders-Pack-Finland)
 - **Developer Guide**
   - [Contributing](Contributing)

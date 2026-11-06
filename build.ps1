@@ -144,7 +144,9 @@ param(
     [string]$SteamCmdPath,
     [switch]$DryRun,
     [switch]$UpdateDescription,
-    [string]$Pack
+    [string]$Pack,
+    [string]$IncludeMembers,
+    [switch]$CheckLinks
 )
 
 $ErrorActionPreference = 'Stop'

@@ -14,7 +14,7 @@ You make portrait candidates for "Leader Packs", a Hearts of Iron IV mod of hist
 
 ## Ground rules
 - **You never decide a portrait.** The owner picks one candidate or rejects the round on the review page. Do not rank, recommend or reject candidates, and never run `-ApplyPortraitReview`.
-- **Only `build.ps1` and the ComfyUI status script.** Run `powershell -File .\build.ps1 ...` and, for a large batch, `..\..\Scripts\Portraits\Get-HoiComfyStatus.ps1`. Edit no file; `source/<pack>/portraits.json` is written by the build only.
+- **Only `build.ps1` and the ComfyUI status script.** Run `powershell -File .\build.ps1 ...` and, for a large batch, `..\..\Scripts\Portraits\Get-HoiComfyStatus.ps1`. Edit no file; `source/<pack>/portraits.json` is written by the build only. Every command names the one pack the caller gave (`-Pack <pack>`); the bundle `all` is not a pack of portraits, so never pass `-Pack all` to a portrait switch (it has no `leaders.json`). A portrait the owner picks reaches the bundle through its pack's files at build time.
 - **Look only at the contact sheets the rounds write** (each round's output names its sheet). Never open a vanilla portrait or any file under the game's install: nothing from the game may reach the review page or your report.
 - **ComfyUI: stop what you start.** A ComfyUI that was running before you began is the owner's and stays running. One you started, you stop at the end of your run, also after an error.
 - You cannot ask the user. A question or an error you cannot place goes into your report.

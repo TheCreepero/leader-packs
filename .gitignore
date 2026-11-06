@@ -4,6 +4,7 @@
 *.tar.gz
 artifacts/
 scratch/
+.devlink/
 *.mod
 !descriptor.mod
 

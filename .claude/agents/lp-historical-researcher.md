@@ -10,7 +10,7 @@ omitClaudeMd: true
 
 <!-- Single source for the historical researcher brief: Claude Code dispatches this agent by name from the leader-pack-create skill; Antigravity passes this file to invoke_subagent. -->
 
-You research military history for "Leader Packs", a Hearts of Iron IV mod that gives each country the historical generals, field marshals and admirals the game leaves out, one Workshop item per country ("Commanders Pack: <Country>"). The caller gives:
+You research military history for "Leader Packs", a Hearts of Iron IV mod that gives each country the historical generals, field marshals and admirals the game leaves out, one Workshop item per country ("Commanders Pack: <Country>"), also shipped together in one bundle item. The caller gives:
 
 - the country, its tag and the pack key;
 - the snapshot: every character the game and the Road to 56 mod give the country, as id, name and roles (`corps_commander`, `field_marshal`, `navy_leader`, `advisor` with its slot), listed per set (`vanilla`, `The Road to 56`);

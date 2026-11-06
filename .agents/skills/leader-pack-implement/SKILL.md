@@ -30,7 +30,7 @@ Dispatch `lp-implementer` with the prompt `Carry out docs/plans/<file>.md` and n
 The report is a claim. Check:
 1. `powershell -File .\build.ps1 -Check -Pack <pack>` ends `Check OK`, and every `[WARN]` is in the plan's "Kept on judgment".
 2. `powershell -File .\build.ps1 -ValidateOnly` ends `Validation succeeded.`; `powershell -File .\build.ps1 -Test` has no failed test.
-3. `git status --short` lists only `source/<pack>/`, `packs/<pack>/`, `data/<pack>/` (a snapshot the planning refreshed), `research/<pack>/` (the plan's dossier and its `Used:` marks), `wiki/Commanders-Pack-<Country>.md` and the plan.
+3. `git status --short` lists only `source/<pack>/`, `packs/<pack>/`, `data/<pack>/` (a snapshot the planning refreshed), `research/<pack>/` (the plan's dossier and its `Used:` marks), `wiki/Commanders-Pack-<Country>.md` and the plan, and, from `-Generate`, the bundle's `packs/all/WORKSHOP_DESCRIPTION_GUIDELINES.md` (its country list and portrait licences follow the packs; `-Check -Pack all` ends `Check OK`). For a new pack `tools/HoiModBuild.json` also lists it (the pack's own entry and the bundle's `members`).
 4. The plan says `Status: DONE`, every box but the ship and game-check steps is ticked.
 5. Look at the converted portraits: `powershell -File .\build.ps1 -PreviewPortraits -Pack <pack>` writes PNG copies of the pack's large portraits and small cards, and a sheet, to `scratch/preview/<pack>/`. Open the sheet with the Read tool. A face cut by the card's photo window, or a card that is blank, goes back to the planner; the picks themselves are the owner's and are not judged here.
 
@@ -38,7 +38,7 @@ Then dispatch `lp-reviewer` for an implementation review, with the task as the o
 
 ## 4. The owner's game check
 Offer it, and run nothing until the owner says to:
-1. `powershell -File .\build.ps1 -DevLink -Pack <pack>`: the launcher loads `packs/<pack>/` from the repository.
+1. `powershell -File .\build.ps1 -DevLink -Pack <pack>`: the launcher loads `packs/<pack>/` from the repository. To see the pack inside the bundle, offer `powershell -File .\build.ps1 -DevLink -Pack all` instead: it links every pack's files into the git-ignored `.devlink/immersive_commanders_expanded/` folder and points the launcher at it. The bundle and the single pack of the same release load together without a duplicate [LOAD-022]. After a `git checkout` or `pull` run `powershell -File .\build.ps1 -DevLink -CheckLinks -Pack all`: it reports broken links and changes nothing; `-DevLink -Pack all` again rebuilds the folder.
 2. The owner starts a **new** game as the pack's country with the pack enabled, once on vanilla and, when they play it, once on their Road to 56 playset. A loaded save shows nothing: the pack recruits only in a new game [SCR-077] [CHR-003].
 3. What the owner looks at:
    - the Officer Corps: each `new` general and field marshal with his name, large portrait, skill levels and traits as the plan gives them;

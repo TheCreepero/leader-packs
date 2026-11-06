@@ -283,9 +283,9 @@ function Set-LpFixtureLeaders {
 }
 
 function Set-LpFixturePhotos {
-    param([string]$Root, [scriptblock]$Change)
+    param([string]$Root, [scriptblock]$Change, [string]$Pack = 'testland')
 
-    Set-LpFixtureJson -Path (Join-Path $Root 'source\testland\photos.json') -Change $Change
+    Set-LpFixtureJson -Path (Join-Path $Root "source\$Pack\photos.json") -Change $Change
 }
 
 function Set-LpFixtureRecords {
