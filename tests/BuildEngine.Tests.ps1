@@ -475,6 +475,37 @@ Describe 'Packages' -Tag 'Engine' {
         Invoke-ModBuildAction -Config $config -Package -NoValidate -Pack 'gamma' | Select-Object -Last 1 | Should -Be 1
     }
 
+    It 'finds a mod that the Manager registry marks with publish false, by absolute or relative path, and no other' {
+        $managerRoot = New-TestDirectory
+        $localRepo = Join-Path $managerRoot 'mods\local-mod'
+        $publishedRepo = Join-Path $managerRoot 'mods\published-mod'
+        $unlistedRepo = Join-Path $managerRoot 'mods\unlisted-mod'
+        foreach ($repoPath in @($localRepo, $publishedRepo, $unlistedRepo)) {
+            Write-TestFile -Root $repoPath -RelativePath 'descriptor.mod' -Text "name=`"Fixture`"`r`n"
+        }
+        $registryText = ConvertTo-Json -InputObject @(
+            [ordered]@{ modName = 'Local'; localPath = 'mods\local-mod'; publish = $false },
+            [ordered]@{ modName = 'Published'; localPath = $publishedRepo; publish = $true },
+            [ordered]@{ modName = 'Plain'; localPath = 'mods\plain-mod' }
+        )
+        Write-TestFile -Root $managerRoot -RelativePath 'Config\mods_registry.json' -Text $registryText
+        Test-ModRegisteredLocalOnly -Config (Get-ModBuildConfig -RepoDir $localRepo) -ManagerRoot $managerRoot | Should -BeTrue
+        Test-ModRegisteredLocalOnly -Config (Get-ModBuildConfig -RepoDir $publishedRepo) -ManagerRoot $managerRoot | Should -BeFalse
+        Test-ModRegisteredLocalOnly -Config (Get-ModBuildConfig -RepoDir $unlistedRepo) -ManagerRoot $managerRoot | Should -BeFalse
+    }
+
+    It 'does not treat a mod as local only when no Manager root is found' {
+        $repo = New-FixtureRepo
+        Test-ModRegisteredLocalOnly -Config (Get-ModBuildConfig -RepoDir $repo) -ManagerRoot '' | Should -BeFalse
+    }
+
+    It 'refuses to upload a mod that is registered as local only' {
+        Mock Test-ModRegisteredLocalOnly { $true }
+        $config = Get-ModBuildConfig -RepoDir (New-FixtureRepo)
+        Invoke-ModPublish -Config $config -DryRun -SteamUser 'tester' | Select-Object -Last 1 | Should -Be 1
+        Should -Invoke Test-ModRegisteredLocalOnly -Times 1 -Exactly
+    }
+
     It 'deploys and DevLinks one package from its own root' {
         $modDir = New-TestDirectory
         $fixtureRoot = New-FixturePackRepo
@@ -883,6 +914,9 @@ Describe 'This repository' {
             return
         }
         foreach ($repoConfig in $script:RepoConfigs) {
+            if (Test-ModRegisteredLocalOnly -Config $repoConfig) {
+                continue
+            }
             $packArguments = @(Get-PackArguments -RepoConfig $repoConfig)
             $dryRunOutput = @(& $script:PowerShellExe -NoProfile -ExecutionPolicy Bypass -File $script:BuildScriptPath -PublishSteam -DryRun -NoValidate -SteamUser 'tester' @packArguments 2>&1 | ForEach-Object { "$_" })
             $LASTEXITCODE | Should -Be 0 -Because "package '$($repoConfig.PackageName)'"
