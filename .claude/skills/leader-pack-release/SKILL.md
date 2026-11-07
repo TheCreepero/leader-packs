@@ -36,7 +36,7 @@ Every pack's thumbnail is drawn by the Manager's `New-HoiThumbnail.ps1` (skill `
 ## 2b. Gallery images
 1. Every leader the release adds has card lines in `source/<pack>/showcase.json` (`docs/source-format.md`). A leader without them: propose 3 or 4 lines and the years from his fact-sheet section, and write them only on the owner's word.
 2. `powershell -File .\build.ps1 -RenderShowcase -Pack <pack>` writes the roster and one card per leader to `artifacts/workshop-images/<pack>/`. A `Warning:` line (a text cut short, a missing sprite or flag) is fixed in the data, not accepted. Look at every image, then show them to the owner.
-3. After the upload of section 4, the owner adds or replaces them on the pack's Workshop page ("Add/edit images & videos"); the upload carries only the thumbnail.
+3. After the upload of section 4, the owner adds or replaces them on the pack's Workshop page ("Add/edit images & videos"); the upload carries only the thumbnail. The bundle's gallery is the cover `Export-HoiBrandingShowcase.ps1` draws (`immersive-commanders-expanded-cover.png` in the Manager's `Artifacts\branding\`) and the `00-roster` of each member in country order; after a member's roster changes, put the new one in the bundle's gallery too.
 
 ## 2c. Description images
 The generated description has a `hero` and an `overview` region, and the preflight's Workshop text row fails a first upload while either has no address in the Manager's `Config/workshop-image-urls.json` (`commanders-pack-<country>/hero` and `/overview`; the strips are shared by the family and exist).
