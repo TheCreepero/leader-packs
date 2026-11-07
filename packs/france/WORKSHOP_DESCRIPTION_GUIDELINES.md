@@ -46,6 +46,7 @@ The portraits are repaints of historical photographs from Wikimedia Commons, use
 [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3833590274][img]https://i.imgur.com/qJpjDyO.png[/img][/url]
 [b]More from the author[/b], all in the collections [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3833590274]The Immersive Series[/url] and [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3834987626]The Immersive Series: Commander Packs[/url]
 [list]
+[*][url=https://steamcommunity.com/sharedfiles/filedetails/?id=3835004745]Immersive Commanders Expanded[/url]
 [*][url=https://steamcommunity.com/sharedfiles/filedetails/?id=3831847770]Commanders Pack: Finland[/url]
 [*][url=https://steamcommunity.com/sharedfiles/filedetails/?id=3832957297]Commanders Pack: France[/url]
 [*][url=https://steamcommunity.com/sharedfiles/filedetails/?id=3834744692]Commanders Pack: Poland[/url]
