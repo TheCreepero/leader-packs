@@ -172,24 +172,6 @@ function Invoke-ForEachSelectedPack {
     return $worstExitCode
 }
 
-function Sync-SkillMirrors {
-    $sourceRoot = Join-Path $PSScriptRoot '.claude\skills'
-    $mirrorRoot = Join-Path $PSScriptRoot '.agents\skills'
-    if (-not (Test-Path -LiteralPath $sourceRoot)) {
-        Write-Host 'No skills under .claude\skills.' -ForegroundColor Yellow
-        return 0
-    }
-    if (Test-Path -LiteralPath $mirrorRoot) {
-        Remove-Item -LiteralPath $mirrorRoot -Recurse -Force
-    }
-    New-Item -ItemType Directory -Path $mirrorRoot -Force | Out-Null
-    foreach ($skillFolder in @(Get-ChildItem -LiteralPath $sourceRoot -Directory)) {
-        Copy-Item -LiteralPath $skillFolder.FullName -Destination (Join-Path $mirrorRoot $skillFolder.Name) -Recurse -Force
-    }
-    Write-Host "Mirrored $(@(Get-ChildItem -LiteralPath $sourceRoot -Directory).Count) skill(s) to .agents\skills." -ForegroundColor Green
-    return 0
-}
-
 function Assert-PackGiven {
     param([Parameter(Mandatory = $true)][string]$SwitchName)
 
@@ -270,7 +252,7 @@ switch ($PSCmdlet.ParameterSetName) {
         exit ([int](@(Invoke-LpAudit -RepoRoot $PSScriptRoot -Pack $Pack)[-1]))
     }
     'SyncMirrors' {
-        exit (Sync-SkillMirrors)
+        exit (Sync-ModSkillMirrors -RepoPath $PSScriptRoot)
     }
     'ReviewPage' {
         Assert-PackGiven -SwitchName '-ReviewPage'
