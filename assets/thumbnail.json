@@ -7,6 +7,12 @@
         "scrim": 0.5
     },
     "packs": {
+        "all": {
+            "background": {
+                "artKey": "fin-artillery-planning-forest",
+                "crop": "art:square"
+            }
+        },
         "finland": {
             "portraits": [
                 "source/finland/portraits/kaarlo_heiskanen.png",

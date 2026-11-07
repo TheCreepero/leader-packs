@@ -18,3 +18,12 @@ Historical generals, field marshals and admirals for Hearts of Iron IV that the 
 
 ## Developers
 - [Contributing](Contributing)
+
+## Picture credits
+
+The thumbnail and the gallery images use period photographs, colourised, then cropped and resized. Each picture links to its source record.
+
+| Picture | Shows | Used for | Credit and licence |
+|---|---|---|---|
+| [JR 16:n komentopaikka. Tykistötukea suunnitellaan karttapöydän ääre...](https://www.finna.fi/Record/sa-kuva.sa-kuva%2F87891) | Finnish officers planning artillery fire over a map on a table in a forest | thumbnail of Immersive Commanders Expanded | SA-kuva-arkisto (M. J. Vuorela), CC BY 4.0 |
+| [The Operations Room at RAF Fighter Command's No. 10 Group Headquart...](https://commons.wikimedia.org/wiki/File:The_Operations_Room_at_RAF_Fighter_Command%27s_No._10_Group_Headquarters,_Rudloe_Manor_(RAF_Box),_Wiltshire,_showing_WAAF_plotters_and_duty_officers_at_work,_1943._CH11887.jpg) | women of the Women's Auxiliary Air Force around the plotting table of an RAF operations room | cover of Immersive Commanders Expanded | Royal Air Force official photographer (F/O A. Goodchild), public domain |
