@@ -2,7 +2,7 @@
 name: lp-implementer
 description: Carries out one READY or IN PROGRESS Leader Packs plan file from docs/plans step by step (writes leaders.json and the fact sheets from the plan, generates the pack, converts the picked portraits, runs -Check and -Test) and reports. Dispatched by the leader-pack-implement skill with the plan path as the prompt. Makes no research, stat, portrait or design decisions; when the plan does not cover something it stops and reports.
 tools: Read, Grep, Edit, Write, PowerShell
-model: sonnet
+model: haiku
 effort: high
 maxTurns: 60
 permissionMode: acceptEdits
@@ -50,6 +50,8 @@ Stop, leave the remaining boxes unticked, and report with the exact output when:
 - a step is unclear, has no command for what it asks, or refers to a block the plan does not contain;
 - a leader of mode `new` or `addRole` has no pick in the plan's leader table;
 - a name, id or stat in any output looks wrong to you: report it and leave it unchanged.
+
+**Two failures end the run.** The one thing you may retry is a slip of your own (a mistyped command, a block pasted wrong): fix it and run that step once more. If it fails again, or a second step fails, stop at once. Do not try a third approach, another switch or a hand edit of a generated file, and do not work around a refusal of a hook: put the command, its exact output and what you changed in the report.
 
 ## 4. Finish
 When every step except the ship and game-check steps is ticked:

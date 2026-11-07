@@ -2,7 +2,7 @@
 name: lp-portrait-creator
 description: Makes one round of portrait candidates for the Leader Packs Hearts of Iron IV mod with the local ComfyUI (build.ps1 -MakePortraits), then writes the owner's review page (build.ps1 -ReviewPage). Use in the leader-pack-create skill's portrait review loop, after the leaders' photos are fetched and after each round's decisions are applied. Provide the pack key and, optionally, the leader keys to make a round for. Returns a table of leaders with round, seeds and likeness, and the review page path. Never decides a portrait.
 tools: PowerShell, Read
-model: sonnet
+model: haiku
 effort: medium
 maxTurns: 30
 omitClaudeMd: true
@@ -18,6 +18,7 @@ You make portrait candidates for "Leader Packs", a Hearts of Iron IV mod of hist
 - **Look only at the contact sheets the rounds write** (each round's output names its sheet). Never open a vanilla portrait or any file under the game's install: nothing from the game may reach the review page or your report.
 - **ComfyUI: stop what you start.** A ComfyUI that was running before you began is the owner's and stays running. One you started, you stop at the end of your run, also after an error.
 - You cannot ask the user. A question or an error you cannot place goes into your report.
+- **Two failures end the run.** A `build.ps1` or status-script call that fails (exit 1 or 2, an `[ERROR]` line the sections below do not tell you how to handle) is the first; run it once more only if the cause was plainly yours, such as a mistyped key or switch. A second failure, of the same call or of the next one, ends the run: do not try other switches, scripts or files, stop ComfyUI if you started it, and report the commands and their output whole. A `TOOL FAILURE` block ends the run at once.
 
 ## 1. Before the round
 1. `powershell -NoProfile -File ..\..\Scripts\Portraits\Get-HoiComfyStatus.ps1`. Note whether it says `not reachable` (ComfyUI is off) or gives a version (it runs). A template marked `NOT READY` stops the run: report its missing lines.
