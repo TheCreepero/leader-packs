@@ -1161,6 +1161,12 @@ Describe 'Plans' {
         $output | Should -Contain '## Photos'
         $output | Should -Contain '## Review rounds'
         $output | Should -Contain '| alpha_leader | Alpha Leader | new | none; none | corps_commander | 3 / 4 2 2 2 | infantry_officer | alpha | r1, seed 2 |'
+        $templateLines = @(Get-Content -LiteralPath (Join-Path (Split-Path -Parent $PSScriptRoot) 'docs\plans\TEMPLATE-pack.md'))
+        foreach ($table in @(@{ Heading = '## Leaders'; Start = '| Key | Name |' }, @{ Heading = '## Photos'; Start = '| Photo key |' }, @{ Heading = '## Review rounds'; Start = '| Leader | Round |' })) {
+            $templateHeader = @($templateLines | Where-Object { $_.StartsWith($table.Start) })
+            $templateHeader.Count | Should -Be 1 -Because "TEMPLATE-pack.md holds one header row of the $($table.Heading) table"
+            $output[[array]::IndexOf($output, $table.Heading) + 2] | Should -BeExactly $templateHeader[0] -Because "the $($table.Heading) header the rehearsal prints is the template's"
+        }
         $output | Should -Contain 'plan tables: match'
         @($output | Where-Object { $_ -like 'differs:*' }).Count | Should -Be 0
         @(Get-ChildItem -LiteralPath (Join-Path $fixture.Root 'scratch') -Directory -ErrorAction SilentlyContinue).Count | Should -Be 0

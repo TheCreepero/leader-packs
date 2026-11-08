@@ -10,7 +10,7 @@ Review page: <url recorded in source/<pack>/review.json>
 
 ## For the implementer
 
-Carry out "Implementation steps" in order with `.claude/agents/lp-implementer.md`. Everything the steps write is in this file: the `json leaders` block is the whole `source/<pack>/leaders.json`, and the `markdown fact-sheets` block holds the sections for `source/<pack>/fact-sheets.md`. The photos, the portrait rounds and the owner's picks were recorded while planning (`photos.json`, `portraits.json`, `portraits/`); do not touch them. Decide nothing; stop and report when something does not fit.
+Carry out "Implementation steps" in order with `.claude/agents/lp-implementer.md`. Everything the steps write is in this file, and the switches carry it out: `build.ps1 -ApplyPlan` writes the source from the three blocks at the end of this file, then `-Generate`, `-ConvertPortraits`, `-Check`, `-ValidateOnly` and `-Test` run as the steps say. Write no block by hand and copy nothing from this file yourself. The photos, the portrait rounds and the owner's picks were recorded while planning (`photos.json`, `portraits.json`, `portraits/`); do not touch them. Decide nothing; stop and report when something does not fit.
 
 ## Context
 
@@ -22,12 +22,10 @@ Carry out "Implementation steps" in order with `.claude/agents/lp-implementer.md
 
 ## Leaders
 
-One row per leader of the pack, `skip` leaders included. Stats are `skill` then the attribute skills of the role kind (army: attack/defense/planning/logistics; navy: attack/defense/maneuvering/coordination).
+One row per leader of the pack, `skip` leaders included. Pasted in Phase 6 from the "Leaders" table of `powershell -File .\build.ps1 -RehearsePlan -Plan docs\plans\<this plan's file name>`, which builds it from `leaders.json` and `portraits.json`; not kept by hand while planning. A value changes in the `json leaders` block, and the table is pasted again. There is no Status column: at READY every leader is ready, and the plan's state is its `Status:` line. Stats are `skill` then the attribute skills of the role kind (army: attack/defense/planning/logistics; navy: attack/defense/maneuvering/coordination).
 
-| Key | Name | Mode | Ids (target; sameAs) | Role | Stats | Traits | Photo | Portrait (round, pick) | Status |
-|---|---|---|---|---|---|---|---|---|---|
-
-Status per leader: `roster`, `photo`, `portrait open`, `portrait picked`, `stats set`, `ready`, or `skip`.
+| Key | Name | Mode | Ids (target; sameAs) | Role | Stats | Traits | Photo | Portrait (round, pick) |
+|---|---|---|---|---|---|---|---|---|
 
 ## Stat notes
 
@@ -35,14 +33,14 @@ Status per leader: `roster`, `photo`, `portrait open`, `portrait picked`, `stats
 
 ## Photos
 
-Every row printed `ACCEPTED` from `build.ps1 -FetchPhoto` while planning; the licence column is what it printed. A `manual` row also names the date the owner confirmed it with `-ConfirmLicence`.
+Pasted in Phase 6 from the "Photos" table of `-RehearsePlan` (the same command), which builds it from `photos.json`, where `build.ps1 -FetchPhoto` recorded each photo after it printed `ACCEPTED`; not kept by hand while planning. A photo no leader uses shows `none (unused)`. `-Check` refuses a `manual` photo the owner has not confirmed with `-ConfirmLicence`.
 
 | Photo key | Source and id | Licence (author or credit) | Size | Leader |
 |---|---|---|---|---|
 
 ## Review rounds
 
-One line per leader and round: the round, its seeds, the owner's decision (pick `<seed>`, or reject with the reason as written), and for a rejection the `portrait` fields or the photo changed for the next round.
+One line per leader and round: the round, its seeds, the owner's decision (pick `<seed>`, or reject with the reason as written). Pasted in Phase 6 from the "Review rounds" table of `-RehearsePlan` (the same command), which builds it from `portraits.json`; not kept by hand while planning. The last column is empty in the output: after pasting, write in it, for a rejection, the `portrait` fields or the photo changed for the next round (from the notes taken in Phase 4).
 
 | Leader | Round | Seeds | Decision | Change for the next round |
 |---|---|---|---|---|
@@ -53,17 +51,15 @@ One line per leader and round: the round, its seeds, the owner's decision (pick 
 
 ## Kept on judgment
 
-<Each `[WARN]` line of `build.ps1 -Check` that stays, with the reason. The implementer stops on any other warning.>
+<Each `[WARN]` line that `-RehearsePlan` prints (under `apply:`, `convert-portraits:` or `check:`) and that stays, with the reason. The implementer stops on any other warning.>
 
 ## READY criteria
 
 - [ ] Every `new` and `addRole` leader has a fact-sheet section in the block below, with a source for each fact his role, stats and traits rest on.
-- [ ] Every `new` and `addRole` leader has a photo that printed `ACCEPTED` and is recorded in `photos.json`.
-- [ ] Every `new` and `addRole` leader has a portrait the owner picked, recorded as `chosen` in `portraits.json`.
-- [ ] Every `new` and `addRole` leader has a role, stats and traits by `docs/stat-guide.md`, with a "Stat notes" line.
-- [ ] Every `skip` leader has a reason that names the covering id.
-- [ ] Every `new` and `addRole` leader has card lines and years in the `json showcase` block, each line restating a sourced fact-sheet bullet, approved by the owner.
-- [ ] `build.ps1 -RehearsePlan` gave what each step expects, and no plan table row differs from the source files.
+- [ ] Every `new` and `addRole` leader has a role, stats and traits by `docs/stat-guide.md`, with a "Stat notes" line (the bands, the trait lists and the skip `reason`'s covering id are checked by `-Check`).
+- [ ] Every `new` and `addRole` leader has card lines and years in the `json showcase` block, each line restating a sourced fact-sheet bullet, approved by the owner (`-ApplyPlan` refuses a key that is not a leader of the block and warns of a missing card).
+- [ ] `powershell -File .\build.ps1 -RehearsePlan -Plan docs\plans\<this plan's file name>` exited 0 with `apply:`, `generate:` and `convert-portraits:` each `OK (...)`, `check:` `Check OK`, `repodata:` `0 Failed`, and ended in `plan tables: match`; the Leaders, Photos and Review rounds tables above are its output, so each `new` and `addRole` leader shows a photo key in Photos, a picked round and seed (no `no chosen portrait yet` warning), and every `skip` leader a row.
+- [ ] Every `[WARN]` line of that rehearsal is listed in "Kept on judgment" with a reason.
 - [ ] `lp-reviewer` returned ready on the plan.
 
 ## Implementation steps
