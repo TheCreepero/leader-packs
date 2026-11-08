@@ -9,12 +9,14 @@ BeforeAll {
         $hookJson = ConvertTo-Json -InputObject @{ tool_name = $ToolName; tool_input = $ToolInput } -Depth 4 -Compress
         $previousIn = [Console]::In
         $previousError = [Console]::Error
+        $errorWriter = [System.IO.StringWriter]::new()
         try {
             [Console]::SetIn([System.IO.StringReader]::new($hookJson))
-            [Console]::SetError([System.IO.StringWriter]::new())
+            [Console]::SetError($errorWriter)
             $global:LASTEXITCODE = 0
             $null = & $script:ProtectHook -RepoRoot $script:RepoRoot
             $hookExitCode = $global:LASTEXITCODE
+            $script:LastHookMessage = $errorWriter.ToString()
         } finally {
             [Console]::SetIn($previousIn)
             [Console]::SetError($previousError)
@@ -135,6 +137,35 @@ Describe 'Protect-ProjectFiles hook' {
         Invoke-ProtectHook -ToolName 'Bash' -ToolInput @{ command = $Command } | Should -Be 2
     }
 
+    It 'tells a refused <Tool> statement how to read the file' -TestCases @(
+        @{ Tool = 'PowerShell'; Command = 'Set-Content source\finland\photos.json "{}"' },
+        @{ Tool = 'Bash'; Command = 'echo x > packs/finland/sound/x.wav' },
+        @{ Tool = 'Bash'; Command = "python - <<EOF`nopen('source/finland/portraits.json','w')`nEOF" }
+    ) {
+        param($Tool, $Command)
+        $script:LastHookMessage = ''
+        Invoke-ProtectHook -ToolName $Tool -ToolInput @{ command = $Command } | Should -Be 2
+        $script:LastHookMessage | Should -BeLike '*writes to a protected path*'
+        $script:LastHookMessage.Contains('To read one of these files, use the Read or Grep tool, or `build.ps1 -ListCharacters`.') | Should -BeTrue -Because $script:LastHookMessage
+    }
+
+    It 'still refuses a Python read, or a read in a command that also writes: <Command>' -TestCases @(
+        @{ Command = 'python -I -c "import json; print(len(json.load(open(''source/finland/photos.json''))))"' },
+        @{ Command = 'Get-Content source\finland\photos.json -Raw | ConvertFrom-Json | Export-Csv scratch\x.csv' }
+    ) {
+        param($Command)
+        $script:LastHookMessage = ''
+        Invoke-ProtectHook -ToolName 'PowerShell' -ToolInput @{ command = $Command } | Should -Be 2
+        $script:LastHookMessage | Should -BeLike '*use the Read or Grep tool*'
+    }
+
+    It 'keeps the edit refusal message free of the read hint' {
+        $script:LastHookMessage = ''
+        Invoke-ProtectHook -ToolName 'Write' -ToolInput @{ file_path = (Join-Path $script:RepoRoot 'source\finland\photos.json') } | Should -Be 2
+        $script:LastHookMessage | Should -BeLike 'source/finland/photos.json is written only by build.ps1 -FetchPhoto*'
+        $script:LastHookMessage | Should -Not -BeLike '*ListCharacters*'
+    }
+
     It 'allows the command <Command>' -TestCases @(
         @{ Command = 'powershell -File .\build.ps1 -Generate -Pack finland' },
         @{ Command = 'powershell -File .\build.ps1 -FetchPhoto -Pack finland -File "File:Einar Vihma.jpg" -Key vihma' },
@@ -153,6 +184,7 @@ Describe 'Protect-ProjectFiles hook' {
         @{ Command = 'git diff -- source/finland/portraits.json' },
         @{ Command = 'Get-Content source\finland\portraits.json' },
         @{ Command = 'Get-Content data\portrait-card.json' },
+        @{ Command = 'Get-Content source\finland\photos.json -Raw | ConvertFrom-Json | Select-Object -First 1' },
         @{ Command = 'powershell -File .\build.ps1 -RefreshGameData -Pack finland' },
         @{ Command = 'git diff -- data/finland/start-traits.json data/finland/game-characters.json source/finland/converted.json' },
         @{ Command = 'Get-ChildItem packs\finland -Recurse 2>$null' },

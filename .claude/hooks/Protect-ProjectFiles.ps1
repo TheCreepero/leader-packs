@@ -106,7 +106,8 @@ try {
             if ($statement -match '^\s*git\s' -and $statement -notmatch '[;&|<>`$]') { continue }
             if ($statement -match $writePattern) {
                 if ($namesProtectedPath -or $protectedPathCarried) {
-                    [Console]::Error.WriteLine("The statement '$statement' writes to a protected path: a pack folder, a photos.json, a portraits.json, a converted.json, a review.json, a chosen portrait, a game snapshot or a generated wiki page changes only through build.ps1 (-Generate, -ConvertPortraits, -FetchPhoto, -MakePortraits, -ApplyPortraitReview, -ReviewPage -PageUrl, -RefreshGameData) run as a statement of its own (see docs/source-format.md); data/portrait-card.json only on the owner's word; a pack's thumbnail.png only through the Manager's New-HoiThumbnail.ps1 -Apply; a file synced from the Manager or the .agents mirror changes at its source. Git statements and other statements in the same command are not affected.")
+                    $readHint = 'To read one of these files, use the Read or Grep tool, or `build.ps1 -ListCharacters`.'
+                    [Console]::Error.WriteLine("The statement '$statement' writes to a protected path: a pack folder, a photos.json, a portraits.json, a converted.json, a review.json, a chosen portrait, a game snapshot or a generated wiki page changes only through build.ps1 (-Generate, -ConvertPortraits, -FetchPhoto, -MakePortraits, -ApplyPortraitReview, -ReviewPage -PageUrl, -RefreshGameData) run as a statement of its own (see docs/source-format.md); data/portrait-card.json only on the owner's word; a pack's thumbnail.png only through the Manager's New-HoiThumbnail.ps1 -Apply; a file synced from the Manager or the .agents mirror changes at its source. Git statements and other statements in the same command are not affected. $readHint")
                     exit 2
                 }
                 continue
