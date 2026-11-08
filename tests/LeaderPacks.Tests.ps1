@@ -1010,7 +1010,7 @@ Describe 'Plans' {
         $script:PlanFixturePath = (Resolve-Path -LiteralPath (Join-Path $script:LpFixtureDir '..\plans\testland-plan.md')).Path
 
         function Get-LpPlanFixtureText {
-            return [System.IO.File]::ReadAllText($script:PlanFixturePath, [System.Text.Encoding]::UTF8)
+            return (ConvertTo-LpLineEnding -Text ([System.IO.File]::ReadAllText($script:PlanFixturePath, [System.Text.Encoding]::UTF8)) -LineEnding "`n")
         }
 
         function New-LpPlanFixture {
@@ -1057,6 +1057,11 @@ Describe 'Plans' {
     It 'writes the leaders, merges the fact-sheet sections and the showcase entries, and touches no record' {
         $fixture = New-LpPlanFixture
         $recordsBefore = Get-LpSourceHashes -Root $fixture.Root -Except @('leaders.json', 'fact-sheets.md', 'showcase.json')
+        $originalEndings = [ordered]@{
+            'leaders.json'   = Get-LpLineEnding -Path (Join-Path $fixture.Root 'source\testland\leaders.json')
+            'fact-sheets.md' = Get-LpLineEnding -Path (Join-Path $fixture.Root 'source\testland\fact-sheets.md')
+            'showcase.json'  = "`n"
+        }
         $output = Invoke-LpApplyCaptured -Fixture $fixture
         $output[-1] | Should -Be '0'
         $output | Should -Contain 'source/testland/leaders.json: written; 6 leader(s): added 0, changed 1 (alpha_leader), removed 0'
@@ -1066,12 +1071,19 @@ Describe 'Plans' {
         $output | Should -Contain "Plan applied to pack 'testland': 3 file(s) written, 0 unchanged."
         @($output | Where-Object { $_ -like '*[[]WARN]*' }).Count | Should -Be 3
         (Read-LpJson -Path (Join-Path $fixture.Root 'source\testland\leaders.json')).leaders[0].attack | Should -Be 4
-        $factSheetText = [System.IO.File]::ReadAllText((Join-Path $fixture.Root 'source\testland\fact-sheets.md'))
+        $factSheetPath = Join-Path $fixture.Root 'source\testland\fact-sheets.md'
+        $factSheetRaw = [System.IO.File]::ReadAllText($factSheetPath)
+        foreach ($endingName in $originalEndings.Keys) {
+            $writtenText = [System.IO.File]::ReadAllText((Join-Path $fixture.Root "source\testland\$endingName"))
+            $strayPattern = $(if ($originalEndings[$endingName] -eq "`r`n") { '(?<!\r)\n' } else { '\r' })
+            [regex]::Matches($writtenText, $strayPattern).Count | Should -Be 0 -Because "$endingName keeps the line ending it had"
+        }
+        $factSheetText = ConvertTo-LpLineEnding -Text $factSheetRaw -LineEnding "`n"
         @([regex]::Matches($factSheetText, '(?m)^## (\S+)') | ForEach-Object { $_.Groups[1].Value }) | Should -Be @('alpha_leader', 'bravo_leader', 'charlie_leader', 'delta_advisor', 'echo_admiral', 'foxtrot_marshal')
         $factSheetText | Should -Match '(?s)## alpha_leader\n\n- A corps commander of the fixture country, now with a second fact\. Source: https://example\.org/alpha\n- He held the line at the bridge\. Source: https://example\.org/alpha-2\n\n## bravo_leader'
         $factSheetText | Should -Match '(?s)## echo_admiral\n\n- A navy chief who also commanded a fleet\. Source: https://example\.org/echo\n\n## foxtrot_marshal\n\n- A skip leader with a note of his own\. Source: https://example\.org/foxtrot\n$'
         $factSheetText | Should -Not -Match "\n\n$"
-        [System.IO.File]::ReadAllText((Join-Path $fixture.Root 'source\testland\showcase.json')) | Should -BeExactly ("{`n    `"leaders`": {`n        `"alpha_leader`": {`n            `"card`": [`n                `"Held the line at the bridge.`",`n                `"A corps commander of \`"Testland\`".`"`n            ],`n            `"years`": [1894, 1960]`n        },`n        `"bravo_leader`": {`n            `"card`": [`n                `"A field marshal known under two ids.`"`n            ],`n            `"years`": [1892]`n        }`n    }`n}`n")
+        (ConvertTo-LpLineEnding -Text ([System.IO.File]::ReadAllText((Join-Path $fixture.Root 'source\testland\showcase.json'))) -LineEnding "`n") | Should -BeExactly ("{`n    `"leaders`": {`n        `"alpha_leader`": {`n            `"card`": [`n                `"Held the line at the bridge.`",`n                `"A corps commander of \`"Testland\`".`"`n            ],`n            `"years`": [1894, 1960]`n        },`n        `"bravo_leader`": {`n            `"card`": [`n                `"A field marshal known under two ids.`"`n            ],`n            `"years`": [1892]`n        }`n    }`n}`n")
         Get-LpSourceHashes -Root $fixture.Root -Except @('leaders.json', 'fact-sheets.md', 'showcase.json') | Should -BeExactly $recordsBefore
     }
 
@@ -1092,14 +1104,18 @@ Describe 'Plans' {
     }
 
     It 'keeps the line endings of a file and the entries the plan does not name' {
-        $fixture = New-LpPlanFixture
+        $fixture = New-LpPlanFixture -Text (ConvertTo-LpLineEnding -Text (Get-LpPlanFixtureText) -LineEnding "`r`n")
+        [System.IO.File]::ReadAllText($fixture.Plan).Contains("`r`n") | Should -BeTrue
         $factSheetPath = Join-Path $fixture.Root 'source\testland\fact-sheets.md'
         Write-LpText -Path $factSheetPath -Text (ConvertTo-LpLineEnding -Text ([System.IO.File]::ReadAllText($factSheetPath)) -LineEnding "`r`n")
+        $leadersPath = Join-Path $fixture.Root 'source\testland\leaders.json'
+        Write-LpText -Path $leadersPath -Text (ConvertTo-LpLineEnding -Text ([System.IO.File]::ReadAllText($leadersPath)) -LineEnding "`r`n")
         $showcasePath = Join-Path $fixture.Root 'source\testland\showcase.json'
         Write-LpText -Path $showcasePath -Text ("{`r`n    `"leaders`": {`r`n        `"charlie_leader`": {`r`n            `"card`": [`r`n                `"Kept.`"`r`n            ],`r`n            `"years`": [1905]`r`n        },`r`n        `"alpha_leader`": {`r`n            `"card`": [`r`n                `"Old line.`"`r`n            ],`r`n            `"years`": [1894]`r`n        }`r`n    }`r`n}`r`n")
         $output = Invoke-LpApplyCaptured -Fixture $fixture
         $output | Should -Contain 'source/testland/showcase.json: written; 2 entr(ies) in the plan: replaced 1 (alpha_leader), added 1 (bravo_leader), unchanged 0'
-        foreach ($endingPath in @($factSheetPath, $showcasePath)) {
+        $output | Should -Contain 'source/testland/leaders.json: written; 6 leader(s): added 0, changed 1 (alpha_leader), removed 0'
+        foreach ($endingPath in @($factSheetPath, $showcasePath, $leadersPath)) {
             $endingText = [System.IO.File]::ReadAllText($endingPath)
             [regex]::Matches($endingText, '(?<!\r)\n').Count | Should -Be 0 -Because $endingPath
         }
