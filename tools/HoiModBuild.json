@@ -30,8 +30,20 @@
         "Hooks": [
             ".claude/hooks/Protect-ProjectFiles.ps1",
             ".claude/hooks/Show-PlanState.ps1",
-            ".claude/settings.json",
-            "docs/plans/**"
+            ".claude/settings.json"
+        ],
+        "RepoData": [
+            "tools/LeaderPacks.ps1",
+            "tools/LeaderPacks.Showcase.ps1",
+            "tools/HoiImageSources.ps1",
+            "tools/HoiModBuild.ps1",
+            "tools/HoiModBuild.json",
+            "tests/LeaderPacks.Fixture.ps1",
+            "data/**",
+            "source/**",
+            "packs/**",
+            "wiki/Commanders-Pack-*.md",
+            "build.ps1"
         ],
         "LeaderPacks": [
             "tools/LeaderPacks.ps1",
@@ -45,9 +57,6 @@
             "tests/LeaderPacks.Fixture.ps1",
             "tests/fixtures/**",
             "data/**",
-            "source/**",
-            "packs/**",
-            "wiki/Commanders-Pack-*.md",
             "assets/thumbnail_master.png",
             "build.ps1",
             ".claude/hooks/Protect-ProjectFiles.ps1"
@@ -59,8 +68,6 @@
             "tests/LeaderPacks.Fixture.ps1",
             "tests/fixtures/**",
             "data/**",
-            "source/**",
-            "packs/**",
             "build.ps1"
         ],
         "CheckFiles": [
@@ -70,8 +77,6 @@
             "tests/LeaderPacks.Fixture.ps1",
             "tests/fixtures/**",
             "data/**",
-            "source/**",
-            "packs/**",
             "build.ps1"
         ],
         "Portraits": [
@@ -84,7 +89,6 @@
             "tests/LeaderPacks.Fixture.ps1",
             "tests/fixtures/**",
             "data/**",
-            "source/**",
             "build.ps1"
         ],
         "ComfyStandIn": [

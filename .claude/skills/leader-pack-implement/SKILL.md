@@ -34,7 +34,7 @@ The report is a claim. Check:
 4. The plan says `Status: DONE`, every box but the ship and game-check steps is ticked.
 5. Look at the converted portraits: `powershell -File .\build.ps1 -PreviewPortraits -Pack <pack>` writes PNG copies of the pack's large portraits and small cards, and a sheet, to `scratch/preview/<pack>/`. Open the sheet with the Read tool. A face cut by the card's photo window, or a card that is blank, goes back to the planner; the picks themselves are the owner's and are not judged here.
 
-Then dispatch `lp-reviewer` for an implementation review, with the task as the owner asked it, the plan path and the summary lines of the three commands. Fix nothing yourself: Critical or Important findings go back to the planner (section 5).
+Then dispatch `lp-reviewer` for an implementation review, with the task as the owner asked it, the plan path and the summary lines of the three commands; the `-Test` line of check 2 goes to every implementation review, because the reviewer runs no `-Test` itself. Fix nothing yourself: Critical or Important findings go back to the planner (section 5).
 
 ## 4. The owner's game check
 Offer it, and run nothing until the owner says to:
