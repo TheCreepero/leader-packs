@@ -54,10 +54,6 @@
       "Bash(*build.ps1*-Clean*)",
       "Bash(*push-wiki.ps1*)",
       "PowerShell(Get-Help .\\build.ps1*)",
-      "PowerShell(robocopy . scratch\\rehearsal *)",
-      "Bash(robocopy . scratch*rehearsal *)",
-      "PowerShell(Remove-Item -Recurse -Force scratch\\rehearsal)",
-      "Bash(rm -rf scratch/rehearsal)",
       "PowerShell(*New-HoiThumbnail.ps1*)",
       "Bash(*New-HoiThumbnail.ps1*)",
       "PowerShell(*Find-HoiKnowledge.ps1*)",
@@ -73,6 +69,7 @@
     ],
     "ask": [
       "Read(tools/HoiModBuild.ps1)",
+      "Read(tools/LeaderPacks.ps1)",
       "Read(tools/HoiImageSources.ps1)",
       "PowerShell(*build.ps1*-ConfirmLicence*)",
       "Bash(*build.ps1*-ConfirmLicence*)",
