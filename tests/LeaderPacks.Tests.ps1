@@ -439,6 +439,55 @@ Describe 'FetchPhoto and Audit' {
         $auditOutput[-1] | Should -Be '0'
         ($auditOutput -join "`n") | Should -Match 'photo alpha: licence recorded from Commons on 2020-01-01, over 180 days ago'
     }
+
+    It 'the audit writes nothing: every file of the repository keeps its bytes, on a pass and on a refusal' {
+        $fixtureRoot = New-LpGeneratedFixture
+        $script:RightsPageHtml = '<html><body><p>Photographs taken by the army before 1945 are in the public domain and free to reuse.</p></body></html>'
+        Mock Invoke-RestMethod {
+            if ($Uri.AbsoluteUri -like 'https://commons.wikimedia.org/*') {
+                $fixtureName = if ($script:AuditCommonsFixture) { $script:AuditCommonsFixture } elseif ($Uri.AbsoluteUri -match 'Calling') { 'cc-by' } elseif ($Uri.AbsoluteUri -match 'Abatis') { 'pd' } else { 'cc0' }
+                return Get-LpCommonsFixture -Name $fixtureName
+            }
+            if ($Uri.AbsoluteUri -like '*terms*') {
+                return $script:RightsPageHtml
+            }
+            return '<html><body><h1>General X at the front</h1></body></html>'
+        }
+        Mock Invoke-WebRequest { Write-LpFixtureJpeg -Path $OutFile }
+        $script:AuditCommonsFixture = $null
+        $evidencePath = Join-Path $fixtureRoot 'scratch\evidence-zulu.json'
+        New-Item -ItemType Directory -Path (Split-Path -Parent $evidencePath) -Force | Out-Null
+        Write-LpJson -Path $evidencePath -Value ([ordered]@{ recordUrl = 'https://archive.example.org/record/42'; imageUrl = 'https://archive.example.org/image/42.jpg'; rightsUrl = 'https://archive.example.org/terms'; rightsQuote = 'Photographs taken by the army before 1945 are in the public domain and free to reuse.'; license = 'pd'; publicDomainReason = 'Army photograph before 1945, archive terms'; author = ''; institution = 'Example Army Archive'; credit = ''; dateOriginal = '1943'; title = 'General X at the front' }) -Depth 3
+        Invoke-LpFetchPhoto -RepoRoot $fixtureRoot -Pack 'testland' -Evidence $evidencePath -Key 'zulu' 6>$null | Select-Object -Last 1 | Should -Be 0
+        Invoke-LpConfirmLicence -RepoRoot $fixtureRoot -Pack 'testland' -Key 'zulu' 6>$null | Select-Object -Last 1 | Should -Be 0
+        $readTree = {
+            $treeHashes = [ordered]@{}
+            foreach ($treeFile in (Get-ChildItem -LiteralPath $fixtureRoot -Recurse -File -Force | Sort-Object FullName)) {
+                $treeHashes[$treeFile.FullName.Substring($fixtureRoot.Length)] = Get-LpSha256 -Path $treeFile.FullName
+            }
+            $treeHashes
+        }
+        $directoriesBefore = @(Get-ChildItem -LiteralPath $fixtureRoot -Recurse -Directory -Force | ForEach-Object { $_.FullName.Substring($fixtureRoot.Length) } | Sort-Object)
+        $before = & $readTree
+        $before.Count | Should -BeGreaterThan 50
+        @($before.Keys | Where-Object { $_ -match '^\\(artifacts|scratch|source|packs|sources-cache)\\' } | ForEach-Object { ($_ -split '\\')[1] } | Select-Object -Unique).Count | Should -BeGreaterOrEqual 4
+        Invoke-LpAudit -RepoRoot $fixtureRoot -Pack 'testland' 6>$null | Select-Object -Last 1 | Should -Be 0
+        Should -Invoke Invoke-RestMethod -Times 1 -ParameterFilter { $Uri.AbsoluteUri -like '*terms*' }
+        $afterPass = & $readTree
+        ($afterPass.Keys -join '|') | Should -BeExactly ($before.Keys -join '|')
+        foreach ($relativePath in @($before.Keys)) {
+            $afterPass[$relativePath] | Should -BeExactly $before[$relativePath] -Because "$relativePath must keep its bytes"
+        }
+        $script:AuditCommonsFixture = 'cc-by-sa'
+        $script:RightsPageHtml = '<html><body>All rights reserved.</body></html>'
+        Invoke-LpAudit -RepoRoot $fixtureRoot -Pack 'testland' 6>$null | Select-Object -Last 1 | Should -Be 1
+        $afterRefusal = & $readTree
+        ($afterRefusal.Keys -join '|') | Should -BeExactly ($before.Keys -join '|')
+        foreach ($relativePath in @($before.Keys)) {
+            $afterRefusal[$relativePath] | Should -BeExactly $before[$relativePath] -Because "$relativePath must keep its bytes"
+        }
+        @(Get-ChildItem -LiteralPath $fixtureRoot -Recurse -Directory -Force | ForEach-Object { $_.FullName.Substring($fixtureRoot.Length) } | Sort-Object) | Should -Be $directoriesBefore
+    }
 }
 
 Describe 'CC BY-SA photos' {
