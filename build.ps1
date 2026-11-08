@@ -71,6 +71,12 @@ param(
     [ValidateRange(1, 50)]
     [int]$Limit = 10,
 
+    [Parameter(ParameterSetName = 'ListCharacters', Mandatory = $true)]
+    [switch]$ListCharacters,
+
+    [Parameter(ParameterSetName = 'ListCharacters')]
+    [string[]]$Name,
+
     [Parameter(ParameterSetName = 'MakePortraits', Mandatory = $true)]
     [switch]$MakePortraits,
 
@@ -212,6 +218,11 @@ switch ($PSCmdlet.ParameterSetName) {
     'FindPhoto' {
         $searchSources = if ($Source) { @($Source) } else { @('commons', 'finna', 'europeana') }
         exit ([int](@(Invoke-LpFindPhoto -Query $Query -Source $searchSources -Limit $Limit)[-1]))
+    }
+    'ListCharacters' {
+        Assert-PackGiven -SwitchName '-ListCharacters'
+        [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false)
+        exit ([int](@(Invoke-LpListCharacters -RepoRoot $PSScriptRoot -Pack $Pack -Name $Name)[-1]))
     }
     'MakePortraits' {
         Assert-PackGiven -SwitchName '-MakePortraits'

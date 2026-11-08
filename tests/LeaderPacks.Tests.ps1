@@ -520,6 +520,53 @@ Describe 'Game data snapshot' {
         $rt56Traits.counterparts['ranger'] | Should -Be 'ranger_trait'
     }
 
+    Context 'ListCharacters' {
+        BeforeAll {
+            $script:ListRoot = New-LpFixtureRepo -NoPortraits
+            Set-LpFixtureJson -Path (Join-Path $script:ListRoot 'data\testland\game-characters.json') -Change {
+                param($snapshot)
+                $snapshot.sets[0].characters += [PSCustomObject]@{ id = 'TST_only_leader'; name = 'Only Leader'; roles = @([PSCustomObject]@{ kind = 'country_leader'; slot = '' }) }
+                $snapshot.sets[1].characters += [PSCustomObject]@{ id = 'TST_lukasz_rommel'; name = "$([char]0x141)ukasz R$([char]0xF3)mmel-S$([char]0xF8)rensen"; roles = @([PSCustomObject]@{ kind = 'field_marshal'; slot = '' }, [PSCustomObject]@{ kind = 'advisor'; slot = 'army_chief' }) }
+                $snapshot.sets[1].characters += [PSCustomObject]@{ id = 'TST_only_leader'; name = 'Only Leader'; roles = @([PSCustomObject]@{ kind = 'country_leader'; slot = '' }) }
+            }
+        }
+
+        It 'lists every character per set with id, name and roles, and leaves out those who only lead a country' {
+            $listOutput = @(Invoke-LpListCharacters -RepoRoot $script:ListRoot -Pack 'testland' 6>&1 | ForEach-Object { [string]$_ })
+            $listOutput[-1] | Should -Be '0'
+            $listOutput | Should -Contain '# set vanilla: characters 6, left out 1 (country_leader only)'
+            $listOutput | Should -Contain '# set rt56 (The Road to 56): characters 7, left out 1 (country_leader only)'
+            $listOutput | Should -Contain 'vanilla | TST_echo_navy_chief | Echo Admiral | advisor:navy_chief'
+            $listOutput | Should -Contain 'rt56 | TST_echo_navy_chief | Echo Admiral | advisor:navy_chief, navy_leader'
+            ($listOutput -join "`n") | Should -Not -Match 'TST_only_leader'
+        }
+
+        It 'finds a person by any spelling in both sets, ignoring case and diacritics, and keeps the country leaders' {
+            $nameOutput = @(Invoke-LpListCharacters -RepoRoot $script:ListRoot -Pack 'testland' -Name 'ROMMEL,only leader' 6>&1 | ForEach-Object { [string]$_ })
+            $nameOutput[-1] | Should -Be '0'
+            @($nameOutput | Where-Object { $_ -like 'rt56 | TST_lukasz_rommel | *| field_marshal, advisor:army_chief' }).Count | Should -Be 1
+            @($nameOutput | Where-Object { $_ -like '* | TST_only_leader | Only Leader | country_leader' }).Count | Should -Be 2
+            ($nameOutput -join "`n") | Should -Not -Match 'TST_echo_navy_chief'
+            $accented = @(Invoke-LpListCharacters -RepoRoot $script:ListRoot -Pack 'testland' -Name "r$([char]0xF3)mmel", "soren" 6>&1 | ForEach-Object { [string]$_ })
+            @($accented | Where-Object { $_ -like '*TST_lukasz_rommel*' }).Count | Should -Be 1
+            @($nameOutput + $accented | Where-Object { $_ -match '^vanilla \| TST_lukasz' }).Count | Should -Be 0
+        }
+
+        It 'splits one comma-separated string, as powershell -File passes it, and matches an id' {
+            $idOutput = @(Invoke-LpListCharacters -RepoRoot $script:ListRoot -Pack 'testland' -Name 'golf_general, India' 6>&1 | ForEach-Object { [string]$_ })
+            @($idOutput | Where-Object { $_ -match '^(vanilla|rt56) \| TST_' }).Count | Should -Be 3
+            $idOutput | Should -Contain 'rt56 | TST_india_admiral | India Admiral | navy_leader'
+        }
+
+        It 'reports a missing snapshot and a name without letters' {
+            Invoke-LpListCharacters -RepoRoot $script:ListRoot -Pack 'nowhere' 6>$null | Select-Object -Last 1 | Should -Be 1
+            Invoke-LpListCharacters -RepoRoot $script:ListRoot -Pack 'testland' -Name '///' 6>$null | Select-Object -Last 1 | Should -Be 1
+            Invoke-LpListCharacters -RepoRoot $script:ListRoot -Pack 'testland' -Name ',' 6>$null | Select-Object -Last 1 | Should -Be 1
+            Invoke-LpListCharacters -RepoRoot $script:ListRoot -Pack 'testland' -Name '' 6>$null | Select-Object -Last 1 | Should -Be 1
+            Invoke-LpListCharacters -RepoRoot $script:ListRoot -Pack 'testland' 6>$null | Select-Object -Last 1 | Should -Be 0
+        }
+    }
+
     It 'refuses to refresh where the Manager is missing' {
         $fixtureRoot = New-LpFixtureRepo -NoPortraits
         Invoke-LpRefreshGameData -RepoRoot $fixtureRoot -Pack 'testland' -ManagerRoot '' 6>$null | Select-Object -Last 1 | Should -Be 1

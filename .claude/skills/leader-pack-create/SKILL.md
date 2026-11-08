@@ -30,11 +30,11 @@ Plans a pack or new leaders, down to every id, stat, trait, photo and picked por
 ## Phase 1: snapshot and roster
 1. `powershell -File .\build.ps1 -RefreshGameData -Pack <pack>` (needs the game and the Road to 56 files): expect `Wrote data\<pack>\game-characters.json` and `Wrote data\<pack>\start-traits.json`. Note the refresh date on the plan's "Snapshot" line.
 2. If `research/<pack>/` exists, read its dossiers. Their candidates without a `Used:` mark are candidates for this plan too; note their keys.
-3. Dispatch `lp-historical-researcher` with: the country, tag and pack; the snapshot's characters as `id, name, roles` per set, read from `data/<pack>/game-characters.json` (every character except those whose only role is `country_leader`); the leaders `source/<pack>/leaders.json` already has (key, name, mode); every candidate of the earlier dossiers as key and one line; the number of candidates (about one and a half times the leaders wanted, less the usable earlier candidates); and the path `research/<pack>/<YYYY-MM-DD>-dossier.md` (with `-2` and up when that day already has one). Wait for its summary.
+3. Dispatch `lp-historical-researcher` with: the country, tag and pack; the snapshot's characters as `id, name, roles` per set, from `powershell -File .\build.ps1 -ListCharacters -Pack <pack>` (every character except those whose only role is `country_leader`; paste its lines, do not write a parser for the snapshot); the leaders `source/<pack>/leaders.json` already has (key, name, mode); every candidate of the earlier dossiers as key and one line; the number of candidates (about one and a half times the leaders wanted, less the usable earlier candidates); and the path `research/<pack>/<YYYY-MM-DD>-dossier.md` (with `-2` and up when that day already has one). Wait for its summary.
 
 ## Phase 2: choose and set the mode
 1. Read the new dossier. Drop candidates whose rank or commands are `UNVERIFIED`, or whose facts cannot support a role and stats.
-2. Decide each candidate's mode yourself, against `data/<pack>/game-characters.json`, not on the researcher's word alone. Search the snapshot for the surname and every other spelling:
+2. Decide each candidate's mode yourself, against the snapshot, not on the researcher's word alone. Search it for the surname and every other spelling with `powershell -File .\build.ps1 -ListCharacters -Pack <pack> -Name <surname>,<other spelling>` (both sets, diacritics folded; no parser of your own):
    - a unit leader (`corps_commander`, `field_marshal`, `navy_leader`) in either set: `skip`, with a `reason` that names the id;
    - an advisor only in vanilla, with no unit-leader role of the kind the pack would add: `addRole` with that id as `target` [CHR-013];
    - absent from both sets: `new`;

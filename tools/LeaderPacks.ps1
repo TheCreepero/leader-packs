@@ -2089,6 +2089,77 @@ function Invoke-LpFindPhoto {
     return 0
 }
 
+function ConvertTo-LpSearchText {
+    param([AllowEmptyString()][string]$Text)
+
+    $decomposed = ([string]$Text).Normalize([System.Text.NormalizationForm]::FormD)
+    $plain = [regex]::Replace($decomposed, '\p{Mn}', '').ToLowerInvariant()
+    # letters that do not decompose: l-stroke, o-slash, d-stroke, eth, dotless i, sharp s, ae, oe, thorn
+    $unfolded = @{ 0x142 = 'l'; 0xF8 = 'o'; 0x111 = 'd'; 0xF0 = 'd'; 0x131 = 'i'; 0xDF = 'ss'; 0xE6 = 'ae'; 0x153 = 'oe'; 0xFE = 'th' }
+    foreach ($code in $unfolded.Keys) {
+        $plain = $plain.Replace([string][char]$code, $unfolded[$code])
+    }
+    return (($plain -replace '[^a-z0-9]+', ' ').Trim())
+}
+
+function Invoke-LpListCharacters {
+    param(
+        [Parameter(Mandatory = $true)][string]$RepoRoot,
+        [Parameter(Mandatory = $true)][string]$Pack,
+        [string[]]$Name
+    )
+
+    $snapshotPath = Join-Path $RepoRoot ('data\' + $Pack + '\game-characters.json')
+    $snapshot = Read-LpOptionalJson -Path $snapshotPath
+    if ($null -eq $snapshot) {
+        Write-Host "data\$Pack\game-characters.json is missing: run build.ps1 -RefreshGameData -Pack $Pack" -ForegroundColor Red
+        return 1
+    }
+    # powershell -File passes "-Name a,b" as one string, so the spellings are split here
+    $nameGiven = $null -ne $Name
+    $Name = @($Name | ForEach-Object { $_ -split ',' } | ForEach-Object { $_.Trim() } | Where-Object { $_ })
+    $spellings = @($Name | ForEach-Object { ConvertTo-LpSearchText -Text $_ } | Where-Object { $_ })
+    if ($nameGiven -and $spellings.Count -eq 0) {
+        Write-Host '-Name holds no letter or digit to search for' -ForegroundColor Red
+        return 1
+    }
+    Write-Host ("# snapshot {0}: tag {1}, game {2}, refreshed {3}" -f $Pack, (Get-LpProperty -Object $snapshot -Name 'tag' -Default ''), (Get-LpProperty -Object $snapshot -Name 'game' -Default ''), (Get-LpProperty -Object $snapshot -Name 'refreshed' -Default ''))
+    if ($spellings.Count -gt 0) {
+        Write-Host ("# every character whose id or name holds {0} (case and diacritics folded)" -f (($Name | ForEach-Object { "'$_'" }) -join ', '))
+    } else {
+        Write-Host '# every character except those whose only role is country_leader; columns: set | id | name | roles (kind or kind:slot)'
+    }
+    foreach ($set in @(ConvertTo-LpArray (Get-LpProperty -Object $snapshot -Name 'sets'))) {
+        $setName = [string](Get-LpProperty -Object $set -Name 'name' -Default '')
+        $setMod = [string](Get-LpProperty -Object $set -Name 'mod' -Default '')
+        $lines = [System.Collections.Generic.List[string]]::new()
+        $leftOut = 0
+        foreach ($character in @(ConvertTo-LpArray (Get-LpProperty -Object $set -Name 'characters'))) {
+            $roles = @(ConvertTo-LpArray (Get-LpProperty -Object $character -Name 'roles'))
+            $roleTexts = @($roles | ForEach-Object { $slot = [string](Get-LpProperty -Object $_ -Name 'slot' -Default ''); $(if ($slot) { "$($_.kind):$slot" } else { [string]$_.kind }) })
+            if ($spellings.Count -gt 0) {
+                $searchable = (ConvertTo-LpSearchText -Text ([string]$character.id)) + ' | ' + (ConvertTo-LpSearchText -Text ([string]$character.name))
+                $found = $false
+                foreach ($spelling in $spellings) {
+                    if ($searchable.Contains($spelling)) { $found = $true }
+                }
+                if (-not $found) { continue }
+            } elseif ($roles.Count -gt 0 -and @($roles | Where-Object { [string]$_.kind -ne 'country_leader' }).Count -eq 0) {
+                $leftOut++
+                continue
+            }
+            $lines.Add(('{0} | {1} | {2} | {3}' -f $setName, $character.id, $character.name, ($roleTexts -join ', ')))
+        }
+        $setTitle = $(if ($setMod) { "$setName ($setMod)" } else { $setName })
+        $leftOutText = $(if ($spellings.Count -eq 0) { ", left out $leftOut (country_leader only)" } else { '' })
+        Write-Host "# set ${setTitle}: characters $($lines.Count)$leftOutText"
+        foreach ($line in $lines) {
+            Write-Host $line
+        }
+    }
+    return 0
+}
+
 function Get-LpCachedPhoto {
     param($Pack, $Photo)
 
