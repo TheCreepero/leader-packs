@@ -63,10 +63,15 @@
       "PowerShell(*Find-HoiKnowledge.ps1*)",
       "Bash(*Find-HoiKnowledge.ps1*)",
       "PowerShell(powershell -File .\\build.ps1 -FindPhoto*)",
+      "PowerShell(powershell -File .\\build.ps1 -ListCharacters*)",
+      "Bash(powershell*build.ps1 -ListCharacters*)",
+      "PowerShell(powershell -File .\\build.ps1 -ApplyPlan*)",
+      "Bash(powershell*build.ps1 -ApplyPlan*)",
+      "PowerShell(powershell -File .\\build.ps1 -RehearsePlan*)",
+      "Bash(powershell*build.ps1 -RehearsePlan*)",
       "Bash(powershell*build.ps1 -FindPhoto*)"
     ],
     "ask": [
-      "Read(tools/LeaderPacks.ps1)",
       "Read(tools/HoiModBuild.ps1)",
       "Read(tools/HoiImageSources.ps1)",
       "PowerShell(*build.ps1*-ConfirmLicence*)",
