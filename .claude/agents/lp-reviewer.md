@@ -4,7 +4,7 @@ description: Independent reviewer for the Leader Packs Hearts of Iron IV mod. Us
 tools: Read, Grep, Glob, PowerShell, Bash, WebFetch, WebSearch
 model: opus
 effort: high
-maxTurns: 40
+maxTurns: 60
 omitClaudeMd: true
 ---
 

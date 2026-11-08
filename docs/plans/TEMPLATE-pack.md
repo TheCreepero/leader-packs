@@ -51,7 +51,7 @@ One line per leader and round: the round, its seeds, the owner's decision (pick 
 
 ## Kept on judgment
 
-<Each `[WARN]` line that `-RehearsePlan` prints (under `apply:`, `convert-portraits:` or `check:`) and that stays, with the reason. The implementer stops on any other warning.>
+<Each `[WARN]` line that `-RehearsePlan` prints (under any step's line) and that stays, with the reason. The implementer stops on any other warning.>
 
 ## READY criteria
 
@@ -65,7 +65,7 @@ One line per leader and round: the round, its seeds, the owner's decision (pick 
 ## Implementation steps
 
 - [ ] 1. Write the source: `powershell -File .\build.ps1 -ApplyPlan -Plan docs\plans\<this plan's file name>`. It replaces `source/<pack>/leaders.json` with the `json leaders` block below, whole; replaces each section of the `markdown fact-sheets` block in `source/<pack>/fact-sheets.md` (a new key is added, the other sections stay); and replaces each entry of the `json showcase` block in `source/<pack>/showcase.json` (the file is created when the pack has none). Expect one line per file and `Plan applied to pack '<pack>'`; a block that does not parse gives exit 1, names the block and writes nothing.
-- [ ] 2. `powershell -File .\build.ps1 -Generate -Pack <pack>`: expect `Generated pack '<pack>'` and, when the bundle page changed (a new pack, or a leader count or licence that changed), a `Bundle 'all'` line that wrote `packs/all/WORKSHOP_DESCRIPTION_GUIDELINES.md`. A new pack: `-NewPack` has put it in the `members` of the bundle `all`; the plan also edits `source/all/workshop-intro.bbcode` so that it names the new country.
+- [ ] 2. `powershell -File .\build.ps1 -Generate -Pack <pack>`: expect `Generated pack '<pack>'` and, when the bundle page changed (a new pack, or a leader count or licence that changed), a `Bundle 'all'` line that wrote `packs/all/WORKSHOP_DESCRIPTION_GUIDELINES.md`. A new pack: `-NewPack` has put it in the `members` of the bundle `all`; the plan also edits `source/all/workshop-intro.bbcode` so that it names the new country: the step gives the whole new file as a fenced `bbcode` block named in the step, the implementer writes that block first (copied exactly), and then `-Generate` runs.
 - [ ] 3. `powershell -File .\build.ps1 -ConvertPortraits -Pack <pack>`: expect `Pack '<pack>': <n> portrait file(s) converted, <m> up to date.` and exit 0.
 - [ ] 4. `powershell -File .\build.ps1 -Check -Pack <pack>`: expect `Check OK`, with no warning outside "Kept on judgment", and `Bundle 'all'` with 0 errors (the bundle that holds the pack is checked with it).
 - [ ] 5. `powershell -File .\build.ps1 -ValidateOnly` then `powershell -File .\build.ps1 -Test`: expect `Validation succeeded.` and no failed test.
