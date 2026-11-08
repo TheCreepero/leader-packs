@@ -901,6 +901,319 @@ Describe 'Bundle' {
     }
 }
 
+Describe 'Plans' {
+    BeforeAll {
+        $script:PlanFixturePath = (Resolve-Path -LiteralPath (Join-Path $script:LpFixtureDir '..\plans\testland-plan.md')).Path
+
+        function Get-LpPlanFixtureText {
+            return [System.IO.File]::ReadAllText($script:PlanFixturePath, [System.Text.Encoding]::UTF8)
+        }
+
+        function New-LpPlanFixture {
+            param([string]$Text)
+
+            $fixtureRoot = New-LpFixtureRepo
+            $planPath = Join-Path $fixtureRoot 'docs\plans\testland-plan.md'
+            Write-LpText -Path $planPath -Text $(if ($PSBoundParameters.ContainsKey('Text')) { $Text } else { Get-LpPlanFixtureText })
+            return [PSCustomObject]@{ Root = $fixtureRoot; Plan = $planPath }
+        }
+
+        function Get-LpSourceHashes {
+            param([string]$Root, [string[]]$Except = @())
+
+            $hashes = [ordered]@{}
+            foreach ($sourceFile in @(Get-ChildItem -LiteralPath (Join-Path $Root 'source') -Recurse -File | Sort-Object FullName)) {
+                if ($Except -notcontains $sourceFile.Name) {
+                    $hashes[$sourceFile.FullName.Substring($Root.Length)] = Get-LpSha256 -Path $sourceFile.FullName
+                }
+            }
+            return ($hashes.GetEnumerator() | ForEach-Object { "$($_.Key)=$($_.Value)" }) -join "`n"
+        }
+
+        function Invoke-LpApplyCaptured {
+            param($Fixture, [switch]$DryRun)
+
+            return @(Invoke-LpApplyPlan -RepoRoot $Fixture.Root -PlanPath $Fixture.Plan -DryRun:$DryRun 6>&1 | ForEach-Object { [string]$_ })
+        }
+
+        function New-LpRehearsalFixture {
+            param([string]$Text)
+
+            $fixture = $(if ($PSBoundParameters.ContainsKey('Text')) { New-LpPlanFixture -Text $Text } else { New-LpPlanFixture })
+            Copy-Item -LiteralPath (Join-Path $script:LpRepoRoot 'build.ps1') -Destination $fixture.Root
+            foreach ($toolFile in @(Get-ChildItem -LiteralPath (Join-Path $script:LpRepoRoot 'tools') -File | Where-Object { $_.Name -ne 'HoiModBuild.json' })) {
+                Copy-Item -LiteralPath $toolFile.FullName -Destination (Join-Path $fixture.Root 'tools')
+            }
+            Write-LpText -Path (Join-Path $fixture.Root 'tests\Run-Tests.ps1') -Text "Write-Host 'Summary: 3 Passed, 0 Failed, 0 Skipped (suite: RepoData)'`r`nexit 0`r`n"
+            Invoke-LpGenerate -RepoRoot $fixture.Root -Pack 'testland' 6>$null | Select-Object -Last 1 | Should -Be 0
+            return $fixture
+        }
+    }
+
+    It 'writes the leaders, merges the fact-sheet sections and the showcase entries, and touches no record' {
+        $fixture = New-LpPlanFixture
+        $recordsBefore = Get-LpSourceHashes -Root $fixture.Root -Except @('leaders.json', 'fact-sheets.md', 'showcase.json')
+        $output = Invoke-LpApplyCaptured -Fixture $fixture
+        $output[-1] | Should -Be '0'
+        $output | Should -Contain 'source/testland/leaders.json: written; 6 leader(s): added 0, changed 1 (alpha_leader), removed 0'
+        $output | Should -Contain 'source/testland/fact-sheets.md: written; 3 section(s) in the plan: replaced 1 (alpha_leader), added 1 (foxtrot_marshal), unchanged 1'
+        $output | Should -Contain 'source/testland/showcase.json: written; 2 entr(ies) in the plan: replaced 0, added 2 (alpha_leader, bravo_leader), unchanged 0'
+        $output | Should -Contain '  [WARN] source/testland/showcase.json has no card entry for charlie_leader'
+        $output | Should -Contain "Plan applied to pack 'testland': 3 file(s) written, 0 unchanged."
+        @($output | Where-Object { $_ -like '*[[]WARN]*' }).Count | Should -Be 3
+        (Read-LpJson -Path (Join-Path $fixture.Root 'source\testland\leaders.json')).leaders[0].attack | Should -Be 4
+        $factSheetText = [System.IO.File]::ReadAllText((Join-Path $fixture.Root 'source\testland\fact-sheets.md'))
+        @([regex]::Matches($factSheetText, '(?m)^## (\S+)') | ForEach-Object { $_.Groups[1].Value }) | Should -Be @('alpha_leader', 'bravo_leader', 'charlie_leader', 'delta_advisor', 'echo_admiral', 'foxtrot_marshal')
+        $factSheetText | Should -Match '(?s)## alpha_leader\n\n- A corps commander of the fixture country, now with a second fact\. Source: https://example\.org/alpha\n- He held the line at the bridge\. Source: https://example\.org/alpha-2\n\n## bravo_leader'
+        $factSheetText | Should -Match '(?s)## echo_admiral\n\n- A navy chief who also commanded a fleet\. Source: https://example\.org/echo\n\n## foxtrot_marshal\n\n- A skip leader with a note of his own\. Source: https://example\.org/foxtrot\n$'
+        $factSheetText | Should -Not -Match "\n\n$"
+        [System.IO.File]::ReadAllText((Join-Path $fixture.Root 'source\testland\showcase.json')) | Should -BeExactly ("{`n    `"leaders`": {`n        `"alpha_leader`": {`n            `"card`": [`n                `"Held the line at the bridge.`",`n                `"A corps commander of \`"Testland\`".`"`n            ],`n            `"years`": [1894, 1960]`n        },`n        `"bravo_leader`": {`n            `"card`": [`n                `"A field marshal known under two ids.`"`n            ],`n            `"years`": [1892]`n        }`n    }`n}`n")
+        Get-LpSourceHashes -Root $fixture.Root -Except @('leaders.json', 'fact-sheets.md', 'showcase.json') | Should -BeExactly $recordsBefore
+    }
+
+    It 'writes nothing the second time, and nothing at all on a dry run' {
+        $fixture = New-LpPlanFixture
+        $dryRun = Invoke-LpApplyCaptured -Fixture $fixture -DryRun
+        $dryRun[-1] | Should -Be '0'
+        $dryRun | Should -Contain 'source/testland/leaders.json: would write; 6 leader(s): added 0, changed 1 (alpha_leader), removed 0'
+        $dryRun | Should -Contain "Dry run for pack 'testland': 3 file(s) would be written, 0 unchanged; nothing was written."
+        Test-Path -LiteralPath (Join-Path $fixture.Root 'source\testland\showcase.json') | Should -BeFalse
+        (Read-LpJson -Path (Join-Path $fixture.Root 'source\testland\leaders.json')).leaders[0].attack | Should -Be 3
+        Invoke-LpApplyCaptured -Fixture $fixture | Select-Object -Last 1 | Should -Be '0'
+        $filesAfterFirst = Get-LpSourceHashes -Root $fixture.Root
+        $second = Invoke-LpApplyCaptured -Fixture $fixture
+        $second | Should -Contain "Plan applied to pack 'testland': 0 file(s) written, 3 unchanged."
+        $second | Should -Contain 'source/testland/leaders.json: unchanged (6 leader(s))'
+        Get-LpSourceHashes -Root $fixture.Root | Should -BeExactly $filesAfterFirst
+    }
+
+    It 'keeps the line endings of a file and the entries the plan does not name' {
+        $fixture = New-LpPlanFixture
+        $factSheetPath = Join-Path $fixture.Root 'source\testland\fact-sheets.md'
+        Write-LpText -Path $factSheetPath -Text (ConvertTo-LpLineEnding -Text ([System.IO.File]::ReadAllText($factSheetPath)) -LineEnding "`r`n")
+        $showcasePath = Join-Path $fixture.Root 'source\testland\showcase.json'
+        Write-LpText -Path $showcasePath -Text ("{`r`n    `"leaders`": {`r`n        `"charlie_leader`": {`r`n            `"card`": [`r`n                `"Kept.`"`r`n            ],`r`n            `"years`": [1905]`r`n        },`r`n        `"alpha_leader`": {`r`n            `"card`": [`r`n                `"Old line.`"`r`n            ],`r`n            `"years`": [1894]`r`n        }`r`n    }`r`n}`r`n")
+        $output = Invoke-LpApplyCaptured -Fixture $fixture
+        $output | Should -Contain 'source/testland/showcase.json: written; 2 entr(ies) in the plan: replaced 1 (alpha_leader), added 1 (bravo_leader), unchanged 0'
+        foreach ($endingPath in @($factSheetPath, $showcasePath)) {
+            $endingText = [System.IO.File]::ReadAllText($endingPath)
+            [regex]::Matches($endingText, '(?<!\r)\n').Count | Should -Be 0 -Because $endingPath
+        }
+        $showcase = Read-LpJson -Path $showcasePath
+        @($showcase.leaders.PSObject.Properties.Name) | Should -Be @('charlie_leader', 'alpha_leader', 'bravo_leader')
+        $showcase.leaders.charlie_leader.card[0] | Should -Be 'Kept.'
+        $showcase.leaders.alpha_leader.card[0] | Should -Be 'Held the line at the bridge.'
+    }
+
+    It 'refuses a plan that <Case>, names the problem, and writes nothing' -TestCases @(
+        @{ Case = 'has a leaders block that is not JSON'; Replacements = @(, @('"prefix": "lp_tst",', '"prefix": "lp_tst"')); Expect = "block 'json leaders' does not parse:" },
+        @{ Case = 'has a leaders block for another pack'; Replacements = @(, @('"pack": "testland"', '"pack": "otherland"')); Expect = "block 'json leaders' does not parse: its 'pack' is 'otherland', the header says 'testland'" },
+        @{ Case = 'has no leaders block'; Replacements = @(, @('```json leaders', '```text leaders')); Expect = "block 'json leaders' is missing" },
+        @{ Case = 'has no fact-sheets block'; Replacements = @(, @('```markdown fact-sheets', '```text fact-sheets')); Expect = "block 'markdown fact-sheets' is missing" },
+        @{ Case = 'has an unfilled fact-sheet heading'; Replacements = @(, @('## foxtrot_marshal', '## <key>')); Expect = "block 'markdown fact-sheets' does not parse: heading '## <key>' is not a leader key" },
+        @{ Case = 'has a fact-sheet section without text'; Replacements = @(, @('- A skip leader with a note of his own. Source: https://example.org/foxtrot', '')); Expect = "block 'markdown fact-sheets' does not parse: section 'foxtrot_marshal' has no text" },
+        @{ Case = 'has a showcase block that is not JSON'; Replacements = @(, @('"years": [1892]', '"years": [1892')); Expect = "block 'json showcase' does not parse:" },
+        @{ Case = 'has a showcase block with a field other than leaders'; Replacements = @(, @('"leaders": {', '"extra": 1, "leaders": {')); Expect = "block 'json showcase' does not parse: unknown field 'extra'; only 'leaders' is read" },
+        @{ Case = 'has an unfilled showcase key'; Replacements = @(, @('"bravo_leader": {', '"<key>": {')); Expect = "block 'json showcase' does not parse: the key '<key>' is not a leader key" },
+        @{ Case = 'has a showcase key that is no leader of the leaders block'; Replacements = @(, @('"bravo_leader": {', '"zulu_leader": {')); Expect = "block 'json showcase' does not parse: the key 'zulu_leader' is not a leader of the 'json leaders' block" },
+        @{ Case = 'has a leaders block whose leaders are not an array'; Replacements = @(, @('"leaders": [', '"leaders": 5, "other": [')); Expect = "block 'json leaders' does not parse: 'leaders' is not an array" },
+        @{ Case = 'has two leaders with one key'; Replacements = @(, @('"key": "bravo_leader"', '"key": "alpha_leader"')); Expect = "block 'json leaders' does not parse: the key 'alpha_leader' appears twice" },
+        @{ Case = 'has no Pack line'; Replacements = @(, @('Pack: testland (TST, prefix lp_tst)', 'Kind: new leaders')); Expect = "the header has no 'Pack: <pack>' line" },
+        @{ Case = 'names a pack the repository does not have'; Replacements = @(@('Pack: testland (TST', 'Pack: nowhere (TST'), @('"pack": "testland"', '"pack": "nowhere"')); Expect = "pack 'nowhere' is not in tools\HoiModBuild.json" }
+    ) {
+        param($Case, $Replacements, $Expect)
+        $brokenText = Get-LpPlanFixtureText
+        foreach ($replacement in $Replacements) {
+            $brokenText.Contains($replacement[0]) | Should -BeTrue -Because "the fixture plan holds '$($replacement[0])'"
+            $brokenText = $brokenText.Replace($replacement[0], $replacement[1])
+        }
+        $fixture = New-LpPlanFixture -Text $brokenText
+        $sourceBefore = Get-LpSourceHashes -Root $fixture.Root
+        $output = Invoke-LpApplyCaptured -Fixture $fixture
+        $output[-1] | Should -Be '1'
+        ($output -join "`n") | Should -BeLike "*$Expect*"
+        $output | Should -Contain 'Nothing was written.'
+        Get-LpSourceHashes -Root $fixture.Root | Should -BeExactly $sourceBefore
+        $sourceDir = Join-Path $fixture.Root 'source\testland'
+        Test-Path -LiteralPath (Join-Path $sourceDir 'showcase.json') | Should -BeFalse
+    }
+
+    It 'refuses a plan file that does not exist and a -Pack other than the plan''s' {
+        $fixture = New-LpPlanFixture
+        Invoke-LpApplyPlan -RepoRoot $fixture.Root -PlanPath (Join-Path $fixture.Root 'docs\plans\nothing.md') 6>$null | Select-Object -Last 1 | Should -Be 1
+        Invoke-LpApplyPlan -RepoRoot $fixture.Root -PlanPath $fixture.Plan -Pack 'otherland' 6>$null | Select-Object -Last 1 | Should -Be 1
+        Invoke-LpApplyPlan -RepoRoot $fixture.Root -PlanPath $fixture.Plan -Pack 'testland' -DryRun 6>$null | Select-Object -Last 1 | Should -Be 0
+    }
+
+    It 'writes nothing at all when an existing showcase.json does not parse' {
+        $fixture = New-LpPlanFixture
+        Write-LpText -Path (Join-Path $fixture.Root 'source\testland\showcase.json') -Text '{ "leaders": { "alpha_leader": '
+        $sourceBefore = Get-LpSourceHashes -Root $fixture.Root
+        $output = Invoke-LpApplyCaptured -Fixture $fixture
+        $output[-1] | Should -Be '1'
+        ($output -join "`n") | Should -BeLike '*source/testland/showcase.json does not parse:*'
+        $output | Should -Contain 'Nothing was written.'
+        Get-LpSourceHashes -Root $fixture.Root | Should -BeExactly $sourceBefore
+        (Read-LpJson -Path (Join-Path $fixture.Root 'source\testland\leaders.json')).leaders[0].attack | Should -Be 3
+    }
+
+    It 'is not thrown off by a fence with an info string or an indented fence' {
+        $fence = '```'
+        $noteText = (@('Notes:', '', ($fence + 'powershell -File .\build.ps1 -ApplyPlan -Plan x'), '## Leaders', '| fake | row |', ($fence + 'json leaders'), $fence, '', ('   ' + $fence + 'text'), '## Photos', ('   ' + $fence), '', '') -join "`n")
+        $fixture = New-LpPlanFixture -Text (Get-LpPlanFixtureText).Replace('## Implementation steps', $noteText + '## Implementation steps')
+        $planData = Read-LpPlan -PlanPath $fixture.Plan
+        $planData.Problems.Count | Should -Be 0 -Because ($planData.Problems -join '; ')
+        @($planData.Tables['Leaders'].Table.Rows).Count | Should -Be 6
+        @($planData.Tables['Photos'].Table.Rows).Count | Should -Be 5
+        Invoke-LpApplyCaptured -Fixture $fixture | Select-Object -Last 1 | Should -Be '0'
+    }
+
+    It 'prints the Leaders, Photos and Review rounds tables from the source files in the plan''s layout, without a Status column' {
+        $fixtureRoot = New-LpFixtureRepo
+        Set-LpFixtureRecords -Root $fixtureRoot -Change {
+            param($records)
+            $records.leaders.alpha_leader.rounds += [PSCustomObject]@{ round = 2; seeds = @(5, 6, 7, 8); decision = [PSCustomObject]@{ reject = 'wrong cap' } }
+            $records.leaders.bravo_leader.rounds += [PSCustomObject]@{ round = 2; seeds = @(5, 6, 7, 8); decision = $null }
+            $records.leaders.delta_advisor.chosen = $null
+        }
+        $packData = Get-LpPack -RepoRoot $fixtureRoot -Pack 'testland'
+        $tables = Get-LpPlanSourceTables -Pack $packData
+        $leaderLines = @(Format-LpPlanTable -SourceTable $tables.Leaders)
+        $leaderLines[0] | Should -Be '## Leaders'
+        $leaderLines[2] | Should -BeExactly '| Key | Name | Mode | Ids (target; sameAs) | Role | Stats | Traits | Photo | Portrait (round, pick) |'
+        $leaderLines[3] | Should -BeExactly '|---|---|---|---|---|---|---|---|---|'
+        $leaderLines | Should -Contain '| alpha_leader | Alpha Leader | new | none; none | corps_commander | 3 / 3 2 2 2 | infantry_officer | alpha | r1, seed 2 |'
+        $leaderLines | Should -Contain '| bravo_leader | Bravo Leader | new | none; TST_bravo_old, TST_bravo_renamed | field_marshal | 4 / 3 4 3 2 | brilliant_strategist, infantry_officer | bravo | r1, seed 2 |'
+        $leaderLines | Should -Contain '| charlie_leader | Charlie Leader | new | none; none | navy_leader | 2 / 1 3 2 2 | spotter | charlie | r1, seed 2 |'
+        $leaderLines | Should -Contain '| delta_advisor | Delta Advisor | addRole | TST_delta_advisor; none | corps_commander | 3 / 2 3 3 2 | none | delta | no pick |'
+        $leaderLines | Should -Contain '| foxtrot_marshal | Foxtrot Marshal | skip | none; none | none | none | none | none | none |'
+        @($leaderLines | Where-Object { $_ -like '*Status*' }).Count | Should -Be 0
+        $photoLines = @(Format-LpPlanTable -SourceTable $tables.Photos)
+        $photoLines[2] | Should -BeExactly '| Photo key | Source and id | Licence (author or credit) | Size | Leader |'
+        @($photoLines | Where-Object { $_ -match '^\| alpha \| commons `File:Calling of reservists 1939.*\| CC BY \(CC BY 4\.0\); .*\| 6588x4590 \| alpha_leader \|$' }).Count | Should -Be 1
+        @($photoLines | Where-Object { $_ -match '^\| bravo \| commons `File:Abatis at Taipale\.jpg` \| PD \(Public domain\); Unknown author; photo 1 December 1939 \| 4962x3248 \| bravo_leader \|$' }).Count | Should -Be 1
+        ($photoLines -join "`n") | Should -Not -Match 'https?://' -Because 'the credit text, which holds the page addresses, is not printed'
+        $roundLines = @(Format-LpPlanTable -SourceTable $tables.Rounds)
+        $roundLines[2] | Should -BeExactly '| Leader | Round | Seeds | Decision | Change for the next round |'
+        $roundLines | Should -Contain '| alpha_leader | 1 | 1-4 | pick 2 |  |'
+        $roundLines | Should -Contain '| alpha_leader | 2 | 5-8 | reject: "wrong cap" |  |'
+        $roundLines | Should -Contain '| bravo_leader | 2 | 5-8 | open |  |'
+    }
+
+    It 'finds no difference between the plan''s tables and the source files the plan produces' {
+        $fixture = New-LpPlanFixture
+        Invoke-LpApplyCaptured -Fixture $fixture | Select-Object -Last 1 | Should -Be '0'
+        $planData = Read-LpPlan -PlanPath $fixture.Plan
+        $planData.Problems.Count | Should -Be 0
+        $packData = Get-LpPack -RepoRoot $fixture.Root -Pack 'testland'
+        @(Compare-LpPlanTables -PlanData $planData -SourceTables (Get-LpPlanSourceTables -Pack $packData) -Pack $packData) | Should -BeNullOrEmpty
+    }
+
+    It 'flags each plan row that differs from the source files' {
+        $changedText = (Get-LpPlanFixtureText).Replace('| corps_commander | 3 / 4 2 2 2 |', '| corps_commander | 3 / 3 2 2 2 |').Replace('| brilliant_strategist, infantry_officer | bravo |', '| brilliant_strategist | bravo |').Replace('| round 1, pick 2 | ready |', '| round 1, pick 3 | ready |').Replace('| delta_advisor | Delta Advisor | addRole | TST_delta_advisor; none |', '| delta_advisor | Delta Advisor | new | TST_delta_advisor; none |').Replace('| 6588x4590 | alpha_leader |', '| 6588x4591 | alpha_leader |').Replace('| echo | commons `File:A Finnish guard during the Battle of Salla.jpg` | CC0 (CC0);', '| echo | commons `File:Somewhere else.jpg` | PD (Public domain);').Replace('| bravo_leader | 1 | 1-4 | pick 2 (owner: "good") | none |', '| bravo_leader | 1 | 1-4 | pick 4 | none |').Replace('| foxtrot_marshal | Foxtrot Marshal | skip | none; none | none | none | none | none | none | skip |', '| golf_leader | Golf Leader | new | none; none | corps_commander | 2 / 1 1 1 1 | none | none | none | roster |')
+        $fixture = New-LpPlanFixture -Text $changedText
+        Invoke-LpApplyCaptured -Fixture $fixture | Select-Object -Last 1 | Should -Be '0'
+        $planData = Read-LpPlan -PlanPath $fixture.Plan
+        $packData = Get-LpPack -RepoRoot $fixture.Root -Pack 'testland'
+        $differences = @(Compare-LpPlanTables -PlanData $planData -SourceTables (Get-LpPlanSourceTables -Pack $packData) -Pack $packData)
+        $differences | Should -Be @(
+            "Leaders row alpha_leader, Stats: plan '3 / 3 2 2 2', source '3 / 4 2 2 2'",
+            "Leaders row bravo_leader, Traits: plan 'brilliant_strategist', source 'brilliant_strategist, infantry_officer'",
+            "Leaders row charlie_leader, Portrait: plan 'round 1, pick 3', source 'r1, seed 2'",
+            "Leaders row delta_advisor, Mode: plan 'new', source 'addRole'",
+            'Leaders row golf_leader: in the plan, not in leaders.json',
+            'Leaders row foxtrot_marshal: in leaders.json, not in the plan',
+            "Photos row alpha, Size: plan '6588x4591', source '6588x4590'",
+            "Photos row echo, Licence: plan 'PD (Public domain); Finnish Wartime Photograph Archive', source starts 'CC0'",
+            "Photos row echo, Source and id: plan 'commons File:Somewhere else.jpg', source 'File:A Finnish guard during the Battle of Salla.jpg'",
+            "Review rounds row bravo_leader|1, Decision: plan 'pick 4', source 'pick 2'"
+        )
+    }
+
+    It 'flags a portrait or decision cell that says nothing while the source holds a pick' {
+        $changedText = (Get-LpPlanFixtureText).Replace('| round 1, pick 2 | ready |', '| no pick | ready |').Replace('| bravo_leader | 1 | 1-4 | pick 2 (owner: "good") | none |', '| bravo_leader | 1 | 1-4 | open | none |').Replace('| echo_admiral | 1 | 1-4 | pick 2 | none |', '| echo_admiral | 1 | 1-4 |  | none |')
+        $fixture = New-LpPlanFixture -Text $changedText
+        Invoke-LpApplyCaptured -Fixture $fixture | Select-Object -Last 1 | Should -Be '0'
+        $planData = Read-LpPlan -PlanPath $fixture.Plan
+        $packData = Get-LpPack -RepoRoot $fixture.Root -Pack 'testland'
+        @(Compare-LpPlanTables -PlanData $planData -SourceTables (Get-LpPlanSourceTables -Pack $packData) -Pack $packData) | Should -Be @(
+            "Leaders row charlie_leader, Portrait: plan 'no pick' says no pick, source 'r1, seed 2'",
+            "Review rounds row bravo_leader|1, Decision: plan 'open', source 'pick 2'",
+            "Review rounds row echo_admiral|1, Decision: plan '', source 'pick 2'"
+        )
+    }
+
+    It 'rehearses a plan in a copy: one line per step, the three tables, no difference, and the copy is gone' {
+        $fixture = New-LpRehearsalFixture
+        $sourceBefore = Get-LpSourceHashes -Root $fixture.Root
+        $generatedBefore = (Get-ChildItem -LiteralPath (Join-Path $fixture.Root 'packs') -Recurse -File | ForEach-Object { Get-LpSha256 -Path $_.FullName }) -join ','
+        $output = @(Invoke-LpRehearsePlan -RepoRoot $fixture.Root -PlanPath $fixture.Plan 6>&1 | ForEach-Object { [string]$_ })
+        $output[-1] | Should -Be '0' -Because ($output -join "`n")
+        $output | Should -Contain "apply: OK (Plan applied to pack 'testland': 3 file(s) written, 0 unchanged.)"
+        $cardWarning = '    [WARN] source/testland/showcase.json has no card entry for charlie_leader'
+        $output | Should -Contain $cardWarning
+        [array]::IndexOf($output, $cardWarning) | Should -Be ([array]::IndexOf($output, "apply: OK (Plan applied to pack 'testland': 3 file(s) written, 0 unchanged.)") + 1)
+        @($output | Where-Object { $_ -like "generate: OK (Generated pack 'testland'*" }).Count | Should -Be 1
+        @($output | Where-Object { $_ -like "convert-portraits: OK (Pack 'testland': *" }).Count | Should -Be 1
+        @($output | Where-Object { $_ -like 'check: Check OK: 1 pack(s)*' }).Count | Should -Be 1
+        $output | Should -Contain 'repodata: Summary: 3 Passed, 0 Failed, 0 Skipped (suite: RepoData)'
+        $output | Should -Contain '## Leaders'
+        $output | Should -Contain '## Photos'
+        $output | Should -Contain '## Review rounds'
+        $output | Should -Contain '| alpha_leader | Alpha Leader | new | none; none | corps_commander | 3 / 4 2 2 2 | infantry_officer | alpha | r1, seed 2 |'
+        $output | Should -Contain 'plan tables: match'
+        @($output | Where-Object { $_ -like 'differs:*' }).Count | Should -Be 0
+        @(Get-ChildItem -LiteralPath (Join-Path $fixture.Root 'scratch') -Directory -ErrorAction SilentlyContinue).Count | Should -Be 0
+        Get-LpSourceHashes -Root $fixture.Root | Should -BeExactly $sourceBefore
+        ((Get-ChildItem -LiteralPath (Join-Path $fixture.Root 'packs') -Recurse -File | ForEach-Object { Get-LpSha256 -Path $_.FullName }) -join ',') | Should -BeExactly $generatedBefore
+    }
+
+    It 'rehearses a plan whose table row differs, fails the exit code for it, and removes the copy' {
+        $fixture = New-LpRehearsalFixture -Text (Get-LpPlanFixtureText).Replace('| corps_commander | 3 / 4 2 2 2 |', '| corps_commander | 3 / 3 2 2 2 |')
+        $output = @(Invoke-LpRehearsePlan -RepoRoot $fixture.Root -PlanPath $fixture.Plan 6>&1 | ForEach-Object { [string]$_ })
+        $output[-1] | Should -Be '1'
+        $output | Should -Contain "differs: Leaders row alpha_leader, Stats: plan '3 / 3 2 2 2', source '3 / 4 2 2 2'"
+        @($output | Where-Object { $_ -like 'check: Check OK*' }).Count | Should -Be 1
+        @(Get-ChildItem -LiteralPath (Join-Path $fixture.Root 'scratch') -Directory -ErrorAction SilentlyContinue).Count | Should -Be 0
+    }
+
+    It 'reports a step that fails, still runs the later ones, and removes the copy' {
+        $fixture = New-LpRehearsalFixture -Text (Get-LpPlanFixtureText).Replace('"traits": ["seawolf"]', '"traits": ["no_such_trait_zz"]')
+        $output = @(Invoke-LpRehearsePlan -RepoRoot $fixture.Root -PlanPath $fixture.Plan 6>&1 | ForEach-Object { [string]$_ })
+        $output[-1] | Should -Be '1'
+        @($output | Where-Object { $_ -like 'check: FAILED (exit 1)*' }).Count | Should -Be 1 -Because ($output -join "`n")
+        @($output | Where-Object { $_ -like '*[[]ERROR]*no_such_trait_zz*' }).Count | Should -BeGreaterThan 0
+        $output | Should -Contain 'repodata: Summary: 3 Passed, 0 Failed, 0 Skipped (suite: RepoData)'
+        @(Get-ChildItem -LiteralPath (Join-Path $fixture.Root 'scratch') -Directory -ErrorAction SilentlyContinue).Count | Should -Be 0
+        (Read-LpJson -Path (Join-Path $fixture.Root 'source\testland\leaders.json')).leaders[4].traits[0] | Should -Be 'seawolf'
+    }
+
+    It 'stops a rehearsal at a plan that does not parse, before any copy is made' {
+        $fixture = New-LpRehearsalFixture -Text (Get-LpPlanFixtureText).Replace('"prefix": "lp_tst",', '"prefix": "lp_tst"')
+        $output = @(Invoke-LpRehearsePlan -RepoRoot $fixture.Root -PlanPath $fixture.Plan 6>&1 | ForEach-Object { [string]$_ })
+        $output[-1] | Should -Be '1'
+        ($output -join "`n") | Should -BeLike "*block 'json leaders' does not parse:*"
+        Test-Path -LiteralPath (Join-Path $fixture.Root 'scratch') | Should -BeFalse
+    }
+
+    It 'wires -ApplyPlan and -RehearsePlan into build.ps1' {
+        $fixture = New-LpRehearsalFixture
+        $fixtureBuild = Join-Path $fixture.Root 'build.ps1'
+        $dryOutput = @(& powershell -NoProfile -ExecutionPolicy Bypass -File $fixtureBuild -ApplyPlan -Plan $fixture.Plan -DryRun)
+        $LASTEXITCODE | Should -Be 0 -Because ($dryOutput -join "`n")
+        ($dryOutput -join "`n") | Should -Match "Dry run for pack 'testland': 3 file\(s\) would be written"
+        $missingOutput = @(& powershell -NoProfile -ExecutionPolicy Bypass -File $fixtureBuild -ApplyPlan -Plan (Join-Path $fixture.Root 'docs\plans\nothing.md'))
+        $LASTEXITCODE | Should -Be 1
+        ($missingOutput -join "`n") | Should -Match 'plan file not found'
+        $sourceBefore = Get-LpSourceHashes -Root $fixture.Root
+        $dryRehearsal = @(& powershell -NoProfile -ExecutionPolicy Bypass -File $fixtureBuild -RehearsePlan -Plan $fixture.Plan -DryRun)
+        $LASTEXITCODE | Should -Be 1
+        ($dryRehearsal -join "`n") | Should -Match '-RehearsePlan takes no -DryRun'
+        Test-Path -LiteralPath (Join-Path $fixture.Root 'scratch') | Should -BeFalse
+        Get-LpSourceHashes -Root $fixture.Root | Should -BeExactly $sourceBefore
+    }
+}
+
 Describe 'Tool files' {
     It 'keeps the PowerShell tools in ASCII' {
         foreach ($toolPath in @('tools\LeaderPacks.ps1', 'tools\LeaderPacks.Showcase.ps1', 'build.ps1', 'tests\LeaderPacks.Fixture.ps1', '.claude\hooks\Protect-ProjectFiles.ps1')) {

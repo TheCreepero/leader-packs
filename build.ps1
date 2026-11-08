@@ -77,6 +77,16 @@ param(
     [Parameter(ParameterSetName = 'ListCharacters')]
     [string[]]$Name,
 
+    [Parameter(ParameterSetName = 'ApplyPlan', Mandatory = $true)]
+    [switch]$ApplyPlan,
+
+    [Parameter(ParameterSetName = 'RehearsePlan', Mandatory = $true)]
+    [switch]$RehearsePlan,
+
+    [Parameter(ParameterSetName = 'ApplyPlan', Mandatory = $true)]
+    [Parameter(ParameterSetName = 'RehearsePlan', Mandatory = $true)]
+    [string]$Plan,
+
     [Parameter(ParameterSetName = 'MakePortraits', Mandatory = $true)]
     [switch]$MakePortraits,
 
@@ -223,6 +233,17 @@ switch ($PSCmdlet.ParameterSetName) {
         Assert-PackGiven -SwitchName '-ListCharacters'
         [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false)
         exit ([int](@(Invoke-LpListCharacters -RepoRoot $PSScriptRoot -Pack $Pack -Name $Name)[-1]))
+    }
+    'ApplyPlan' {
+        exit ([int](@(Invoke-LpApplyPlan -RepoRoot $PSScriptRoot -PlanPath $Plan -Pack $Pack -DryRun:$DryRun)[-1]))
+    }
+    'RehearsePlan' {
+        if ($DryRun) {
+            Write-Host '-RehearsePlan takes no -DryRun: it already writes only a copy under scratch\ and removes it; use -ApplyPlan -DryRun to see what a plan would write' -ForegroundColor Red
+            exit 1
+        }
+        [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false)
+        exit ([int](@(Invoke-LpRehearsePlan -RepoRoot $PSScriptRoot -PlanPath $Plan -Pack $Pack)[-1]))
     }
     'MakePortraits' {
         Assert-PackGiven -SwitchName '-MakePortraits'

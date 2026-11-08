@@ -143,6 +143,11 @@ Describe 'Protect-ProjectFiles hook' {
         @{ Command = 'powershell -File .\build.ps1 -ApplyPortraitReview -Pack finland -Leader einar_vihma -Pick 2' },
         @{ Command = 'powershell -File .\build.ps1 -ApplyPortraitReview -Pack finland -Leader einar_vihma -Withdraw "photo licence refused: a re-shot print under PD-self"' },
         @{ Command = 'powershell -File .\build.ps1 -ConvertPortraits -Pack finland -Force' },
+        @{ Command = 'powershell -File .\build.ps1 -ApplyPlan -Plan docs\plans\2026-11-08-poland-fixes.md' },
+        @{ Command = 'powershell -File .\build.ps1 -ApplyPlan -Plan docs\plans\2026-11-08-poland-fixes.md -DryRun' },
+        @{ Command = 'powershell -File .\build.ps1 -RehearsePlan -Plan docs\plans\2026-11-08-poland-fixes.md' },
+        @{ Command = 'powershell -File .\build.ps1 -ApplyPlan -Plan "docs\plans\2026-11-08-packs-portraits.json-review.md" -DryRun' },
+        @{ Command = 'powershell -File .\build.ps1 -RehearsePlan -Plan docs\plans\2026-11-08-packs\poland-photos.json.md' },
         @{ Command = '.\build.ps1 -Check' },
         @{ Command = 'git status --short -- packs/finland' },
         @{ Command = 'git diff -- source/finland/portraits.json' },
@@ -162,15 +167,22 @@ Describe 'Protect-ProjectFiles hook' {
 }
 
 Describe 'Project settings' {
-    It 'asks before an agent reads the pack tools and allows every build switch of a pack' {
+    It 'asks before an agent reads the pack tools' {
         $settings = Get-Content -LiteralPath (Join-Path $script:RepoRoot '.claude\settings.json') -Raw | ConvertFrom-Json
         @($settings.permissions.ask) | Should -Contain 'Read(tools/LeaderPacks.ps1)'
         @($settings.permissions.ask) | Should -Contain 'Read(tools/HoiModBuild.ps1)'
         @($settings.permissions.ask) | Should -Contain 'Read(tools/HoiImageSources.ps1)'
         @($settings.permissions.ask) | Should -Contain 'PowerShell(*build.ps1*-ConfirmLicence*)'
         @($settings.permissions.ask) | Should -Contain 'Bash(*build.ps1*-ConfirmLicence*)'
-        foreach ($switchName in @('Generate', 'FetchPhoto', 'MakePortraits', 'ReviewPage', 'ApplyPortraitReview', 'ConvertPortraits', 'PreviewPortraits', 'RefreshGameData', 'Check', 'Audit', 'SyncMirrors', 'RenderShowcase')) {
+    }
+
+    It 'allows every build switch of a pack in both shells' {
+        $settings = Get-Content -LiteralPath (Join-Path $script:RepoRoot '.claude\settings.json') -Raw | ConvertFrom-Json
+        foreach ($switchName in @('Generate', 'FetchPhoto', 'MakePortraits', 'ReviewPage', 'ApplyPortraitReview', 'ConvertPortraits', 'PreviewPortraits', 'RefreshGameData', 'Check', 'Audit', 'SyncMirrors', 'RenderShowcase', 'ListCharacters', 'ApplyPlan', 'RehearsePlan')) {
             @($settings.permissions.allow) | Should -Contain "PowerShell(powershell -File .\build.ps1 -$switchName*)"
+        }
+        foreach ($switchName in @('ListCharacters', 'ApplyPlan', 'RehearsePlan')) {
+            @($settings.permissions.allow) | Should -Contain "Bash(powershell*build.ps1 -$switchName*)"
         }
     }
 }

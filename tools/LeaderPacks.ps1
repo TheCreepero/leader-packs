@@ -2160,6 +2160,922 @@ function Invoke-LpListCharacters {
     return 0
 }
 
+function Get-LpLineEnding {
+    param([Parameter(Mandatory = $true)][string]$Path)
+
+    if ((Test-Path -LiteralPath $Path) -and [System.IO.File]::ReadAllText($Path, [System.Text.Encoding]::UTF8).Contains("`r`n")) {
+        return "`r`n"
+    }
+    return "`n"
+}
+
+function ConvertTo-LpLineEnding {
+    param([AllowEmptyString()][string]$Text, [Parameter(Mandatory = $true)][string]$LineEnding)
+
+    return ((([string]$Text) -replace "`r`n", "`n") -replace "`r", "`n").Replace("`n", $LineEnding)
+}
+
+function ConvertTo-LpJsonString {
+    param([AllowEmptyString()][string]$Value)
+
+    $builder = [System.Text.StringBuilder]::new()
+    [void]$builder.Append('"')
+    foreach ($character in $Value.ToCharArray()) {
+        $code = [int]$character
+        if ($code -eq 34) {
+            [void]$builder.Append('\"')
+        } elseif ($code -eq 92) {
+            [void]$builder.Append('\\')
+        } elseif ($code -eq 10) {
+            [void]$builder.Append('\n')
+        } elseif ($code -eq 13) {
+            [void]$builder.Append('\r')
+        } elseif ($code -eq 9) {
+            [void]$builder.Append('\t')
+        } elseif ($code -lt 32) {
+            [void]$builder.Append('\u' + $code.ToString('x4'))
+        } else {
+            [void]$builder.Append($character)
+        }
+    }
+    [void]$builder.Append('"')
+    return $builder.ToString()
+}
+
+function ConvertTo-LpFormattedJson {
+    param($Value, [int]$Depth = 0)
+
+    $closingPad = ' ' * (4 * $Depth)
+    $innerPad = ' ' * (4 * ($Depth + 1))
+    if ($null -eq $Value) {
+        return 'null'
+    }
+    if ($Value -is [bool]) {
+        return $(if ($Value) { 'true' } else { 'false' })
+    }
+    if ($Value -is [string]) {
+        return (ConvertTo-LpJsonString -Value $Value)
+    }
+    if ($Value -is [ValueType]) {
+        return [System.Convert]::ToString($Value, [System.Globalization.CultureInfo]::InvariantCulture)
+    }
+    if ($Value -is [System.Collections.IDictionary]) {
+        if ($Value.Count -eq 0) {
+            return '{}'
+        }
+        $entries = @(foreach ($entryKey in @($Value.Keys)) { $innerPad + (ConvertTo-LpJsonString -Value ([string]$entryKey)) + ': ' + (ConvertTo-LpFormattedJson -Value $Value[$entryKey] -Depth ($Depth + 1)) })
+        return ("{`n" + ($entries -join ",`n") + "`n" + $closingPad + '}')
+    }
+    $items = @($Value)
+    if ($items.Count -eq 0) {
+        return '[]'
+    }
+    if (@($items | Where-Object { $_ -is [ValueType] -and $_ -isnot [bool] }).Count -eq $items.Count) {
+        return ('[' + (@($items | ForEach-Object { ConvertTo-LpFormattedJson -Value $_ }) -join ', ') + ']')
+    }
+    $itemTexts = @(foreach ($item in $items) { $innerPad + (ConvertTo-LpFormattedJson -Value $item -Depth ($Depth + 1)) })
+    return ("[`n" + ($itemTexts -join ",`n") + "`n" + $closingPad + ']')
+}
+
+function ConvertFrom-LpFactSheetText {
+    param([AllowEmptyString()][string]$Text)
+
+    $lines = [System.Collections.Generic.List[string]]::new()
+    foreach ($line in (ConvertTo-LpLineEnding -Text $Text -LineEnding "`n").Split("`n")) {
+        $lines.Add($line)
+    }
+    if ($lines.Count -gt 0 -and $lines[$lines.Count - 1] -eq '') {
+        $lines.RemoveAt($lines.Count - 1)
+    }
+    $preamble = [System.Collections.Generic.List[string]]::new()
+    $sections = [System.Collections.Generic.List[object]]::new()
+    $current = $null
+    foreach ($line in $lines) {
+        $headingMatch = [regex]::Match($line, '^##\s+(\S.*?)\s*$')
+        if ($headingMatch.Success) {
+            $current = [PSCustomObject]@{ Key = $headingMatch.Groups[1].Value; Lines = [System.Collections.Generic.List[string]]::new() }
+            $current.Lines.Add($line)
+            $sections.Add($current)
+        } elseif ($null -eq $current) {
+            $preamble.Add($line)
+        } else {
+            $current.Lines.Add($line)
+        }
+    }
+    return [PSCustomObject]@{ Preamble = $preamble; Sections = $sections }
+}
+
+function Get-LpTrimmedSectionLines {
+    param($Lines)
+
+    $kept = [System.Collections.Generic.List[string]]::new()
+    foreach ($line in $Lines) {
+        $kept.Add($line)
+    }
+    while ($kept.Count -gt 0 -and $kept[$kept.Count - 1].Trim() -eq '') {
+        $kept.RemoveAt($kept.Count - 1)
+    }
+    return , $kept.ToArray()
+}
+
+function Merge-LpFactSheets {
+    param([AllowEmptyString()][string]$ExistingText, [Parameter(Mandatory = $true)]$BlockSections)
+
+    $existing = ConvertFrom-LpFactSheetText -Text $ExistingText
+    $replacedKeys = [System.Collections.Generic.List[string]]::new()
+    $addedKeys = [System.Collections.Generic.List[string]]::new()
+    $unchangedKeys = [System.Collections.Generic.List[string]]::new()
+    $appended = [System.Collections.Generic.List[object]]::new()
+    foreach ($blockSection in $BlockSections) {
+        $newLines = Get-LpTrimmedSectionLines -Lines $blockSection.Lines
+        $target = @($existing.Sections | Where-Object { $_.Key -ceq $blockSection.Key })[0]
+        if ($null -eq $target) {
+            $appended.Add([PSCustomObject]@{ Key = $blockSection.Key; Lines = $newLines })
+            $addedKeys.Add($blockSection.Key)
+            continue
+        }
+        $oldLines = Get-LpTrimmedSectionLines -Lines $target.Lines
+        if (($oldLines -join "`n") -ceq ($newLines -join "`n")) {
+            $unchangedKeys.Add($blockSection.Key)
+            continue
+        }
+        $trailingBlankCount = $target.Lines.Count - $oldLines.Count
+        $target.Lines = [System.Collections.Generic.List[string]]::new()
+        foreach ($newLine in $newLines) {
+            $target.Lines.Add($newLine)
+        }
+        for ($blankIndex = 0; $blankIndex -lt $trailingBlankCount; $blankIndex++) {
+            $target.Lines.Add('')
+        }
+        $replacedKeys.Add($blockSection.Key)
+    }
+    $outputLines = [System.Collections.Generic.List[string]]::new()
+    foreach ($line in $existing.Preamble) {
+        $outputLines.Add($line)
+    }
+    foreach ($section in @($existing.Sections) + @($appended)) {
+        if ($appended -contains $section -and $outputLines.Count -gt 0 -and $outputLines[$outputLines.Count - 1].Trim() -ne '') {
+            $outputLines.Add('')
+        }
+        foreach ($line in $section.Lines) {
+            $outputLines.Add($line)
+        }
+    }
+    return [PSCustomObject]@{
+        Text      = (($outputLines.ToArray() -join "`n") + "`n")
+        Replaced  = $replacedKeys.ToArray()
+        Added     = $addedKeys.ToArray()
+        Unchanged = $unchangedKeys.ToArray()
+    }
+}
+
+function ConvertTo-LpCellText {
+    param([AllowEmptyString()][string]$Cell)
+
+    return ([regex]::Replace(([string]$Cell).Replace('`', ''), '\s+', ' ')).Trim()
+}
+
+function Test-LpCellEmpty {
+    param([AllowEmptyString()][string]$Cell)
+
+    return (@('', '-', 'none', 'n/a') -contains (ConvertTo-LpCellText -Cell $Cell).ToLowerInvariant())
+}
+
+function ConvertFrom-LpMarkdownTable {
+    param([string[]]$Lines)
+
+    if (@($Lines).Count -lt 2) {
+        return $null
+    }
+    $splitRow = {
+        param([string]$Line)
+        $rowMatch = [regex]::Match($Line, '^\s*\|(.*)\|\s*$')
+        if (-not $rowMatch.Success) { return , @() }
+        return , @($rowMatch.Groups[1].Value.Split('|') | ForEach-Object { $_.Trim() })
+    }
+    $header = & $splitRow $Lines[0]
+    $rows = [System.Collections.Generic.List[object]]::new()
+    foreach ($line in @($Lines | Select-Object -Skip 1)) {
+        if ($line -match '^\s*\|[\s:|-]+\|?\s*$') { continue }
+        $cells = & $splitRow $line
+        $padded = [string[]]::new([Math]::Max($header.Count, $cells.Count))
+        for ($cellIndex = 0; $cellIndex -lt $cells.Count; $cellIndex++) { $padded[$cellIndex] = $cells[$cellIndex] }
+        $rows.Add($padded)
+    }
+    return [PSCustomObject]@{ Header = @($header); Rows = $rows.ToArray() }
+}
+
+function Read-LpPlan {
+    param([Parameter(Mandatory = $true)][string]$PlanPath)
+
+    $problems = [System.Collections.Generic.List[string]]::new()
+    $plan = [PSCustomObject]@{ Path = $PlanPath; Pack = ''; Problems = $problems; Leaders = $null; LeadersText = ''; FactSheets = $null; Showcase = $null; Tables = @{} }
+    if (-not (Test-Path -LiteralPath $PlanPath -PathType Leaf)) {
+        $problems.Add("plan file not found: $PlanPath")
+        return $plan
+    }
+    $lines = (ConvertTo-LpLineEnding -Text ([System.IO.File]::ReadAllText($PlanPath, [System.Text.Encoding]::UTF8)) -LineEnding "`n").Split("`n")
+    $blockTexts = @{}
+    $tableLines = @{}
+    $headerLines = [System.Collections.Generic.List[string]]::new()
+    $openFence = $null
+    $heading = ''
+    foreach ($line in $lines) {
+        if ($null -ne $openFence) {
+            if ($line.Trim() -eq '```') {
+                if ($openFence.Name) {
+                    if (-not $blockTexts.ContainsKey($openFence.Name)) { $blockTexts[$openFence.Name] = [System.Collections.Generic.List[string]]::new() }
+                    $blockTexts[$openFence.Name].Add(($openFence.Lines.ToArray() -join "`n"))
+                }
+                $openFence = $null
+            } else {
+                $openFence.Lines.Add($line)
+            }
+            continue
+        }
+        if ($line.TrimStart().StartsWith('```')) {
+            $blockName = ''
+            $infoWords = @($line.TrimStart().Substring(3).Trim() -split '\s+' | Where-Object { $_ })
+            $blockKey = $(if ($infoWords.Count -ge 2) { $infoWords[0] + ' ' + $infoWords[1] } else { '' })
+            if (@('json leaders', 'markdown fact-sheets', 'json showcase') -contains $blockKey) { $blockName = $blockKey }
+            $openFence = [PSCustomObject]@{ Name = $blockName; Lines = [System.Collections.Generic.List[string]]::new() }
+            continue
+        }
+        $headingMatch = [regex]::Match($line, '^##\s+(.+?)\s*$')
+        if ($headingMatch.Success) {
+            $heading = $headingMatch.Groups[1].Value
+            if (-not $tableLines.ContainsKey($heading)) { $tableLines[$heading] = [System.Collections.Generic.List[string]]::new() }
+            continue
+        }
+        if ($heading -eq '') {
+            $headerLines.Add($line)
+        } elseif ($line.TrimStart().StartsWith('|')) {
+            $tableLines[$heading].Add($line)
+        }
+    }
+    if ($null -ne $openFence) {
+        $problems.Add('a code fence is never closed')
+    }
+    $packMatch = [regex]::Match(($headerLines.ToArray() -join "`n"), '(?m)^Pack:\s*([a-z][a-z0-9_]*)')
+    if ($packMatch.Success) {
+        $plan.Pack = $packMatch.Groups[1].Value
+    } else {
+        $problems.Add("the header has no 'Pack: <pack>' line naming a pack key")
+    }
+    foreach ($tableHeading in @('Leaders', 'Photos', 'Review rounds')) {
+        if ($tableLines.ContainsKey($tableHeading)) {
+            $plan.Tables[$tableHeading] = [PSCustomObject]@{ Table = (ConvertFrom-LpMarkdownTable -Lines $tableLines[$tableHeading].ToArray()) }
+        }
+    }
+
+    foreach ($blockKey in @('json leaders', 'markdown fact-sheets', 'json showcase')) {
+        if ($blockTexts.ContainsKey($blockKey) -and $blockTexts[$blockKey].Count -gt 1) {
+            $problems.Add("block '$blockKey' appears $($blockTexts[$blockKey].Count) times; a plan has one")
+        }
+    }
+    foreach ($requiredKey in @('json leaders', 'markdown fact-sheets')) {
+        if (-not $blockTexts.ContainsKey($requiredKey)) {
+            $problems.Add("block '$requiredKey' is missing")
+        }
+    }
+
+    if ($blockTexts.ContainsKey('json leaders')) {
+        $plan.LeadersText = $blockTexts['json leaders'][0]
+        try {
+            if ($plan.LeadersText.Trim() -eq '') { throw 'the block is empty' }
+            $plan.Leaders = $plan.LeadersText | ConvertFrom-Json
+            if ($plan.Leaders -isnot [PSCustomObject]) { throw 'the block is not a JSON object' }
+            if ($null -eq $plan.Leaders.PSObject.Properties['leaders']) { throw "the object has no 'leaders' array" }
+            if ($plan.Leaders.leaders -isnot [array]) { throw "'leaders' is not an array" }
+            $seenLeaderKeys = @{}
+            foreach ($leaderEntry in $plan.Leaders.leaders) {
+                if ($leaderEntry -isnot [PSCustomObject] -or [string](Get-LpProperty -Object $leaderEntry -Name 'key' -Default '') -cnotmatch '^[a-z][a-z0-9_]*$') { throw "a leader has no key of lower-case letters, digits and underscores" }
+                if ($seenLeaderKeys.ContainsKey([string]$leaderEntry.key)) { throw "the key '$($leaderEntry.key)' appears twice" }
+                $seenLeaderKeys[[string]$leaderEntry.key] = $true
+            }
+            if ($plan.Pack -and [string](Get-LpProperty -Object $plan.Leaders -Name 'pack' -Default '') -cne $plan.Pack) {
+                throw "its 'pack' is '$(Get-LpProperty -Object $plan.Leaders -Name 'pack' -Default '')', the header says '$($plan.Pack)'"
+            }
+        } catch {
+            $plan.Leaders = $null
+            $problems.Add("block 'json leaders' does not parse: $($_.Exception.Message)")
+        }
+    }
+
+    if ($blockTexts.ContainsKey('markdown fact-sheets')) {
+        $factSheetText = $blockTexts['markdown fact-sheets'][0]
+        $parsed = ConvertFrom-LpFactSheetText -Text $factSheetText
+        $factProblems = [System.Collections.Generic.List[string]]::new()
+        if (@($parsed.Preamble | Where-Object { $_.Trim() -ne '' }).Count -gt 0) {
+            $factProblems.Add('text before the first "## <key>" heading')
+        }
+        $seenKeys = @{}
+        foreach ($section in $parsed.Sections) {
+            if ($section.Key -cnotmatch '^[a-z][a-z0-9_]*$') { $factProblems.Add("heading '## $($section.Key)' is not a leader key") }
+            if ($seenKeys.ContainsKey($section.Key)) { $factProblems.Add("section '$($section.Key)' appears twice") }
+            $seenKeys[$section.Key] = $true
+            if (@($section.Lines | Select-Object -Skip 1 | Where-Object { $_.Trim() -ne '' }).Count -eq 0) { $factProblems.Add("section '$($section.Key)' has no text") }
+        }
+        if ($factProblems.Count -gt 0) {
+            $problems.Add("block 'markdown fact-sheets' does not parse: " + ($factProblems -join '; '))
+        } else {
+            $plan.FactSheets = $parsed.Sections.ToArray()
+        }
+    }
+
+    if ($blockTexts.ContainsKey('json showcase')) {
+        try {
+            $showcaseValue = $blockTexts['json showcase'][0] | ConvertFrom-Json
+            if ($showcaseValue -isnot [PSCustomObject]) { throw 'the block is not a JSON object' }
+            $extraNames = @($showcaseValue.PSObject.Properties.Name | Where-Object { $_ -cne 'leaders' })
+            if ($extraNames.Count -gt 0) { throw "unknown field '$($extraNames[0])'; only 'leaders' is read" }
+            if ($showcaseValue.leaders -isnot [PSCustomObject]) { throw "'leaders' is not an object of entries by leader key" }
+            foreach ($entry in @($showcaseValue.leaders.PSObject.Properties)) {
+                if ($entry.Value -isnot [PSCustomObject]) { throw "leaders.$($entry.Name) is not an object" }
+                if ($entry.Name -cnotmatch '^[a-z][a-z0-9_]*$') { throw "the key '$($entry.Name)' is not a leader key" }
+                if ($null -ne $plan.Leaders -and @($plan.Leaders.leaders | ForEach-Object { [string]$_.key }) -cnotcontains $entry.Name) { throw "the key '$($entry.Name)' is not a leader of the 'json leaders' block" }
+            }
+            $plan.Showcase = $showcaseValue
+        } catch {
+            $problems.Add("block 'json showcase' does not parse: $($_.Exception.Message)")
+        }
+    }
+    return $plan
+}
+
+function Get-LpPlanTarget {
+    param([Parameter(Mandatory = $true)][string]$RepoRoot, [Parameter(Mandatory = $true)]$PlanData, [string]$Pack)
+
+    $refusals = [System.Collections.Generic.List[string]]::new()
+    foreach ($problem in $PlanData.Problems) {
+        $refusals.Add("Plan $($PlanData.Path): $problem")
+    }
+    if ($refusals.Count -eq 0 -and @(Get-LpPackNames -RepoRoot $RepoRoot) -cnotcontains $PlanData.Pack) {
+        $refusals.Add("Plan $($PlanData.Path): pack '$($PlanData.Pack)' is not in tools\HoiModBuild.json; create it with build.ps1 -NewPack first")
+    }
+    if ($refusals.Count -eq 0 -and $Pack -and $Pack -cne $PlanData.Pack) {
+        $refusals.Add("-Pack $Pack does not match the plan's pack '$($PlanData.Pack)'; -ApplyPlan and -RehearsePlan take the pack from the plan")
+    }
+    foreach ($refusal in $refusals) {
+        Write-Host $refusal -ForegroundColor Red
+    }
+    if ($refusals.Count -gt 0) {
+        Write-Host 'Nothing was written.' -ForegroundColor Red
+        return $false
+    }
+    return $true
+}
+
+function Get-LpJsonKey {
+    param($Value)
+
+    return (ConvertTo-Json -InputObject (ConvertTo-LpOrdered -Value $Value) -Depth 12 -Compress)
+}
+
+function Invoke-LpApplyPlan {
+    param(
+        [Parameter(Mandatory = $true)][string]$RepoRoot,
+        [Parameter(Mandatory = $true)][string]$PlanPath,
+        [string]$Pack,
+        [switch]$DryRun
+    )
+
+    $planData = Read-LpPlan -PlanPath $PlanPath
+    if (-not (Get-LpPlanTarget -RepoRoot $RepoRoot -PlanData $planData -Pack $Pack)) {
+        return 1
+    }
+    $packName = $planData.Pack
+    $sourceDir = Join-Path $RepoRoot ('source\' + $packName)
+    $written = 0
+    $unchanged = 0
+    $verb = $(if ($DryRun) { 'would write' } else { 'written' })
+    $reportLines = [System.Collections.Generic.List[string]]::new()
+    $pendingWrites = [System.Collections.Generic.List[object]]::new()
+
+    $leadersPath = Join-Path $sourceDir 'leaders.json'
+    $leadersEnding = Get-LpLineEnding -Path $leadersPath
+    $newLeadersText = ConvertTo-LpLineEnding -Text ($planData.LeadersText.TrimEnd() + "`n") -LineEnding $leadersEnding
+    $oldLeaders = @{}
+    $oldLeadersText = ''
+    if (Test-Path -LiteralPath $leadersPath) {
+        $oldLeadersText = [System.IO.File]::ReadAllText($leadersPath, [System.Text.Encoding]::UTF8)
+        try {
+            foreach ($oldLeader in @(ConvertTo-LpArray (Get-LpProperty -Object (Read-LpJson -Path $leadersPath) -Name 'leaders'))) { $oldLeaders[[string]$oldLeader.key] = Get-LpJsonKey -Value $oldLeader }
+        } catch {
+            $oldLeaders = @{}
+        }
+    }
+    $addedLeaders = [System.Collections.Generic.List[string]]::new()
+    $changedLeaders = [System.Collections.Generic.List[string]]::new()
+    $newLeaderKeys = @{}
+    foreach ($newLeader in @(ConvertTo-LpArray (Get-LpProperty -Object $planData.Leaders -Name 'leaders'))) {
+        $newLeaderKeys[[string]$newLeader.key] = $true
+        if (-not $oldLeaders.ContainsKey([string]$newLeader.key)) { $addedLeaders.Add([string]$newLeader.key) } elseif ($oldLeaders[[string]$newLeader.key] -cne (Get-LpJsonKey -Value $newLeader)) { $changedLeaders.Add([string]$newLeader.key) }
+    }
+    $removedLeaders = @($oldLeaders.Keys | Where-Object { -not $newLeaderKeys.ContainsKey($_) } | Sort-Object)
+    $leaderDetail = "$($newLeaderKeys.Count) leader(s): added $($addedLeaders.Count)$(if ($addedLeaders.Count) { ' (' + ($addedLeaders -join ', ') + ')' }), changed $($changedLeaders.Count)$(if ($changedLeaders.Count) { ' (' + ($changedLeaders -join ', ') + ')' }), removed $($removedLeaders.Count)$(if ($removedLeaders.Count) { ' (' + ($removedLeaders -join ', ') + ')' })"
+    if ($newLeadersText -ceq $oldLeadersText) {
+        $reportLines.Add("source/$packName/leaders.json: unchanged ($($newLeaderKeys.Count) leader(s))")
+        $unchanged++
+    } else {
+        $pendingWrites.Add([PSCustomObject]@{ Path = $leadersPath; Text = $newLeadersText })
+        $reportLines.Add("source/$packName/leaders.json: $verb; $leaderDetail")
+        $written++
+    }
+
+    $factSheetPath = Join-Path $sourceDir 'fact-sheets.md'
+    $factSheetEnding = Get-LpLineEnding -Path $factSheetPath
+    $oldFactSheetText = $(if (Test-Path -LiteralPath $factSheetPath) { [System.IO.File]::ReadAllText($factSheetPath, [System.Text.Encoding]::UTF8) } else { '' })
+    $merged = Merge-LpFactSheets -ExistingText $oldFactSheetText -BlockSections $planData.FactSheets
+    $mergedText = ConvertTo-LpLineEnding -Text $merged.Text -LineEnding $factSheetEnding
+    $factDetail = "$(@($planData.FactSheets).Count) section(s) in the plan: replaced $($merged.Replaced.Count)$(if ($merged.Replaced.Count) { ' (' + ($merged.Replaced -join ', ') + ')' }), added $($merged.Added.Count)$(if ($merged.Added.Count) { ' (' + ($merged.Added -join ', ') + ')' }), unchanged $($merged.Unchanged.Count)"
+    if ($mergedText -ceq $oldFactSheetText) {
+        $reportLines.Add("source/$packName/fact-sheets.md: unchanged ($factDetail)")
+        $unchanged++
+    } else {
+        $pendingWrites.Add([PSCustomObject]@{ Path = $factSheetPath; Text = $mergedText })
+        $reportLines.Add("source/$packName/fact-sheets.md: $verb; $factDetail")
+        $written++
+    }
+
+    $showcasePath = Join-Path $sourceDir 'showcase.json'
+    $showcaseEntries = $null
+    if ($null -ne $planData.Showcase) {
+        $showcaseEnding = Get-LpLineEnding -Path $showcasePath
+        $showcaseValue = [ordered]@{ leaders = [ordered]@{} }
+        if (Test-Path -LiteralPath $showcasePath) {
+            try {
+                $showcaseValue = ConvertTo-LpOrdered -Value (Read-LpJson -Path $showcasePath)
+            } catch {
+                Write-Host "source/$packName/showcase.json does not parse: $($_.Exception.Message)" -ForegroundColor Red
+                Write-Host 'Nothing was written.' -ForegroundColor Red
+                return 1
+            }
+            if (-not $showcaseValue.Contains('leaders') -or $showcaseValue['leaders'] -isnot [System.Collections.IDictionary]) { $showcaseValue['leaders'] = [ordered]@{} }
+        }
+        $replacedCards = [System.Collections.Generic.List[string]]::new()
+        $addedCards = [System.Collections.Generic.List[string]]::new()
+        $unchangedCards = 0
+        foreach ($entry in @($planData.Showcase.leaders.PSObject.Properties)) {
+            $newEntry = ConvertTo-LpOrdered -Value $entry.Value
+            if (-not $showcaseValue['leaders'].Contains($entry.Name)) {
+                $addedCards.Add($entry.Name)
+            } elseif ((Get-LpJsonKey -Value $showcaseValue['leaders'][$entry.Name]) -ceq (Get-LpJsonKey -Value $newEntry)) {
+                $unchangedCards++
+                continue
+            } else {
+                $replacedCards.Add($entry.Name)
+            }
+            $showcaseValue['leaders'][$entry.Name] = $newEntry
+        }
+        $newShowcaseText = ConvertTo-LpLineEnding -Text ((ConvertTo-LpFormattedJson -Value $showcaseValue) + "`n") -LineEnding $showcaseEnding
+        $showcaseDetail = "$(@($planData.Showcase.leaders.PSObject.Properties).Count) entr(ies) in the plan: replaced $($replacedCards.Count)$(if ($replacedCards.Count) { ' (' + ($replacedCards -join ', ') + ')' }), added $($addedCards.Count)$(if ($addedCards.Count) { ' (' + ($addedCards -join ', ') + ')' }), unchanged $unchangedCards"
+        if ($replacedCards.Count -eq 0 -and $addedCards.Count -eq 0) {
+            $reportLines.Add("source/$packName/showcase.json: unchanged ($showcaseDetail)")
+            $unchanged++
+        } else {
+            $pendingWrites.Add([PSCustomObject]@{ Path = $showcasePath; Text = $newShowcaseText })
+            $reportLines.Add("source/$packName/showcase.json: $verb; $showcaseDetail")
+            $written++
+        }
+        $showcaseEntries = $showcaseValue['leaders']
+    } else {
+        $reportLines.Add("source/$packName/showcase.json: the plan has no 'json showcase' block; not touched")
+        try {
+            $existingShowcase = Read-LpOptionalJson -Path $showcasePath
+        } catch {
+            Write-Host "source/$packName/showcase.json does not parse: $($_.Exception.Message)" -ForegroundColor Red
+            Write-Host 'Nothing was written.' -ForegroundColor Red
+            return 1
+        }
+        if ($null -ne $existingShowcase) { $showcaseEntries = ConvertTo-LpOrdered -Value (Get-LpProperty -Object $existingShowcase -Name 'leaders') }
+    }
+    foreach ($leader in @(ConvertTo-LpArray (Get-LpProperty -Object $planData.Leaders -Name 'leaders'))) {
+        if (@('new', 'addRole') -contains [string](Get-LpProperty -Object $leader -Name 'mode' -Default '') -and ($null -eq $showcaseEntries -or -not $showcaseEntries.Contains([string]$leader.key))) {
+            $reportLines.Add("  [WARN] source/$packName/showcase.json has no card entry for $($leader.key)")
+        }
+    }
+
+    foreach ($reportLine in $reportLines) {
+        Write-Host $reportLine
+    }
+    if (-not $DryRun) {
+        foreach ($pendingWrite in $pendingWrites) {
+            Write-LpText -Path $pendingWrite.Path -Text $pendingWrite.Text
+        }
+    }
+
+    if ($DryRun) {
+        Write-Host "Dry run for pack '$packName': $written file(s) would be written, $unchanged unchanged; nothing was written."
+    } else {
+        Write-Host "Plan applied to pack '$packName': $written file(s) written, $unchanged unchanged." -ForegroundColor Green
+    }
+    return 0
+}
+
+function Get-LpPlanSourceTables {
+    param([Parameter(Mandatory = $true)]$Pack)
+
+    $leaderRows = [System.Collections.Generic.List[object]]::new()
+    foreach ($leader in $Pack.Leaders) {
+        $mode = Get-LpMode -Leader $leader
+        $role = [string](Get-LpProperty -Object $leader -Name 'role' -Default '')
+        $statText = 'none'
+        if ($role) {
+            $statNames = @(Get-LpStatNames -Pack $Pack -Role $role)
+            if ($statNames.Count -eq 0) {
+                $statNames = $(if ((Get-LpRoleKinds)[$role] -eq 'navy') { @('skill', 'attack', 'defense', 'maneuvering', 'coordination') } else { @('skill', 'attack', 'defense', 'planning', 'logistics') })
+            }
+            $statValues = @($statNames | ForEach-Object { [string](Get-LpProperty -Object $leader -Name $_ -Default '?') })
+            $statText = $statValues[0] + ' / ' + (@($statValues | Select-Object -Skip 1) -join ' ')
+        }
+        $target = [string](Get-LpProperty -Object $leader -Name 'target' -Default '')
+        $sameAs = @(Get-LpSameAs -Leader $leader)
+        $traits = @(Get-LpTraits -Leader $leader)
+        $portraitSource = Get-LpProperty -Object $leader -Name 'portrait'
+        $photoKey = [string](Get-LpProperty -Object $portraitSource -Name 'photo' -Default '')
+        $portraitText = 'none'
+        if ($mode -ne 'skip') {
+            $record = Get-LpPortraitEntry -Pack $Pack -LeaderKey ([string]$leader.key)
+            $chosen = Get-LpProperty -Object $record -Name 'chosen'
+            if ($null -ne $chosen) {
+                $portraitText = 'r' + $chosen.round + ', seed ' + $chosen.seed
+            } elseif (@(ConvertTo-LpArray (Get-LpProperty -Object $record -Name 'rounds')).Count -gt 0) {
+                $portraitText = 'no pick'
+            }
+        }
+        $leaderRows.Add([PSCustomObject]@{
+            Key   = [string]$leader.key
+            Cells = [string[]]@([string]$leader.key, [string](Get-LpProperty -Object $leader -Name 'name' -Default ''), $mode, ($(if ($target) { $target } else { 'none' }) + '; ' + $(if ($sameAs.Count) { $sameAs -join ', ' } else { 'none' })), $(if ($role) { $role } else { 'none' }), $statText, $(if ($traits.Count) { $traits -join ', ' } else { 'none' }), $(if ($photoKey) { $photoKey } else { 'none' }), $portraitText)
+        })
+    }
+
+    $photoRows = [System.Collections.Generic.List[object]]::new()
+    foreach ($photo in $Pack.Photos) {
+        $photoKey = [string]$photo.key
+        $users = @($Pack.Leaders | Where-Object { [string](Get-LpProperty -Object (Get-LpProperty -Object $_ -Name 'portrait') -Name 'photo' -Default '') -ceq $photoKey } | ForEach-Object { [string]$_.key })
+        $attribution = @(@('author', 'institution') | ForEach-Object { ([regex]::Replace([string](Get-LpProperty -Object $photo -Name $_ -Default ''), '\s+', ' ')).Trim() } | Where-Object { $_ } | Select-Object -First 1)
+        $licenceParts = @(([string](Get-LpProperty -Object $photo -Name 'licenseCategory' -Default '') + ' (' + [string](Get-LpProperty -Object $photo -Name 'licenseShortName' -Default '') + ')'))
+        if ($attribution.Count -gt 0) { $licenceParts += $(if ($attribution[0].Length -gt 60) { $attribution[0].Substring(0, 57) + '...' } else { $attribution[0] }) }
+        $dateOriginal = ([regex]::Replace([string](Get-LpProperty -Object $photo -Name 'dateOriginal' -Default ''), '\s+', ' ')).Trim()
+        if ($dateOriginal) { $licenceParts += $(if ($dateOriginal.Length -gt 30) { 'photo ' + $dateOriginal.Substring(0, 27) + '...' } else { 'photo ' + $dateOriginal }) }
+        $photoSourceName = [string](Get-LpProperty -Object $photo -Name 'source' -Default 'commons')
+        $sourceId = [string](Get-LpProperty -Object $photo -Name 'sourceId' -Default (Get-LpProperty -Object $photo -Name 'commonsTitle' -Default ''))
+        $photoRows.Add([PSCustomObject]@{
+            Key   = $photoKey
+            Cells = [string[]]@($photoKey, ($photoSourceName + ' `' + $sourceId + '`'), ($licenceParts -join '; '), ([string]$photo.width + 'x' + [string]$photo.height), $(if ($users.Count) { $users -join ', ' } else { 'none (unused)' }))
+        }
+        )
+    }
+
+    $roundRows = [System.Collections.Generic.List[object]]::new()
+    $recordLeaders = Get-LpProperty -Object $Pack.PortraitRecords -Name 'leaders'
+    if ($null -ne $recordLeaders) {
+        foreach ($recordProperty in @($recordLeaders.PSObject.Properties)) {
+            foreach ($round in @(ConvertTo-LpArray (Get-LpProperty -Object $recordProperty.Value -Name 'rounds'))) {
+                $seeds = @(ConvertTo-LpArray $round.seeds | ForEach-Object { [int]$_ })
+                $contiguous = $seeds.Count -gt 1 -and ($seeds[-1] - $seeds[0] + 1) -eq $seeds.Count
+                $seedText = $(if ($contiguous) { "$($seeds[0])-$($seeds[-1])" } else { $seeds -join ',' })
+                $decision = Get-LpProperty -Object $round -Name 'decision'
+                $decisionText = 'open'
+                if ($null -ne $decision -and $null -ne $decision.PSObject.Properties['pick']) {
+                    $decisionText = 'pick ' + $decision.pick
+                } elseif ($null -ne $decision -and $null -ne $decision.PSObject.Properties['reject']) {
+                    $decisionText = 'reject: "' + $decision.reject + '"'
+                }
+                $withdrawn = Get-LpProperty -Object $round -Name 'withdrawn'
+                if ($null -ne $withdrawn) {
+                    $decisionText += ' (withdrawn ' + [string](Get-LpProperty -Object $withdrawn -Name 'date' -Default '') + ': ' + [string](Get-LpProperty -Object $withdrawn -Name 'reason' -Default '') + ')'
+                }
+                $roundRows.Add([PSCustomObject]@{ Key = ($recordProperty.Name + '|' + $round.round); Cells = [string[]]@($recordProperty.Name, [string]$round.round, $seedText, $decisionText, '') })
+            }
+        }
+    }
+    return [PSCustomObject]@{
+        Leaders = [PSCustomObject]@{ Heading = 'Leaders'; Header = @('Key', 'Name', 'Mode', 'Ids (target; sameAs)', 'Role', 'Stats', 'Traits', 'Photo', 'Portrait (round, pick)'); Rows = $leaderRows.ToArray() }
+        Photos  = [PSCustomObject]@{ Heading = 'Photos'; Header = @('Photo key', 'Source and id', 'Licence (author or credit)', 'Size', 'Leader'); Rows = $photoRows.ToArray() }
+        Rounds  = [PSCustomObject]@{ Heading = 'Review rounds'; Header = @('Leader', 'Round', 'Seeds', 'Decision', 'Change for the next round'); Rows = $roundRows.ToArray() }
+    }
+}
+
+function Format-LpPlanTable {
+    param([Parameter(Mandatory = $true)]$SourceTable)
+
+    $tableLines = [System.Collections.Generic.List[string]]::new()
+    $tableLines.Add('## ' + $SourceTable.Heading)
+    $tableLines.Add('')
+    $tableLines.Add('| ' + ($SourceTable.Header -join ' | ') + ' |')
+    $tableLines.Add('|' + (($SourceTable.Header | ForEach-Object { '---|' }) -join ''))
+    foreach ($row in $SourceTable.Rows) {
+        $tableLines.Add('| ' + (@($row.Cells | ForEach-Object { ([string]$_).Replace('|', '/') }) -join ' | ') + ' |')
+    }
+    return $tableLines.ToArray()
+}
+
+function Get-LpTableColumn {
+    param($PlanTable, [Parameter(Mandatory = $true)][string]$Pattern)
+
+    for ($columnIndex = 0; $columnIndex -lt @($PlanTable.Header).Count; $columnIndex++) {
+        if ($PlanTable.Header[$columnIndex] -match $Pattern) {
+            return $columnIndex
+        }
+    }
+    return -1
+}
+
+function Get-LpPlanCell {
+    param($Row, [int]$Column)
+
+    if ($Column -lt 0 -or $Column -ge @($Row).Count) {
+        return ''
+    }
+    return (ConvertTo-LpCellText -Cell ([string]$Row[$Column]))
+}
+
+function Get-LpTokenSet {
+    param([AllowEmptyString()][string]$Cell, [string]$Pattern = '[A-Za-z0-9_]+', [string[]]$Ignore = @('none', '-'))
+
+    $withoutNotes = [regex]::Replace($Cell, '\([^)]*\)', ' ')
+    return @([regex]::Matches($withoutNotes, $Pattern) | ForEach-Object { $_.Value } | Where-Object { $Ignore -notcontains $_.ToLowerInvariant() } | Sort-Object -Unique)
+}
+
+function Compare-LpPlanTables {
+    param([Parameter(Mandatory = $true)]$PlanData, [Parameter(Mandatory = $true)]$SourceTables, [Parameter(Mandatory = $true)]$Pack)
+
+    $differences = [System.Collections.Generic.List[string]]::new()
+    $shorten = { param([string]$Text) $(if ($Text.Length -gt 70) { $Text.Substring(0, 67) + '...' } else { $Text }) }
+    $leaderKeys = @($Pack.Leaders | ForEach-Object { [string]$_.key })
+
+    foreach ($tableName in @('Leaders', 'Photos', 'Review rounds')) {
+        $sourceTable = @($SourceTables.PSObject.Properties.Value | Where-Object { $_.Heading -eq $tableName })[0]
+        $planEntry = $PlanData.Tables[$tableName]
+        if ($null -eq $planEntry) {
+            $differences.Add("the plan has no '## $tableName' section; the source files give $(@($sourceTable.Rows).Count) row(s)")
+            continue
+        }
+        if ($null -eq $planEntry.Table) {
+            if (@($sourceTable.Rows).Count -gt 0) {
+                $differences.Add("the plan's '$tableName' section has no table; the source files give $(@($sourceTable.Rows).Count) row(s)")
+            }
+            continue
+        }
+        $planTable = $planEntry.Table
+        if ($tableName -eq 'Leaders') {
+            $columns = @{ Key = Get-LpTableColumn -PlanTable $planTable -Pattern '^Key'; Name = Get-LpTableColumn -PlanTable $planTable -Pattern '^Name'; Mode = Get-LpTableColumn -PlanTable $planTable -Pattern '^Mode'; Ids = Get-LpTableColumn -PlanTable $planTable -Pattern '^Ids'; Role = Get-LpTableColumn -PlanTable $planTable -Pattern '^Role'; Stats = Get-LpTableColumn -PlanTable $planTable -Pattern '^Stats'; Traits = Get-LpTableColumn -PlanTable $planTable -Pattern '^Traits'; Photo = Get-LpTableColumn -PlanTable $planTable -Pattern '^Photo'; Portrait = Get-LpTableColumn -PlanTable $planTable -Pattern '^Portrait' }
+            $planKeys = @{}
+            foreach ($planRow in $planTable.Rows) {
+                $rowKey = Get-LpPlanCell -Row $planRow -Column $columns.Key
+                $planKeys[$rowKey] = $true
+                $sourceRow = @($sourceTable.Rows | Where-Object { $_.Key -ceq $rowKey })[0]
+                if ($null -eq $sourceRow) {
+                    $differences.Add("Leaders row ${rowKey}: in the plan, not in leaders.json")
+                    continue
+                }
+                $sourceCells = $sourceRow.Cells
+                $checks = @(
+                    @{ Column = 'Name'; Plan = (Get-LpPlanCell -Row $planRow -Column $columns.Name); Source = $sourceCells[1]; Same = { param($p, $s) (ConvertTo-LpSearchText -Text $p) -ceq (ConvertTo-LpSearchText -Text $s) } },
+                    @{ Column = 'Mode'; Plan = (Get-LpPlanCell -Row $planRow -Column $columns.Mode); Source = $sourceCells[2]; Same = { param($p, $s) [regex]::Match($p, '[A-Za-z]+').Value -ieq $s } },
+                    @{ Column = 'Ids'; Plan = (Get-LpPlanCell -Row $planRow -Column $columns.Ids); Source = $sourceCells[3]; Same = { param($p, $s) (@(Get-LpTokenSet -Cell $p -Ignore @('none', 'sameas', 'target', '-')) -join ' ') -ceq (@(Get-LpTokenSet -Cell $s) -join ' ') } },
+                    @{ Column = 'Role'; Plan = (Get-LpPlanCell -Row $planRow -Column $columns.Role); Source = $sourceCells[4]; Same = { param($p, $s) ([regex]::Match($p, '[a-z_]+').Value -eq [regex]::Match($s, '[a-z_]+').Value) -or ((Test-LpCellEmpty -Cell $p) -and (Test-LpCellEmpty -Cell $s)) } },
+                    @{ Column = 'Stats'; Plan = (Get-LpPlanCell -Row $planRow -Column $columns.Stats); Source = $sourceCells[5]; Same = { param($p, $s) (@([regex]::Matches($p, '\d+') | ForEach-Object { $_.Value }) -join ' ') -ceq (@([regex]::Matches($s, '\d+') | ForEach-Object { $_.Value }) -join ' ') } },
+                    @{ Column = 'Traits'; Plan = (Get-LpPlanCell -Row $planRow -Column $columns.Traits); Source = $sourceCells[6]; Same = { param($p, $s) (@(Get-LpTokenSet -Cell $p -Pattern '[A-Za-z0-9_]+' -Ignore @('none', '-')) -join ' ') -ceq (@(Get-LpTokenSet -Cell $s) -join ' ') } },
+                    @{ Column = 'Photo'; Plan = (Get-LpPlanCell -Row $planRow -Column $columns.Photo); Source = $sourceCells[7]; Same = { param($p, $s) (@(Get-LpTokenSet -Cell $p | Select-Object -First 1) -join ' ') -ceq (@(Get-LpTokenSet -Cell $s | Select-Object -First 1) -join ' ') } }
+                )
+                foreach ($check in $checks) {
+                    if (-not (& $check.Same $check.Plan $check.Source)) {
+                        $differences.Add("Leaders row ${rowKey}, $($check.Column): plan '$(& $shorten $check.Plan)', source '$(& $shorten $check.Source)'")
+                    }
+                }
+                $planPortrait = Get-LpPlanCell -Row $planRow -Column $columns.Portrait
+                $planRound = [regex]::Match($planPortrait, '(?i)(?:\br|round\s*)(\d+)')
+                $planSeed = [regex]::Match($planPortrait, '(?i)(?:seed|pick)\s*(\d+)')
+                if ($planRound.Success -or $planSeed.Success) {
+                    $sourceRound = [regex]::Match($sourceCells[8], '^r(\d+)')
+                    $sourceSeed = [regex]::Match($sourceCells[8], 'seed (\d+)')
+                    $roundSame = (-not $planRound.Success) -or ($sourceRound.Success -and $planRound.Groups[1].Value -eq $sourceRound.Groups[1].Value)
+                    $seedSame = (-not $planSeed.Success) -or ($sourceSeed.Success -and $planSeed.Groups[1].Value -eq $sourceSeed.Groups[1].Value)
+                    if (-not ($roundSame -and $seedSame)) {
+                        $differences.Add("Leaders row ${rowKey}, Portrait: plan '$(& $shorten $planPortrait)', source '$($sourceCells[8])'")
+                    }
+                } elseif (((Test-LpCellEmpty -Cell $planPortrait) -or $planPortrait -match '(?i)\bno pick\b|^open\b|portrait open') -and $sourceCells[8] -match '^r\d+') {
+                    $differences.Add("Leaders row ${rowKey}, Portrait: plan '$(& $shorten $planPortrait)' says no pick, source '$($sourceCells[8])'")
+                }
+            }
+            foreach ($sourceRow in $sourceTable.Rows) {
+                if (-not $planKeys.ContainsKey($sourceRow.Key)) {
+                    $differences.Add("Leaders row $($sourceRow.Key): in leaders.json, not in the plan")
+                }
+            }
+        } elseif ($tableName -eq 'Photos') {
+            $columns = @{ Key = Get-LpTableColumn -PlanTable $planTable -Pattern '^Photo key'; Source = Get-LpTableColumn -PlanTable $planTable -Pattern '^(Source|Commons file)'; Licence = Get-LpTableColumn -PlanTable $planTable -Pattern '^Licen'; Size = Get-LpTableColumn -PlanTable $planTable -Pattern '^Size'; Leader = Get-LpTableColumn -PlanTable $planTable -Pattern '^Leader' }
+            $planKeys = @{}
+            foreach ($planRow in $planTable.Rows) {
+                $rowKeys = @([regex]::Matches((Get-LpPlanCell -Row $planRow -Column $columns.Key), '[A-Za-z0-9_]+') | ForEach-Object { $_.Value })
+                foreach ($rowKey in $rowKeys) {
+                    $planKeys[$rowKey] = $true
+                    if (-not ($Pack.Photos | Where-Object { [string]$_.key -ceq $rowKey })) {
+                        $differences.Add("Photos row ${rowKey}: in the plan, not in photos.json")
+                    }
+                }
+                if ($rowKeys.Count -ne 1) { continue }
+                $rowKey = $rowKeys[0]
+                $sourceRow = @($sourceTable.Rows | Where-Object { $_.Key -ceq $rowKey })[0]
+                $photo = @($Pack.Photos | Where-Object { [string]$_.key -ceq $rowKey })[0]
+                if ($null -eq $sourceRow) { continue }
+                $planSize = Get-LpPlanCell -Row $planRow -Column $columns.Size
+                if ($planSize -and $planSize -ne $sourceRow.Cells[3]) {
+                    $differences.Add("Photos row ${rowKey}, Size: plan '$planSize', source '$($sourceRow.Cells[3])'")
+                }
+                $planLicence = Get-LpPlanCell -Row $planRow -Column $columns.Licence
+                $category = [string](Get-LpProperty -Object $photo -Name 'licenseCategory' -Default '')
+                if ($planLicence -and $category -and $planLicence -notmatch ('(?i)^' + [regex]::Escape($category) + '(?![\w-])')) {
+                    $differences.Add("Photos row ${rowKey}, Licence: plan '$(& $shorten $planLicence)', source starts '$category'")
+                }
+                $planSource = Get-LpPlanCell -Row $planRow -Column $columns.Source
+                $sourceId = [string](Get-LpProperty -Object $photo -Name 'sourceId' -Default (Get-LpProperty -Object $photo -Name 'commonsTitle' -Default ''))
+                if ($planSource -and $sourceId -and $planSource.ToLowerInvariant().Contains($sourceId.ToLowerInvariant()) -eq $false) {
+                    $differences.Add("Photos row ${rowKey}, Source and id: plan '$(& $shorten $planSource)', source '$(& $shorten $sourceId)'")
+                }
+                $planUsers = @([regex]::Matches((Get-LpPlanCell -Row $planRow -Column $columns.Leader), '[a-z][a-z0-9_]*') | ForEach-Object { $_.Value } | Where-Object { $leaderKeys -ccontains $_ } | Sort-Object -Unique)
+                $sourceUsers = @($Pack.Leaders | Where-Object { [string](Get-LpProperty -Object (Get-LpProperty -Object $_ -Name 'portrait') -Name 'photo' -Default '') -ceq $rowKey } | ForEach-Object { [string]$_.key } | Sort-Object -Unique)
+                if (($planUsers -join ',') -cne ($sourceUsers -join ',')) {
+                    $differences.Add("Photos row ${rowKey}, Leader: plan '$($planUsers -join ', ')', leaders.json '$($sourceUsers -join ', ')'")
+                }
+            }
+            foreach ($sourceRow in $sourceTable.Rows) {
+                if (-not $planKeys.ContainsKey($sourceRow.Key)) {
+                    $differences.Add("Photos row $($sourceRow.Key): in photos.json, not in the plan")
+                }
+            }
+        } else {
+            $columns = @{ Leader = Get-LpTableColumn -PlanTable $planTable -Pattern '^Leader'; Round = Get-LpTableColumn -PlanTable $planTable -Pattern '^Round'; Seeds = Get-LpTableColumn -PlanTable $planTable -Pattern '^Seeds'; Decision = Get-LpTableColumn -PlanTable $planTable -Pattern '^Decision' }
+            $planKeys = @{}
+            foreach ($planRow in $planTable.Rows) {
+                $rowKey = (Get-LpPlanCell -Row $planRow -Column $columns.Leader) + '|' + [regex]::Match((Get-LpPlanCell -Row $planRow -Column $columns.Round), '\d+').Value
+                $planKeys[$rowKey] = $true
+                $sourceRow = @($sourceTable.Rows | Where-Object { $_.Key -ceq $rowKey })[0]
+                if ($null -eq $sourceRow) {
+                    $differences.Add("Review rounds row ${rowKey}: in the plan, not in portraits.json")
+                    continue
+                }
+                $planSeeds = [regex]::Match((Get-LpPlanCell -Row $planRow -Column $columns.Seeds), '^\d+(?:-\d+|(?:,\d+)*)').Value
+                if ($planSeeds -and $planSeeds -cne $sourceRow.Cells[2]) {
+                    $differences.Add("Review rounds row ${rowKey}, Seeds: plan '$planSeeds', source '$($sourceRow.Cells[2])'")
+                }
+                $planDecision = Get-LpPlanCell -Row $planRow -Column $columns.Decision
+                $sourceDecision = $sourceRow.Cells[3]
+                $planPick = [regex]::Match($planDecision, '(?i)^pick\s+(\d+)')
+                $decisionSame = $true
+                if ($planPick.Success) {
+                    $decisionSame = $sourceDecision -match ('^pick ' + $planPick.Groups[1].Value + '(?!\d)')
+                } elseif ($planDecision -match '(?i)^reject') {
+                    $decisionSame = $sourceDecision -match '^reject'
+                } elseif ($sourceDecision -match '^(pick|reject)') {
+                    $decisionSame = $false
+                }
+                if (-not $decisionSame) {
+                    $differences.Add("Review rounds row ${rowKey}, Decision: plan '$(& $shorten $planDecision)', source '$(& $shorten $sourceDecision)'")
+                }
+            }
+            foreach ($sourceRow in $sourceTable.Rows) {
+                if (-not $planKeys.ContainsKey($sourceRow.Key)) {
+                    $differences.Add("Review rounds row $($sourceRow.Key): in portraits.json, not in the plan")
+                }
+            }
+        }
+    }
+    return $differences.ToArray()
+}
+
+function Invoke-LpRehearsalProcess {
+    param(
+        [Parameter(Mandatory = $true)][string]$WorkingDirectory,
+        [Parameter(Mandatory = $true)][string[]]$Arguments
+    )
+
+    $powerShellExecutable = if (Get-Command -Name 'pwsh' -ErrorAction SilentlyContinue) { 'pwsh' } else { 'powershell' }
+    $startInfo = [System.Diagnostics.ProcessStartInfo]::new((Get-Command -Name $powerShellExecutable).Source)
+    $startInfo.WorkingDirectory = $WorkingDirectory
+    $startInfo.UseShellExecute = $false
+    $startInfo.RedirectStandardOutput = $true
+    $startInfo.RedirectStandardError = $true
+    $quotedArguments = @(@('-NoProfile', '-ExecutionPolicy', 'Bypass') + $Arguments | ForEach-Object { if ($_ -match '[\s"]') { '"' + $_.Replace('"', '\"') + '"' } else { $_ } })
+    $startInfo.Arguments = $quotedArguments -join ' '
+    $process = [System.Diagnostics.Process]::Start($startInfo)
+    $outputTask = $process.StandardOutput.ReadToEndAsync()
+    $errorTask = $process.StandardError.ReadToEndAsync()
+    if (-not $process.WaitForExit(900000)) {
+        $process.Kill()
+    }
+    $process.WaitForExit()
+    $outputLines = @(([string]$outputTask.Result + "`n" + [string]$errorTask.Result) -split "\r?\n" | Where-Object { $_.Trim() })
+    return [PSCustomObject]@{ ExitCode = $process.ExitCode; Lines = $outputLines }
+}
+
+function Remove-LpRehearsalCopy {
+    param([Parameter(Mandatory = $true)][string]$Path)
+
+    for ($attempt = 1; $attempt -le 5; $attempt++) {
+        if (-not (Test-Path -LiteralPath $Path)) {
+            return $true
+        }
+        try {
+            Remove-Item -LiteralPath $Path -Recurse -Force -ErrorAction Stop
+        } catch {
+            Start-Sleep -Milliseconds 400
+        }
+    }
+    return (-not (Test-Path -LiteralPath $Path))
+}
+
+function Invoke-LpRehearsePlan {
+    param(
+        [Parameter(Mandatory = $true)][string]$RepoRoot,
+        [Parameter(Mandatory = $true)][string]$PlanPath,
+        [string]$Pack
+    )
+
+    $RepoRoot = (Get-Item -LiteralPath $RepoRoot).FullName.TrimEnd('\')
+    $planData = Read-LpPlan -PlanPath $PlanPath
+    if (-not (Get-LpPlanTarget -RepoRoot $RepoRoot -PlanData $planData -Pack $Pack)) {
+        return 1
+    }
+    $packName = $planData.Pack
+    $fullPlanPath = (Get-Item -LiteralPath $PlanPath).FullName
+    $copyRoot = Join-Path $RepoRoot ('scratch\rehearsal-' + (Get-Date).ToString('yyyyMMdd-HHmmss', [System.Globalization.CultureInfo]::InvariantCulture) + '-' + [guid]::NewGuid().ToString('N').Substring(0, 6))
+    $exitCode = 0
+    try {
+        New-Item -ItemType Directory -Path $copyRoot -Force | Out-Null
+        $leftOut = @('.git', '.claude', '.agents', 'scratch', 'artifacts', 'sources-cache', '.devlink')
+        foreach ($entry in @(Get-ChildItem -LiteralPath $RepoRoot -Force)) {
+            if ($leftOut -notcontains $entry.Name) {
+                Copy-Item -LiteralPath $entry.FullName -Destination (Join-Path $copyRoot $entry.Name) -Recurse -Force
+            }
+        }
+        $planInCopy = $null
+        if ($fullPlanPath.StartsWith($RepoRoot + '\', [System.StringComparison]::OrdinalIgnoreCase)) {
+            $planInCopy = Join-Path $copyRoot $fullPlanPath.Substring($RepoRoot.Length + 1)
+        }
+        if ($null -eq $planInCopy -or -not (Test-Path -LiteralPath $planInCopy)) {
+            $planInCopy = Join-Path $copyRoot ('docs\plans\' + (Split-Path -Leaf $fullPlanPath))
+            Write-LpText -Path $planInCopy -Text ([System.IO.File]::ReadAllText($fullPlanPath, [System.Text.Encoding]::UTF8))
+        }
+        Write-Host "Rehearsing $fullPlanPath for pack '$packName' in a copy under scratch\; the real repository is not written."
+        $steps = @(
+            @{ Name = 'apply'; Arguments = @('-File', (Join-Path $copyRoot 'build.ps1'), '-ApplyPlan', '-Plan', $planInCopy); Summary = '^(Plan applied|Dry run)' },
+            @{ Name = 'generate'; Arguments = @('-File', (Join-Path $copyRoot 'build.ps1'), '-Generate', '-Pack', $packName); Summary = '^Generated pack' },
+            @{ Name = 'convert-portraits'; Arguments = @('-File', (Join-Path $copyRoot 'build.ps1'), '-ConvertPortraits', '-Pack', $packName); Summary = '^Pack ' },
+            @{ Name = 'check'; Arguments = @('-File', (Join-Path $copyRoot 'build.ps1'), '-Check', '-Pack', $packName); Summary = '^Check ' },
+            @{ Name = 'repodata'; Arguments = @('-File', (Join-Path $copyRoot 'tests\Run-Tests.ps1'), '-Suite', 'RepoData'); Summary = 'Summary:' }
+        )
+        $applyFailed = $false
+        foreach ($step in $steps) {
+            if ($applyFailed) { break }
+            $result = Invoke-LpRehearsalProcess -WorkingDirectory $copyRoot -Arguments $step.Arguments
+            $summaryLine = [string](@($result.Lines | Where-Object { $_ -match $step.Summary }) | Select-Object -Last 1)
+            if (-not $summaryLine -and $result.Lines.Count -gt 0) { $summaryLine = [string]$result.Lines[-1] }
+            $summaryLine = $summaryLine.Trim()
+            if ($result.ExitCode -eq 0) {
+                if ($step.Name -eq 'check' -or $step.Name -eq 'repodata') {
+                    Write-Host "$($step.Name): $summaryLine"
+                } else {
+                    Write-Host "$($step.Name): OK ($summaryLine)"
+                }
+                foreach ($noteLine in @($result.Lines | Where-Object { $_ -match '\[WARN\]' })) { Write-Host ('    ' + $noteLine.Trim()) }
+            } else {
+                $exitCode = 1
+                Write-Host "$($step.Name): FAILED (exit $($result.ExitCode)); last lines of its output:" -ForegroundColor Red
+                foreach ($failedLine in @($result.Lines | Select-Object -Last 40)) { Write-Host ('    ' + $failedLine.Trim()) }
+                if ($step.Name -eq 'apply') { $applyFailed = $true }
+            }
+        }
+        if (-not $applyFailed) {
+            $copyPack = Get-LpPack -RepoRoot $copyRoot -Pack $packName
+            $sourceTables = Get-LpPlanSourceTables -Pack $copyPack
+            Write-Host ''
+            Write-Host "Tables from the source files of pack '$packName' (in the plan's layout, without the Status column), ready to paste:"
+            foreach ($sourceTable in @($sourceTables.Leaders, $sourceTables.Photos, $sourceTables.Rounds)) {
+                Write-Host ''
+                foreach ($tableLine in (Format-LpPlanTable -SourceTable $sourceTable)) { Write-Host $tableLine }
+            }
+            Write-Host ''
+            $differences = @(Compare-LpPlanTables -PlanData $planData -SourceTables $sourceTables -Pack $copyPack)
+            if ($differences.Count -eq 0) {
+                Write-Host 'plan tables: match'
+            } else {
+                $exitCode = 1
+                foreach ($difference in $differences) { Write-Host "differs: $difference" -ForegroundColor Yellow }
+            }
+        }
+    } finally {
+        if (-not (Remove-LpRehearsalCopy -Path $copyRoot)) {
+            Write-Host "[ERROR] could not remove the rehearsal copy $copyRoot; remove it by hand" -ForegroundColor Red
+            $exitCode = 1
+        }
+    }
+    return $exitCode
+}
+
 function Get-LpCachedPhoto {
     param($Pack, $Photo)
 
