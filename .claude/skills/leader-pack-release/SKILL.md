@@ -11,7 +11,7 @@ disable-model-invocation: true
 
 # Leader Pack: release a pack
 
-Each pack is its own Workshop item, and the bundle "Immersive Commanders Expanded" (package `all`) holds all of them: a pack's upload also uploads the bundle in the same run. Follow the shared `hoi4-mod-release` skill, sections "Repos with packages" and "A pack that belongs to a bundle", with these additions. Every command names the package: `-Pack <pack>`, or `-Pack all` for the bundle alone.
+Each pack is its own Workshop item, and the bundle "Immersive Commanders Expanded" (package `all`) holds all of them: a pack's upload also uploads the bundle in the same run. The agent cannot load the shared `hoi4-mod-release` skill: first ask the owner to run `/hoi4-mod-release` in this session, and do not read its file instead. Once the owner has run it, work from both skills: follow its sections "Repos with packages" and "A pack that belongs to a bundle", with these additions. Every command names the package: `-Pack <pack>`, or `-Pack all` for the bundle alone.
 
 **Release in waves.** A new country ships its Event Pack and its Commanders Pack in the same session, so the four items (two packs, two bundles) are touched together: each change note names the leaders of the pack, and the bundles' change notes ("<Country>: <note>", the country added by `Publish-Mod.ps1`, so the owner types the note without it) are the announcement. The owner's launch posts link the two bundles and the collection rather than the single packs; draft their text on request. The Event Packs repository's `event-pack-release` skill has the other half.
 
