@@ -227,4 +227,24 @@ Describe 'Show-PlanState hook' {
         $hookOutput[0] | Should -BeLike 'Plans in docs/plans*'
         $hookOutput | Should -Contain 'Uncommitted files (git status --short):'
     }
+
+    It 'prints the Pack and Review page lines of an open plan under its Status line, and skips the template' {
+        $fakeRoot = Join-Path $TestDrive 'plan-state-repo'
+        $plansDirectory = Join-Path $fakeRoot 'docs\plans'
+        New-Item -ItemType Directory -Path $plansDirectory -Force | Out-Null
+        Set-Content -LiteralPath (Join-Path $plansDirectory '2026-01-01-demo.md') -Value @('# Demo', '', 'Status: IN PROGRESS', 'Pack: demo (DMO, prefix lp_dmo)', 'Kind: new pack', 'Review page: https://example.invalid/review/demo/')
+        Set-Content -LiteralPath (Join-Path $plansDirectory '2026-01-02-bare.md') -Value @('# Bare', '', 'Status: READY')
+        Set-Content -LiteralPath (Join-Path $plansDirectory 'TEMPLATE-pack.md') -Value @('# Template', '', 'Status: PLANNING', 'Pack: <pack>', 'Review page: <url>')
+        $planStateHook = Join-Path $script:RepoRoot '.claude\hooks\Show-PlanState.ps1'
+        $hookOutput = @('{}' | & $script:PowerShellExe -NoProfile -ExecutionPolicy Bypass -File $planStateHook -RepoRoot $fakeRoot)
+        $LASTEXITCODE | Should -Be 0
+        $statusIndex = [array]::IndexOf($hookOutput, 'docs/plans/2026-01-01-demo.md: Status: IN PROGRESS')
+        $statusIndex | Should -BeGreaterThan -1
+        $hookOutput[$statusIndex + 1] | Should -Be '  Pack: demo (DMO, prefix lp_dmo)'
+        $hookOutput[$statusIndex + 2] | Should -Be '  Review page: https://example.invalid/review/demo/'
+        $bareIndex = [array]::IndexOf($hookOutput, 'docs/plans/2026-01-02-bare.md: Status: READY')
+        $bareIndex | Should -BeGreaterThan -1
+        $hookOutput[$bareIndex + 1] | Should -Not -BeLike '  Pack:*'
+        ($hookOutput -join "`n") | Should -Not -BeLike '*TEMPLATE*'
+    }
 }

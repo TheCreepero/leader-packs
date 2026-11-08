@@ -10,7 +10,13 @@ try {
     $planStates = [System.Collections.Generic.List[string]]::new()
     foreach ($planFile in $planFiles) {
         $statusMatch = @(Select-String -LiteralPath $planFile.FullName -Pattern '^Status:' | Select-Object -First 1)
-        if ($statusMatch.Count -gt 0) { $planStates.Add(('docs/plans/{0}: {1}' -f $planFile.Name, $statusMatch[0].Line)) }
+        if ($statusMatch.Count -gt 0) {
+            $planStates.Add(('docs/plans/{0}: {1}' -f $planFile.Name, $statusMatch[0].Line))
+            foreach ($headerName in @('Pack', 'Review page')) {
+                $headerMatch = @(Select-String -LiteralPath $planFile.FullName -Pattern ('^{0}:' -f $headerName) | Select-Object -First 1)
+                if ($headerMatch.Count -gt 0) { $planStates.Add(('  {0}' -f $headerMatch[0].Line)) }
+            }
+        }
     }
     'Plans in docs/plans (archive not listed):'
     if ($planStates.Count -gt 0) { $planStates } else { '  none' }

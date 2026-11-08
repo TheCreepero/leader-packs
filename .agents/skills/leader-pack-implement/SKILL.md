@@ -48,6 +48,7 @@ Offer it, and run nothing until the owner says to:
    - on Road to 56: nobody appears twice (a `skip` or renamed person) [RT56-011].
 4. Then read `Documents\Paradox Interactive\Hearts of Iron IV\logs\error.log` for lines naming `lp_<tag>` files. One warning line per `recruit_character` in `common/on_actions/lp_<tag>_on_actions.txt` is expected [CHR-014]; count them against the `new` leaders. Any other line naming a pack file is a finding.
 5. Record what the owner saw and the log result in the plan's "Outcome", and tick the game-check step.
+6. A game check the owner runs after the ship (the plan is already archived): write the same into the archived plan's "Outcome" in place of its "not run" line, tick its game-check step, and commit the plan on the owner's word. The pack's row in the Manager's `docs/ingame-verification-pending.md` (a Manager file; the Manager's `AGENTS.md` has the rule) comes out when the owner reports the check: remove it in the Manager repository, or tell the owner it is still there.
 
 ## 5. When it stops
 The implementer reported `STOPPED`, a check failed, the reviewer found a problem, or the game check showed one. Leave the files, report to the owner (the step, the exact output, what the plan would need), and stop. Once the plan is corrected, dispatch again: the implementer resumes at the first unticked step.
