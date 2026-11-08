@@ -315,9 +315,64 @@ Describe 'FetchPhoto and Audit' {
             ($searchOutput -join "`n") | Should -Match "Search 'Rundstedt' in commons, finna: 2 acceptable of 2"
             ($searchOutput -join "`n") | Should -Match '\| commons \| File:Bundesarchiv Bild 183-S37772, Gerd v\. Rundstedt\.jpg \|.*\| ACCEPTABLE \|'
             ($searchOutput -join "`n") | Should -Match '\| finna \| sa-kuva\.sa-kuva/111307 \|.*\| ACCEPTABLE, size checked at download \|'
+            @($searchOutput | Where-Object { $_ -like '## *' }) | Should -HaveCount 0
+            ($searchOutput -join "`n") | Should -Not -Match 'Photo column'
         } finally {
             [Environment]::SetEnvironmentVariable('HOI_EUROPEANA_WSKEY', $savedKey)
         }
+    }
+
+    It 'searches several names in one call: one block per name, then a photo column, and one failing source stops nobody' {
+        $savedKey = [Environment]::GetEnvironmentVariable('HOI_EUROPEANA_WSKEY')
+        [Environment]::SetEnvironmentVariable('HOI_EUROPEANA_WSKEY', $null)
+        try {
+            Mock Get-LpManagerRootText { '' }
+            Mock Invoke-RestMethod {
+                if ($Uri.AbsoluteUri -like 'https://commons.wikimedia.org/*') {
+                    return [PSCustomObject]@{ query = [PSCustomObject]@{ pages = @((Get-LpCommonsFixture -Name 'cc-by-sa-3.0-de').query.pages[0]) } }
+                }
+                if ($Uri.AbsoluteUri -match 'Mannerheim') {
+                    throw 'Finna is down'
+                }
+                return [PSCustomObject]@{ resultCount = 1; records = @((Get-LpSourceFixture -Source 'finna' -Name 'sa-kuva-cc-by').records[0]) }
+            }
+            $searchOutput = @(Invoke-LpFindPhoto -Query @('Rundstedt, Mannerheim') -Source @('commons', 'finna') -Limit 3 6>&1 | ForEach-Object { [string]$_ })
+            $searchText = $searchOutput -join "`n"
+            $searchOutput[-1] | Should -Be '0'
+            $searchOutput | Where-Object { $_ -like '## *' } | Should -HaveCount 3
+            $searchText | Should -Match '(?s)## Rundstedt\r?\nSearch ''Rundstedt'' in commons, finna: 2 acceptable of 2.*## Mannerheim\r?\nSearching finna failed: .*Search ''Mannerheim'' in commons, finna: 1 acceptable of 1'
+            $searchText | Should -Match '(?s)## Photo column.*\nRundstedt: 2 acceptable, largest \d+x\d+ .+\nMannerheim: 1 acceptable, largest \d+x\d+ .+ \(search failed: finna\)'
+            Mock Invoke-RestMethod { [PSCustomObject]@{ query = [PSCustomObject]@{ pages = @() } } }
+            $emptyOutput = @(Invoke-LpFindPhoto -Query @('Nobody One', 'Nobody Two') -Source @('commons') -Limit 3 6>&1 | ForEach-Object { [string]$_ })
+            $emptyOutput[-1] | Should -Be '0'
+            $emptyOutput | Should -Contain 'Nobody One: no acceptable hit'
+            $emptyOutput | Should -Contain 'Nobody Two: no acceptable hit'
+            @(Invoke-LpFindPhoto -Query @(' , ') 6>&1 | ForEach-Object { [string]$_ })[-1] | Should -Be '1'
+        } finally {
+            [Environment]::SetEnvironmentVariable('HOI_EUROPEANA_WSKEY', $savedKey)
+        }
+    }
+
+    It 'takes -Source as one comma-separated string, as powershell -File passes it, and refuses a bad value or two sources for -FetchPhoto' {
+        $resolved = Resolve-LpSourceNames -Source 'commons, finna'
+        $resolved.Sources | Should -Be @('commons', 'finna')
+        @($resolved.Invalid) | Should -HaveCount 0
+        @((Resolve-LpSourceNames -Source @('commons', 'bogus')).Invalid) | Should -Be @('bogus')
+        $script:SearchedSources = [System.Collections.Generic.List[string]]::new()
+        Mock Get-LpManagerRootText { '' }
+        Mock Find-HoiImageCandidates { $script:SearchedSources.Add([string]($Sources -join ',')); @() }
+        $buildScript = Join-Path $script:LpRepoRoot 'build.ps1'
+        $unknownOutput = @(& powershell -NoProfile -ExecutionPolicy Bypass -File $buildScript -FindPhoto -Query 'x' -Source 'commons,bogus' 2>&1 | ForEach-Object { [string]$_ })
+        $LASTEXITCODE | Should -Be 1
+        ($unknownOutput -join "`n") | Should -Match "-Source takes commons, finna or europeana.*'commons,bogus'"
+        $twoOutput = @(& powershell -NoProfile -ExecutionPolicy Bypass -File $buildScript -FetchPhoto -Pack finland -Source 'commons,finna' -Id 'x' -Key 'zz_unused' -DryRun 2>&1 | ForEach-Object { [string]$_ })
+        $LASTEXITCODE | Should -Be 1
+        ($twoOutput -join "`n") | Should -Match '-FetchPhoto takes one -Source'
+        $badOutput = @(& powershell -NoProfile -ExecutionPolicy Bypass -File $buildScript -FetchPhoto -Pack finland -Source 'bogus' -Id 'x' -Key 'zz_unused' -DryRun 2>&1 | ForEach-Object { [string]$_ })
+        $LASTEXITCODE | Should -Be 1
+        ($badOutput -join "`n") | Should -Match "-Source takes commons, finna or europeana, not 'bogus'"
+        Invoke-LpFindPhoto -Query 'x' -Source (Resolve-LpSourceNames -Source 'commons,finna').Sources -Limit 3 6>$null | Select-Object -Last 1 | Should -Be 0
+        $script:SearchedSources | Should -Be @('commons', 'finna')
     }
 
     It 'records a Finna photo measured at download, credited to the archive' {

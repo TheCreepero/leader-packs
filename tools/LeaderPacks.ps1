@@ -2051,13 +2051,82 @@ function Invoke-LpConfirmLicence {
     return 0
 }
 
-function Invoke-LpFindPhoto {
+function Search-LpPhotoName {
     param(
         [Parameter(Mandatory = $true)][string]$Query,
+        [Parameter(Mandatory = $true)][string[]]$SearchSources,
+        [Parameter(Mandatory = $true)][int]$Limit,
+        [Parameter(Mandatory = $true)]$ImagePolicy,
+        [string]$ManagerRoot
+    )
+
+    $foundRows = [System.Collections.Generic.List[PSObject]]::new()
+    $failedSources = [System.Collections.Generic.List[string]]::new()
+    foreach ($searchSource in $SearchSources) {
+        try {
+            foreach ($foundRow in @(Find-HoiImageCandidates -Query $Query -Sources @($searchSource) -Policy $ImagePolicy -Limit $Limit -ManagerRoot $ManagerRoot)) {
+                $foundRows.Add($foundRow)
+            }
+        } catch {
+            $failedSources.Add($searchSource)
+            Write-Host "Searching $searchSource failed: $(Get-HoiWebErrorText -ErrorRecord $_)" -ForegroundColor Yellow
+        }
+    }
+    Write-Host "Search '$Query' in $($SearchSources -join ', '): $(@($foundRows | Where-Object { $_.Accepted }).Count) acceptable of $($foundRows.Count)" -ForegroundColor Cyan
+    Write-Host '| Source | Id | Title | Institution | Year | Size | Licence | Verdict | Page |'
+    Write-Host '|---|---|---|---|---|---|---|---|---|'
+    foreach ($foundRow in @($foundRows | Sort-Object { -not $_.Accepted })) {
+        $cells = @($foundRow.Source, $foundRow.Id, $foundRow.Title, $foundRow.Institution, $foundRow.Year, $foundRow.Size, $foundRow.Licence, $foundRow.Verdict, $foundRow.Page) | ForEach-Object { ([string]$_).Replace('|', '/') }
+        Write-Host ('| ' + ($cells -join ' | ') + ' |')
+    }
+    return [PSCustomObject]@{ Rows = @($foundRows); FailedSources = @($failedSources) }
+}
+
+function Resolve-LpSourceNames {
+    param([string[]]$Source)
+
+    # powershell -File passes "-Source a,b" as one string, so the names are split here
+    $allowedSources = @('commons', 'finna', 'europeana')
+    $givenSources = @($Source | ForEach-Object { $_ -split ',' } | ForEach-Object { $_.Trim() } | Where-Object { $_ })
+    return [PSCustomObject]@{
+        Sources = @($givenSources | Where-Object { $_ -in $allowedSources })
+        Invalid = @($givenSources | Where-Object { $_ -notin $allowedSources })
+    }
+}
+
+function Get-LpPhotoSummaryLine {
+    param(
+        [Parameter(Mandatory = $true)][string]$Query,
+        [Parameter(Mandatory = $true)]$Result
+    )
+
+    $acceptedRows = @($Result.Rows | Where-Object { $_.Accepted })
+    $failureText = $(if (@($Result.FailedSources).Count -gt 0) { " (search failed: $(@($Result.FailedSources) -join ', '))" } else { '' })
+    if ($acceptedRows.Count -eq 0) {
+        return "${Query}: no acceptable hit$failureText"
+    }
+    $areaOf = {
+        $sizeMatch = [regex]::Match([string]$_.Size, '^(\d+)x(\d+)$')
+        $(if ($sizeMatch.Success) { [double]$sizeMatch.Groups[1].Value * [double]$sizeMatch.Groups[2].Value } else { 0.0 })
+    }
+    $largestRow = @($acceptedRows | Sort-Object -Property @{ Expression = $areaOf; Descending = $true })[0]
+    $largestSize = $(if ([string]$largestRow.Size) { [string]$largestRow.Size } else { 'size checked at download' })
+    return "${Query}: $($acceptedRows.Count) acceptable, largest $largestSize $($largestRow.Licence)$failureText"
+}
+
+function Invoke-LpFindPhoto {
+    param(
+        [Parameter(Mandatory = $true)][string[]]$Query,
         [string[]]$Source = @('commons', 'finna', 'europeana'),
         [int]$Limit = 10
     )
 
+    # powershell -File passes "-Query a,b" as one string, so the names are split here
+    $names = @($Query | ForEach-Object { $_ -split ',' } | ForEach-Object { $_.Trim() } | Where-Object { $_ })
+    if ($names.Count -eq 0) {
+        Write-Host '-Query holds no name to search for' -ForegroundColor Red
+        return 1
+    }
     $imagePolicy = Get-LpImagePolicy
     $managerRoot = Get-LpManagerRootText
     $searchSources = @($Source | Where-Object { $_ })
@@ -2069,22 +2138,20 @@ function Invoke-LpFindPhoto {
             $searchSources = @($searchSources | Where-Object { $_ -ne 'europeana' })
         }
     }
-    $foundRows = [System.Collections.Generic.List[PSObject]]::new()
-    foreach ($searchSource in $searchSources) {
-        try {
-            foreach ($foundRow in @(Find-HoiImageCandidates -Query $Query -Sources @($searchSource) -Policy $imagePolicy -Limit $Limit -ManagerRoot $managerRoot)) {
-                $foundRows.Add($foundRow)
-            }
-        } catch {
-            Write-Host "Searching $searchSource failed: $(Get-HoiWebErrorText -ErrorRecord $_)" -ForegroundColor Yellow
-        }
+    if ($names.Count -eq 1) {
+        Search-LpPhotoName -Query $names[0] -SearchSources $searchSources -Limit $Limit -ImagePolicy $imagePolicy -ManagerRoot $managerRoot | Out-Null
+        return 0
     }
-    Write-Host "Search '$Query' in $($searchSources -join ', '): $(@($foundRows | Where-Object { $_.Accepted }).Count) acceptable of $($foundRows.Count)" -ForegroundColor Cyan
-    Write-Host '| Source | Id | Title | Institution | Year | Size | Licence | Verdict | Page |'
-    Write-Host '|---|---|---|---|---|---|---|---|---|'
-    foreach ($foundRow in @($foundRows | Sort-Object { -not $_.Accepted })) {
-        $cells = @($foundRow.Source, $foundRow.Id, $foundRow.Title, $foundRow.Institution, $foundRow.Year, $foundRow.Size, $foundRow.Licence, $foundRow.Verdict, $foundRow.Page) | ForEach-Object { ([string]$_).Replace('|', '/') }
-        Write-Host ('| ' + ($cells -join ' | ') + ' |')
+    $summaryLines = [System.Collections.Generic.List[string]]::new()
+    foreach ($name in $names) {
+        Write-Host "## $name" -ForegroundColor Cyan
+        $result = Search-LpPhotoName -Query $name -SearchSources $searchSources -Limit $Limit -ImagePolicy $imagePolicy -ManagerRoot $managerRoot
+        $summaryLines.Add((Get-LpPhotoSummaryLine -Query $name -Result $result))
+        Write-Host ''
+    }
+    Write-Host '## Photo column (acceptable hits, largest size, licence)' -ForegroundColor Cyan
+    foreach ($summaryLine in $summaryLines) {
+        Write-Host $summaryLine
     }
     return 0
 }

@@ -43,7 +43,6 @@ param(
 
     [Parameter(ParameterSetName = 'FetchPhotoSource', Mandatory = $true)]
     [Parameter(ParameterSetName = 'FindPhoto')]
-    [ValidateSet('commons', 'finna', 'europeana')]
     [string[]]$Source,
 
     [Parameter(ParameterSetName = 'FetchPhotoSource', Mandatory = $true)]
@@ -65,7 +64,7 @@ param(
     [switch]$FindPhoto,
 
     [Parameter(ParameterSetName = 'FindPhoto', Mandatory = $true)]
-    [string]$Query,
+    [string[]]$Query,
 
     [Parameter(ParameterSetName = 'FindPhoto')]
     [ValidateRange(1, 50)]
@@ -211,11 +210,16 @@ switch ($PSCmdlet.ParameterSetName) {
     }
     'FetchPhotoSource' {
         Assert-PackGiven -SwitchName '-FetchPhoto'
-        if (@($Source).Count -ne 1) {
+        $fetchSources = Resolve-LpSourceNames -Source $Source
+        if (@($fetchSources.Invalid).Count -gt 0) {
+            Write-Host "-Source takes commons, finna or europeana, not '$(@($fetchSources.Invalid) -join ', ')'" -ForegroundColor Red
+            exit 1
+        }
+        if (@($fetchSources.Sources).Count -ne 1) {
             Write-Host '-FetchPhoto takes one -Source' -ForegroundColor Red
             exit 1
         }
-        exit ([int](@(Invoke-LpFetchPhoto -RepoRoot $PSScriptRoot -Pack $Pack -Source $Source[0] -Id $Id -Key $Key -DryRun:$DryRun)[-1]))
+        exit ([int](@(Invoke-LpFetchPhoto -RepoRoot $PSScriptRoot -Pack $Pack -Source $fetchSources.Sources[0] -Id $Id -Key $Key -DryRun:$DryRun)[-1]))
     }
     'FetchPhotoEvidence' {
         Assert-PackGiven -SwitchName '-FetchPhoto'
@@ -226,7 +230,16 @@ switch ($PSCmdlet.ParameterSetName) {
         exit ([int](@(Invoke-LpConfirmLicence -RepoRoot $PSScriptRoot -Pack $Pack -Key $Key)[-1]))
     }
     'FindPhoto' {
-        $searchSources = if ($Source) { @($Source) } else { @('commons', 'finna', 'europeana') }
+        $searchSources = @('commons', 'finna', 'europeana')
+        if ($PSBoundParameters.ContainsKey('Source')) {
+            $givenSources = Resolve-LpSourceNames -Source $Source
+            if (@($givenSources.Invalid).Count -gt 0 -or @($givenSources.Sources).Count -eq 0) {
+                Write-Host "-Source takes commons, finna or europeana, comma-separated, not '$(@($Source) -join ',')'" -ForegroundColor Red
+                exit 1
+            }
+            $searchSources = @($givenSources.Sources)
+        }
+        [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false)
         exit ([int](@(Invoke-LpFindPhoto -Query $Query -Source $searchSources -Limit $Limit)[-1]))
     }
     'ListCharacters' {
