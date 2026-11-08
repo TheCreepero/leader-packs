@@ -60,5 +60,6 @@ On the owner's word:
 2. Move the plan to `docs/plans/archive/`: `git mv` when tracked, `Move-Item` and `git add` when new.
 3. Commit the files from section 3.3 with the plan at its archived path, with the message the ship step gives.
 4. `powershell -File .\wiki\push-wiki.ps1`. If it fails, report the output; the commit stands.
+5. Report the commit and the wiki push, and end with: "Start `/leader-pack-release` in a new session; the shipped plan and the pack hold everything." Do not start the release in this session.
 
 Publishing to the Workshop is a separate decision: `leader-pack-release`.
